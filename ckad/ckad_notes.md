@@ -44,6 +44,11 @@
       - [Pod Conditions](#pod-conditions)
     - [Readiness Probe](#readiness-probe)
     - [Liveness Probe](#liveness-probe)
+    - [Container Logging](#container-logging)
+    - [Monitoring Cluster](#monitoring-cluster)
+      - [Metrics server Overview](#metrics-server-overview)
+      - [Metrics Server Deployment](#metrics-server-deployment)
+  - [Section 5: Pod Design](#section-5-pod-design)
 
 <!-- /code_chunk_output -->
 
@@ -858,6 +863,10 @@ https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
 
 ### Readiness and Liveness Probes
 
+**Failing liveness probe will restart the container**, whereas **failing readiness probe will stop our application from serving traffic**.
+
+demo image: kodekloud/webapp-delayed-start
+
 #### Pod Status
 
 **Pod States:**
@@ -915,9 +924,9 @@ set **a readiness check on a acontainer**
           httpGet:
             path: /api/ready
             port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          failureThreshold: 8     # default is 3
+          initialDelaySeconds: 10   # wait before probes begin
+          periodSeconds: 5          # deplay bettween probes
+          failureThreshold: 8       # retries before failure declared; default is 3
 
         # TCP Test
         readinessProbe:
@@ -942,7 +951,6 @@ Defines **when an application in a conatainer is healthy**
 - Script execution
 
 set **a liveness check on a acontainer**
-
 
     apiVersion: v1
     kind: Pod
@@ -978,3 +986,68 @@ set **a liveness check on a acontainer**
             command:
             - cat
             - /app/is_ready
+
+### Container Logging
+
+demo image: kodekloud/event-simulator
+
+**get a container's logs** (`<pod-container>` are necessary for multi-container pods.)
+
+    kubectl logs -f <pod-name> <container-name>
+
+### Monitoring Cluster
+
+Monitoring metrics:
+
+- **node-level metrics**
+
+  - node number
+  - node health
+  - node performance metrics
+    - cpu
+    - memory
+    - network
+    - disk
+
+- **pod-level metrics**
+  - number of pods
+  - pods performance metrics
+    - cpu
+    - memory
+
+K8s monitoring solutions:
+
+- heapster **(deprecated)**
+- metric server
+- prometheus
+- ELK stack
+- data dog (proprietary)
+- dynatracee (proprietary)
+
+#### Metrics server Overview
+
+Is a slimmed down version of heapster. can only be 1 metrics server per k8s cluster. An **In-Memory monitoring solution**; doesn't store logs and mterics data on disk.
+
+Uses a `kubelet` component `cAdvisor`; retrieves pod performance metrics and expose them through kubelet api to metrics server.
+
+#### Metrics Server Deployment
+
+deploy metrics server in minikube
+
+    minikube addons eable metrics-server
+
+deploy metrics server in other cluster
+
+    # clone yaml deployment files
+    # contain set of pods, services and roles
+    git clone https://github.com/kubernetes-incubator/metrics-server.git
+
+    # deploy metrics server
+    kubectl create -f deploy/1.8+/
+
+get performance metrics
+
+    kubectl top node
+    kubectl top pod
+
+## Section 5: Pod Design
