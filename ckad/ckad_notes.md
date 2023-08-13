@@ -1,6 +1,6 @@
 # Certified Kubernetes Application Developer - CKAD
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=3 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
@@ -14,41 +14,25 @@
   - [Section 3: Configuration](#section-3-configuration)
     - [Commands And Arguments](#commands-and-arguments)
     - [ConfigMap](#configmap)
-      - [Intro: Environment Variables](#intro-environment-variables)
-      - [Create ConfigMap](#create-configmap)
-      - [Use ConfigMap](#use-configmap)
     - [Secrets](#secrets)
-      - [Create Secrets](#create-secrets)
-      - [Use Secret](#use-secret)
     - [Security](#security)
-      - [Docker Security](#docker-security)
-      - [SecurityContexts](#securitycontexts)
     - [ServiceAccounts](#serviceaccounts)
-      - [Create ServiceAcounts and Secrets](#create-serviceacounts-and-secrets)
-      - [Use ServiceAccounts](#use-serviceaccounts)
     - [Resource Requirements](#resource-requirements)
-      - [Limits and Requests](#limits-and-requests)
-      - [LimitRanges](#limitranges)
     - [ResourceQuota](#resourcequota)
     - [Taints and Tolerations](#taints-and-tolerations)
-      - [Taints (Node)](#taints-node)
-      - [Tolerations](#tolerations)
     - [Node Selectors and Affinity](#node-selectors-and-affinity)
-      - [Node Selectors](#node-selectors)
-      - [Node Affinity](#node-affinity)
   - [Section 4: Multi-Container Pods](#section-4-multi-container-pods)
     - [Init Containers](#init-containers)
   - [Section 4: Observability](#section-4-observability)
     - [Readiness and Liveness Probes](#readiness-and-liveness-probes)
-      - [Pod Status](#pod-status)
-      - [Pod Conditions](#pod-conditions)
     - [Readiness Probe](#readiness-probe)
     - [Liveness Probe](#liveness-probe)
     - [Container Logging](#container-logging)
     - [Monitoring Cluster](#monitoring-cluster)
-      - [Metrics server Overview](#metrics-server-overview)
-      - [Metrics Server Deployment](#metrics-server-deployment)
   - [Section 5: Pod Design](#section-5-pod-design)
+    - [Labels Selectors and Annotations](#labels-selectors-and-annotations)
+    - [Rolling Updates and Rollbacks in Deployments](#rolling-updates-and-rollbacks-in-deployments)
+    - [Jobs and CronJobs](#jobs-and-cronjobs)
 
 <!-- /code_chunk_output -->
 
@@ -1051,3 +1035,117 @@ get performance metrics
     kubectl top pod
 
 ## Section 5: Pod Design
+
+### Labels Selectors and Annotations
+
+**Labels** are intended to be used to specify **identifying attributes of objects** that are meaningful and relevant to users, but do not directly imply semantics to the core system.
+Labels **can be used to organize and to select subsets of objects**.
+
+Via a label **selector**, the client/user **can identify a set of objects**.
+The API currently supports **two types of selectors: equality-based and set-based**. A label selector can be made of multiple requirements which are comma-separated.
+
+You can use Kubernetes **annotations** to attach **arbitrary non-identifying metadata** to objects. Clients such as tools and libraries can retrieve this metadata.
+
+### Rolling Updates and Rollbacks in Deployments
+
+Rollout strategies:
+
+- Recreate strategy
+- Rolling update (default strategy)
+
+**apply rollout**
+
+    # apply yaml file
+    kubectl apply -f deployment_def.yaml [--record]
+
+    # edit deployment
+    kubectl edit deploy <deployment-name> [--record]
+
+    # via command (will not update file)
+    kubectl set image deploy <deployment-name> [--record] \
+      nginx-container=nginx:1.9.1
+
+get **rollout status and history**
+
+    # describe deployment
+    kubectl describe deploy <deployment-name>
+
+    # rollout status
+    kubectl rollout status deploy <deployment-name> [--revision <revision-num>]
+
+    # rollout history
+    kubectl rollout history deploy <deployment-name> [--revision <revision-num>]
+
+**rollback latest revision**
+
+    # rollback update
+    kubectl rollback deploy <deployment-name>
+
+### Jobs and CronJobs
+
+demo image: kodekloud/throw-dice
+
+#### Jobs
+
+Creates one or more Pods and will continue to retry execution of the Pods until a specified number of them successfully terminate.
+
+Deleting a Job will clean up the Pods it created. Suspending a Job will delete its active Pods until the Job is resumed again.
+
+define a pod **restart policy**
+
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: math-pod
+
+    spec:
+      containers:
+      - name: math-add
+        image: ubuntu
+        command: ['expr', '3', '+', '2']
+      restartPolicy: Always # Always, Never, OnFailure
+
+**create job**
+
+    apiVersion: batch/v1
+    kind: Job
+    metadata:
+      name: math-add-job
+
+    spec:
+      completions: 3    # retries until 3 successful completions
+      parallelism: 3
+      template:
+        spec:
+          containers:
+          - name: math-add
+            image: ubuntu
+            command: ['expr', '3', '+', '2']
+          restartPolicy: Never
+      backoffLimit: 4   # default is 6
+
+#### CronJobs
+
+Creates Jobs on a repeating schedule.
+
+**create CronJob**
+
+    apiVersion: batch/v1
+    kind: CronJob
+    metadata:
+      name: hello
+    spec:
+      schedule: "* * * * *"
+      jobTemplate:
+        spec:
+          template:
+            spec:
+              containers:
+              - name: hello
+                image: busybox:1.28
+                imagePullPolicy: IfNotPresent
+                command:
+                - /bin/sh
+                - -c
+                - date; echo Hello from the Kubernetes cluster
+              restartPolicy: OnFailure
