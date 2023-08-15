@@ -5,8 +5,8 @@
 <!-- code_chunk_output -->
 
 - [Certified Kubernetes Application Developer - CKAD](#certified-kubernetes-application-developer---ckad)
-- [Section 1: Overview](#section-1-overview)
-  - [Resources](#resources)
+  - [Section 1: Overview](#section-1-overview)
+    - [Resources](#resources)
   - [Section 2: Core Concepts](#section-2-core-concepts)
     - [Docker vs ContainerD](#docker-vs-containerd)
     - [Containerd CLIs:](#containerd-clis)
@@ -23,22 +23,26 @@
     - [Node Selectors and Affinity](#node-selectors-and-affinity)
   - [Section 4: Multi-Container Pods](#section-4-multi-container-pods)
     - [Init Containers](#init-containers)
-  - [Section 4: Observability](#section-4-observability)
+  - [Section 5: Observability](#section-5-observability)
     - [Readiness and Liveness Probes](#readiness-and-liveness-probes)
     - [Readiness Probe](#readiness-probe)
     - [Liveness Probe](#liveness-probe)
     - [Container Logging](#container-logging)
     - [Monitoring Cluster](#monitoring-cluster)
-  - [Section 5: Pod Design](#section-5-pod-design)
+  - [Section 6: Pod Design](#section-6-pod-design)
     - [Labels Selectors and Annotations](#labels-selectors-and-annotations)
     - [Rolling Updates and Rollbacks in Deployments](#rolling-updates-and-rollbacks-in-deployments)
     - [Jobs and CronJobs](#jobs-and-cronjobs)
+  - [Section 7: Services and Networking](#section-7-services-and-networking)
+    - [Ingress](#ingress)
+    - [Network Policies](#network-policies)
+  - [Section 8: State Persistance](#section-8-state-persistance)
 
 <!-- /code_chunk_output -->
 
-# Section 1: Overview
+## Section 1: Overview
 
-## Resources
+### Resources
 
 - Certified Kubernetes Application Developer: https://www.cncf.io/certification/ckad/
 
@@ -843,7 +847,7 @@ If any of the initContainers fail to complete, Kubernetes restarts the Pod repea
 Read more about initContainers here.
 https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
 
-## Section 4: Observability
+## Section 5: Observability
 
 ### Readiness and Liveness Probes
 
@@ -1034,7 +1038,7 @@ get performance metrics
     kubectl top node
     kubectl top pod
 
-## Section 5: Pod Design
+## Section 6: Pod Design
 
 ### Labels Selectors and Annotations
 
@@ -1149,3 +1153,617 @@ Creates Jobs on a repeating schedule.
                 - -c
                 - date; echo Hello from the Kubernetes cluster
               restartPolicy: OnFailure
+
+## Section 7: Services and Networking
+
+Enable communication between various components within and
+outside of the application.
+
+Main types of services:
+
+- **NodePort**
+- **ClusterIP**
+- **LoadBalancer**
+
+### Ingress
+
+**demo images:**
+
+- kodekloud/ecommerce:apparels
+- kodekloud/ecommerce:video
+- kodekloud/ecommerce:food
+- kodekloud/ecommerce:404
+
+Exposes HTTP and HTTPS **routes from outside the cluster to services within the cluster.** Traffic routing is controlled by rules defined on the Ingress resource.
+Ingress may provide load balancing, SSL termination and name-based virtual hosting.
+
+**Ingress components:**
+
+- **Ingress controller** (Ingress runtimes)
+  And ingress controller is a special LoadBalancer container deployment customized for Ingress. They can be:
+
+  - Cloud LoadBalancers (supported)
+  - Nginx (supported)
+  - HAProxy
+  - traefik
+  - Istio
+  - Contour
+
+- **Ingress resources**
+  Routing rules for the ingress controller
+
+#### Ingress Controller
+
+**Deployment resources/steps:**
+
+- Create ingress config map
+- Prepare ingress service account (for monitoring ingress resource changes)
+- Create controller deployment
+- Create ingress service
+
+##### Ingress ConfigMap
+
+**create ingress config map**
+
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: nginx-configuration
+
+##### Ingress ServiceAccount
+
+**prepare ingress service account**
+**Note:** Roles, ClusterRoles and RoleBindings must be configured as well
+
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: nginx-ingress-serviceaccount
+
+**create serviceaccount roles**
+
+    #k get role --namespace ingress-nginx
+
+    NAME                      CREATED AT
+    ingress-nginx             2023-08-15T10:25:53Z
+    ingress-nginx-admission   2023-08-15T10:25:53Z
+
+    #k get role ingress-nginx --namespace ingress-nginx -o yaml
+    apiVersion: v1
+    items:
+    - apiVersion: rbac.authorization.k8s.io/v1
+      kind: Role
+      metadata:
+        labels:
+          app.kubernetes.io/component: controller
+          app.kubernetes.io/instance: ingress-nginx
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: ingress-nginx
+          app.kubernetes.io/part-of: ingress-nginx
+          app.kubernetes.io/version: 1.1.2
+          helm.sh/chart: ingress-nginx-4.0.18
+        name: ingress-nginx
+        namespace: ingress-nginx
+      rules:
+      - apiGroups:
+        - ""
+        resources:
+        - namespaces
+        verbs:
+        - get
+      - apiGroups:
+        - ""
+        resources:
+        - configmaps
+        - pods
+        - secrets
+        - endpoints
+        verbs:
+        - get
+        - list
+        - watch
+      - apiGroups:
+        - ""
+        resources:
+        - services
+        verbs:
+        - get
+        - list
+        - watch
+      - apiGroups:
+        - networking.k8s.io
+        resources:
+        - ingresses
+        verbs:
+        - get
+        - list
+        - watch
+      - apiGroups:
+        - networking.k8s.io
+        resources:
+        - ingresses/status
+        verbs:
+        - update
+      - apiGroups:
+        - networking.k8s.io
+        resources:
+        - ingressclasses
+        verbs:
+        - get
+        - list
+        - watch
+      - apiGroups:
+        - ""
+        resourceNames:
+        - ingress-controller-leader
+        resources:
+        - configmaps
+        verbs:
+        - get
+        - update
+      - apiGroups:
+        - ""
+        resources:
+        - configmaps
+        verbs:
+        - create
+      - apiGroups:
+        - ""
+        resources:
+        - events
+        verbs:
+        - create
+        - patch
+
+    #k get role ingress-nginx-admission --namespace ingress-nginx -o yaml
+    - apiVersion: rbac.authorization.k8s.io/v1
+      kind: Role
+      metadata:
+        annotations:
+          helm.sh/hook: pre-install,pre-upgrade,post-install,post-upgrade
+          helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+        labels:
+          app.kubernetes.io/component: admission-webhook
+          app.kubernetes.io/instance: ingress-nginx
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: ingress-nginx
+          app.kubernetes.io/part-of: ingress-nginx
+          app.kubernetes.io/version: 1.1.2
+          helm.sh/chart: ingress-nginx-4.0.18
+        name: ingress-nginx-admission
+        namespace: ingress-nginx
+      rules:
+      - apiGroups:
+        - ""
+        resources:
+        - secrets
+        verbs:
+        - get
+        - create
+
+**create serviceaccount rolebindings**
+
+    # for ingress-nginx
+    apiVersion: v1
+    items:
+    - apiVersion: rbac.authorization.k8s.io/v1
+      kind: RoleBinding
+      metadata:
+        labels:
+          app.kubernetes.io/component: controller
+          app.kubernetes.io/instance: ingress-nginx
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: ingress-nginx
+          app.kubernetes.io/part-of: ingress-nginx
+          app.kubernetes.io/version: 1.1.2
+          helm.sh/chart: ingress-nginx-4.0.18
+        name: ingress-nginx
+        namespace: ingress-nginx
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: Role
+        name: ingress-nginx
+      subjects:
+      - kind: ServiceAccount
+        name: ingress-nginx
+        namespace: ingress-nginx
+
+    # for ingress-nginx-admission
+    - apiVersion: rbac.authorization.k8s.io/v1
+      kind: RoleBinding
+      metadata:
+        annotations:
+          helm.sh/hook: pre-install,pre-upgrade,post-install,post-upgrade
+          helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+        labels:
+          app.kubernetes.io/component: admission-webhook
+          app.kubernetes.io/instance: ingress-nginx
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: ingress-nginx
+          app.kubernetes.io/part-of: ingress-nginx
+          app.kubernetes.io/version: 1.1.2
+          helm.sh/chart: ingress-nginx-4.0.18
+        name: ingress-nginx-admission
+        namespace: ingress-nginx
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: Role
+        name: ingress-nginx-admission
+      subjects:
+      - kind: ServiceAccount
+        name: ingress-nginx-admission
+        namespace: ingress-nginx
+
+**create serviceaccount clustrerrole**
+
+    # for ingress-nginx
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      labels:
+        app.kubernetes.io/instance: ingress-nginx
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: ingress-nginx
+        app.kubernetes.io/part-of: ingress-nginx
+        app.kubernetes.io/version: 1.1.2
+        helm.sh/chart: ingress-nginx-4.0.18
+      name: ingress-nginx
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - configmaps
+      - endpoints
+      - nodes
+      - pods
+      - secrets
+      - namespaces
+      verbs:
+      - list
+      - watch
+    - apiGroups:
+      - ""
+      resources:
+      - nodes
+      verbs:
+      - get
+    - apiGroups:
+      - ""
+      resources:
+      - services
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - networking.k8s.io
+      resources:
+      - ingresses
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - ""
+      resources:
+      - events
+      verbs:
+      - create
+      - patch
+    - apiGroups:
+      - networking.k8s.io
+      resources:
+      - ingresses/status
+      verbs:
+      - update
+    - apiGroups:
+      - networking.k8s.io
+      resources:
+      - ingressclasses
+      verbs:
+      - get
+      - list
+      - watch
+
+    # for ingress-nginx-admission
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      annotations:
+        helm.sh/hook: pre-install,pre-upgrade,post-install,post-upgrade
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+      labels:
+        app.kubernetes.io/component: admission-webhook
+        app.kubernetes.io/instance: ingress-nginx
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: ingress-nginx
+        app.kubernetes.io/part-of: ingress-nginx
+        app.kubernetes.io/version: 1.1.2
+        helm.sh/chart: ingress-nginx-4.0.18
+      name: ingress-nginx-admission
+    rules:
+    - apiGroups:
+      - admissionregistration.k8s.io
+      resources:
+      - validatingwebhookconfigurations
+      verbs:
+      - get
+      - update
+
+##### Ingress Controller Deployment
+
+**create controller deployment**
+
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx-ingress-controller
+
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          name: nginx-ingress
+      template:
+        metadata:
+          labels:
+            name: nginx-ingress
+
+        spec:
+          containers:
+            - name: nginx-ingress-controller
+              image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.21.1
+          args:
+            - /nginx-ingress-controller
+            - --configmap=$(POD_NAMESPACE)/nginx-configuration
+
+          # nginx service needs these to read config data from within the pod
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+
+##### Ingress Service
+
+**create ingress service**
+
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx-ingress
+
+    spec:
+      type: NodePort
+      selector:
+        name: nginx-ingress
+      ports:
+      - port: 80
+        targetPort: 80
+        protocol: TCP
+        name: http
+      - port: 443
+        targetPort: 443
+        protocol: TCP
+        name: https
+
+#### Ingress Resources
+
+see:
+[kubernetes.io - create ingress command ref](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-em-ingress-em-)
+[kubernetes.io - ingress](https://kubernetes.io/docs/concepts/services-networking/ingress)
+[kubernetes.io - ingress examples](https://kubernetes.github.io/ingress-nginx/examples/)
+
+**Note:** ingress resource apiVersion may change depending on k8s' version
+
+**Basic routing components**
+
+- Single/Mutliple URLs
+- Single/Mutliple paths
+- Single/Mutliple backend services
+
+**get ingress resources**
+
+    kubectl get ingress --namespace <namespace-name>
+
+**create ingress imperatively**
+
+    # format
+    kubectl create ingress <ingress-name> --rule="host/path=service:port"
+
+    # example
+    kubectl create ingress ingress-test --rule="wear.my-online-store.com/wear*=wear-service:80"
+
+##### Single URL - Single paths - Single backend
+
+**Routing schema**
+
+    # URL: www.my-online-store.com
+        Path: /
+        backend sevice: wear-service
+
+**create ingress object**
+
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: ingress-wear
+
+    spec:
+      backend:
+        name: wear-service
+        port:
+          number: 80
+
+##### Mutliple paths - Mutliple backends
+
+Single rule, multiple paths each
+
+**Routing schema**
+
+    # URL: www.my-online-store.com
+
+        Path: /wear
+        backend service: wear-service
+
+        Path: /watch
+        backend service: watch-service
+
+        # default 404 page
+        Path: *
+        backend service: default-http-backend
+
+**create ingress resource**
+
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: ingress-wear-watch
+
+    spec:
+      rules:
+      - http:
+          paths:
+          - path: /wear
+            backend:
+              service:
+                name: wear-service
+                port:
+                  number:  80
+
+          - path: /watch
+            backend:
+              service:
+                name: watch-service
+                port:
+                  number:  80
+
+          # default 404 page
+          - path: /
+            backend:
+              service:
+                name: default-http-backend
+                port:
+                  number:  80
+
+##### Multiple URLs - Mutliple backends
+
+Multiple rules, single path each
+
+**Routing schema**
+
+    # URL: www.wear.my-online-store.com
+
+        Path: *
+        backend service: wear-service
+
+    # URL: www.watch.my-online-store.com
+
+        Path: *
+        backend service: watch-service
+
+**create ingress resource**
+
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: ingress-wear-watch
+
+    spec:
+      rules:
+      - host: www.wear.my-online-store.com
+        http:
+          paths:
+          - backend:
+              service:
+                name: wear-service
+                port:
+                  number:  80
+
+      - host: www.watch.my-online-store.com
+        http:
+          paths:
+          - backend:
+              service:
+                name: watch-service
+                port:
+                  number:  80
+
+          # default 404 page
+          - path: /
+            backend:
+              service:
+                name: default-http-backend
+                port:
+                  number:  80
+
+### Network Policies
+
+demo/lab image: kodekloud/webapp-conntest
+
+Control traffic flow at the IP address or port level. Allows you to specify how a pod is allowed to communicate with various network "entities" over the network.
+NetworkPolicies apply to a connection with a pod on one or both ends, and are not relevant to other connections.
+
+Network solutions that **support network policy:**
+
+- Kube-router
+- Calico
+- Romana
+- Weave-net
+
+Network solutions that **do not support network policy:**
+
+- Flannel
+  if net policy created no error message will be displayed, the net policy will simply not work
+
+**create network policy**
+
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: test-network-policy
+      namespace: default
+
+    spec:
+      podSelector:
+        matchLabels:
+          role: db
+      policyTypes:
+        - Ingress
+        - Egress
+      ingress:
+        - from:
+            - ipBlock:
+                cidr: 172.17.0.0/16
+                except:
+                  - 172.17.1.0/24
+            # And applied here because both rules
+            # are in the same from element
+            - namespaceSelector:
+                matchLabels:
+                  env: prod
+              podSelector:
+                matchLabels:
+                  role: frontend
+          ports:
+            - protocol: TCP
+              port: 6379
+      egress:
+        - to:
+            - ipBlock:
+                cidr: 10.0.0.0/24
+          ports:
+            - protocol: TCP
+              port: 5978
+
+## Section 8: State Persistance

@@ -43,6 +43,8 @@
 
 [kubernetes.io - Learn Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
 
+[kubernetes.io - basic commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-strong-getting-started-strong-)
+
 [kubernetes.io docs - Command line tool (kubectl)](https://kubernetes.io/docs/reference/kubectl/)
 
 [kubernetes.io docs - kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
