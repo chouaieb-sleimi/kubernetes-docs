@@ -1,6 +1,6 @@
 # Certified Kubernetes Application Developer - CKAD
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=3 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=4 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
@@ -14,27 +14,50 @@
   - [Section 3: Configuration](#section-3-configuration)
     - [Commands And Arguments](#commands-and-arguments)
     - [ConfigMap](#configmap)
+      - [Intro: Environment Variables](#intro-environment-variables)
+      - [Create ConfigMap](#create-configmap)
+      - [Use ConfigMap](#use-configmap)
     - [Secrets](#secrets)
+      - [Create Secrets](#create-secrets)
+      - [Use Secret](#use-secret)
     - [Security](#security)
+      - [Docker Security](#docker-security)
+      - [SecurityContexts](#securitycontexts)
     - [ServiceAccounts](#serviceaccounts)
+      - [Create ServiceAcounts and Secrets](#create-serviceacounts-and-secrets)
+      - [Use ServiceAccounts](#use-serviceaccounts)
     - [Resource Requirements](#resource-requirements)
+      - [Limits and Requests](#limits-and-requests)
+      - [LimitRanges](#limitranges)
     - [ResourceQuota](#resourcequota)
     - [Taints and Tolerations](#taints-and-tolerations)
+      - [Taints (Node)](#taints-node)
+      - [Tolerations](#tolerations)
     - [Node Selectors and Affinity](#node-selectors-and-affinity)
+      - [Node Selectors](#node-selectors)
+      - [Node Affinity](#node-affinity)
   - [Section 4: Multi-Container Pods](#section-4-multi-container-pods)
     - [Init Containers](#init-containers)
   - [Section 5: Observability](#section-5-observability)
     - [Readiness and Liveness Probes](#readiness-and-liveness-probes)
+      - [Pod Status](#pod-status)
+      - [Pod Conditions](#pod-conditions)
     - [Readiness Probe](#readiness-probe)
     - [Liveness Probe](#liveness-probe)
     - [Container Logging](#container-logging)
     - [Monitoring Cluster](#monitoring-cluster)
+      - [Metrics server Overview](#metrics-server-overview)
+      - [Metrics Server Deployment](#metrics-server-deployment)
   - [Section 6: Pod Design](#section-6-pod-design)
     - [Labels Selectors and Annotations](#labels-selectors-and-annotations)
     - [Rolling Updates and Rollbacks in Deployments](#rolling-updates-and-rollbacks-in-deployments)
     - [Jobs and CronJobs](#jobs-and-cronjobs)
+      - [Jobs](#jobs)
+      - [CronJobs](#cronjobs)
   - [Section 7: Services and Networking](#section-7-services-and-networking)
     - [Ingress](#ingress)
+      - [Ingress Controller](#ingress-controller)
+      - [Ingress Resources](#ingress-resources)
     - [Network Policies](#network-policies)
   - [Section 8: State Persistance](#section-8-state-persistance)
     - [Volume](#volume)
@@ -44,7 +67,12 @@
     - [StatefulSets](#statefulsets)
     - [Headless Services](#headless-services)
     - [volumeClaimTemplates](#volumeclaimtemplates)
-    - [Section 9: Post Sep-2021 Changes](#section-9-post-sep-2021-changes)
+  - [Section 9: Post Sep-2021 Changes](#section-9-post-sep-2021-changes)
+    - [Define, Build, Modify Container Images](#define-build-modify-container-images)
+    - [Authentication, Authorization and Admission Control](#authentication-authorization-and-admission-control)
+      - [Authentication](#authentication)
+      - [Authorization](#authorization)
+      - [AdmissionController](#admissioncontroller)
 
 <!-- /code_chunk_output -->
 
@@ -2072,4 +2100,487 @@ use volumeClaimTemplates in a StatefulSet
             requests:
               storage: 1Gi
 
-### Section 9: Post Sep-2021 Changes
+## Section 9: Post Sep-2021 Changes
+
+### Define, Build, Modify Container Images
+
+### Authentication, Authorization and Admission Control
+
+**Secure hosts:**
+
+- ssh root access disabled
+- ssh password access disabled
+- ssh key based auth
+
+Secure cluster:
+
+- Set up certs for inter-cluster-components TLS communication
+- Secure inter-pod comm using NetworkPolicies
+
+**Authentication (who can access ):**
+
+- Files - Username and password
+- Files - Username and tokens
+- Certificates
+- Axternal auth providers - LDAP
+- Service accounts (machines)
+
+**Authorization (what can they do):**
+
+- RBAC (Role Based Access Control)
+- ABAC (Atribute Based Access Control)
+- Node Auth
+- Webhook mode
+
+#### Authentication
+
+Types of accounts:
+
+- Service ccounts (bots and machines)
+- User accounts
+  not managed by k8s, it is handled externally via:
+  - static password file\* (Deprecated in 1.19)
+  - static token file\* (Deprecated in 1.19)
+  - certificates
+  - identity service (ex: LDAP)
+
+> Notes:
+>
+> - not recommended
+> - consider using volume mount while providing the auth file in a kubeadm setup
+> - setup RBAC for new users
+
+##### Static Password File
+
+define static password file
+
+    cat user-details.csv
+
+    # password,usernae,uid,group (optional)
+    password123,user1,u0001,group1
+    password123,user2,u0002,group2
+    password123,user3,u0003,group3
+    password123,user4,u0004,group4
+
+use static password file
+
+    /usr/local/bin/kube-apiserver \
+      ...
+      --base-file-auth=user-details.csv
+      ...
+
+use account auth in API call
+
+    curl -v -k https://master-node-ip:6443/api/v1/pods -u "user1:password123"
+
+##### Static Token File
+
+define static token file
+
+    cat user-token-details.csv
+
+    # password,usernae,uid,group (optional)
+    b026324c6904b2a9cb4b88d6d61c81d1,user1,u0001,group1
+    26ab0db90d72e28ad0ba1e22ee510510,user2,u0002,group2
+    6d7fce9fee471194aa8b5b6e47267f03,user3,u0003,group3
+    48a24b70a0b376535542b996af517398,user4,u0004,group4
+
+use static token file
+
+    /usr/local/bin/kube-apiserver \
+      ...
+      --token-auth-file=user-token-details.csv
+      ...
+
+use account auth in API call
+
+    curl -v -k https://master-node-ip:6443/api/v1/pods --header "Authorization: Bearer b026324c6904b2a9cb4b88d6d61c81d1"
+
+##### Certificates
+
+use cert auth in API call
+
+    curl https://my-kube-playground:6443/api/v1/pods \
+    --key admin.key \
+    --cert admin.crt \
+    --cacert ca.crt
+
+use cert auth in kubectl
+
+    kubectl get pods \
+      --server my-kube-playground:6443 \
+      --client-key admin.key \
+      --client-certificate admin.crt \
+      --certificate-authority ca.crt
+
+##### KubeConfig
+
+path: `$HOME/.kube/config`
+
+KubeConfig sections:
+
+- Clusters
+  example: `Development`,`Production`,`Google`, `KubePlayground`
+- Contexts
+  example: `Admin@Prodction`,`Dev-user@Google`, `KubeAdmin@KubePlayground`
+- Users
+  example: `Admin`,`Dev-user`,`Prod-user`, `KubeAdmin`
+
+KubeConfig sample 1
+
+    apiVersion: v1
+    kind: Config
+    current-context: dev-user@google # kubectl default context
+
+    clusters:
+    - development
+    - production
+    - google
+    - kubeplayground
+
+    contexts:
+    - admin@prodction
+    - dev-user@google
+    - kubeadmin@kubeplayground
+
+    users:
+    - admin
+    - dev-user
+    - prod-user
+    - kubeadmin
+
+KubeConfig sample 2
+
+    # <cert-base64-data>: cat ca.crt | base64
+    apiVersion: v1
+    kind: Config
+    current-context: admin@production # kubectl default context
+
+    clusters:
+    - production
+      cluster:
+        certificate-authority: /etc/kubernetes/pki/ca.crt
+        # OR
+        certificate-authority-data: <cert-base64-data>
+        server: https://172.17.0.51:6443
+
+    contexts:
+    - admin@prodction
+      context:
+        cluster: production
+        user: admin
+        context: finance
+
+    users:
+    - admin
+      user
+        client-certificate: /etc/kubernetes/pki/users/admin.crt
+        client-key: /etc/kubernetes/pki/users/admin.key
+
+##### API Groups
+
+API examples:
+`curl https://my-kube-playground:6443/version`
+`curl https://my-kube-playground:6443/api/v1/pods`
+
+API Groups:
+
+- /metrics
+- /healthz
+- /version
+- /api
+- /apis
+- /logs
+
+Cluster functionality APIs
+
+- **core group** `/api`
+  - `/v1`
+    - `namespaces`
+    - `pods`
+    - `rc`
+    - `events`
+    - `endpoints`
+    - `nodes`
+    - `bindings`
+    - `PV`
+    - `PVC`
+    - `configmaps`
+    - `secrets`
+    - `services`
+- **named group** `/apis`
+  **API groups:**
+  - `/apps`
+    - `/v1`
+      **resources:**
+      - `/deploymens`
+        **verbs**
+        - `list`
+        - `get`
+        - `create`
+        - `delete`
+        - `update`
+        - `watch`
+      - `/replicasets`
+      - `/statefulsets`
+  - `/extensions`
+  - `/networking.k8s.io`
+    - `/v1`
+      - `/networkpolicies`
+  - `/storage.k8s.io`
+  - `/authentication.k8s.io`
+  - `/certificates.k8s.io`
+
+get API tree
+
+    # reads kubeconfig and adds auth conf to commands
+    kubectl proxy
+      Starting to serve on 127.0.0.1:8001
+
+    curl https://localhost:8001 -k
+    curl https://localhost:8001/apis -k | grep name
+
+#### Authorization
+
+Authorization modes
+
+- AlwaysAllow # default
+  allows all requests w/out auth checks
+
+- AlwaysDeny
+  denies all requests w/out auth checks
+
+- Node Authorizer
+  for internal cluster access, ex: kubelets must
+
+  - be part of the system `nodes` group
+  - have a name prefix `system-node`
+
+- ABAC (Atribute Based Access Control)
+
+  - implemented with a policy file.
+  - requires apiServer restart with each file modification
+
+        {"kind": "Policy, "spec": {"user": "dev-user", "namespace": "*", "resource": "pods", "apiGroup": "*"}}
+        {"kind": "Policy, "spec": {"user": "dev-user-2", "namespace": "*", "resource": "pods", "apiGroup": "*"}}
+        {"kind": "Policy, "spec": {"user": "dev-user-group", "namespace": "*", "resource": "pods", "apiGroup": "*"}}
+
+- RBAC (Role Based Access Control)
+
+  - associates `users` and `groups` with `roles`
+
+- Webhook
+  - external auth tools
+  - accessed using API calls
+
+specify auth mode to the kube apiServer
+
+    # attmpted auth order: Node > RBAC > Webhook
+    /usr/local/bin/kube-apiserver \
+      ...
+      --authorization-mode=Node,RBAC,Webhook
+      ...
+
+##### RBAC
+
+Steps:
+
+- create role/clusterRole
+- create roleBinding
+
+get current user access
+
+    kubectl auth can-i create deployments
+    kubectl auth can-i delete pods
+
+get user access
+
+    kubectl auth can-i create deployments --as dev-user
+    kubectl auth can-i delete pods --as dev-user
+
+##### Roles and RoleBindings
+
+Roles are specific for namespaced-scoped resources:
+
+- pods
+- replicasets
+- jobs
+- deployments
+- services
+- secrets
+- roles
+- rolebindings
+- configmaps
+- PVC
+
+creates role that can view, create, delete pods and create ConfigMaps
+
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      namespace: default
+      name: developer-role
+    rules:
+      - apiGroups: [""] # "" indicates the core API group
+        resources: ["pods"]
+        verbs: ["list, "get", "create", "update", "watch", "delete"]
+        resourceName: ["front-end", "back-end"]
+      - apiGroups: [""]
+        resources: ["ConfigMaps"]
+        verbs: ["create"]
+
+associate role with user through a RoleBinding
+
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      # limits user access to this namespace
+      namespace: default
+      name: dev-user-binding
+    subjects:
+      - kind: User
+        name: dev-user # "name" is case sensitive
+        apiGroup: rbac.authorization.k8s.io
+    roleRef:
+      # "roleRef" specifies the binding to a Role / ClusterRole
+      kind: Role #this must be Role or ClusterRole
+      name: developer-role # this must match the name of the Role or ClusterRole you wish to bind to
+      apiGroup: rbac.authorization.k8s.io
+
+##### ClusterRoles and ClusterRoleBindings
+
+Roles for cluster-scoped resources\*:
+
+- nodes
+- PV
+- clusterroles
+- clusterrolebindings
+- namespaces
+
+_\*: ClusterRoles can be created for namespaced-resources, the role will apply across ALL namespaces for that resource_
+
+create cluster role
+
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      # "namespace" omitted since ClusterRoles are not namespaced
+      name: cluster-admin
+    rules:
+      - apiGroups: [""]
+        resources: ["nodes"]
+        verbs: ["get", "watch", "list", "create", "delete"]
+
+associate role with user using ClusterRoleBinding
+
+    apiVersion: rbac.authorization.k8s.io/v1
+    # This cluster role binding allows anyone in the "manager" group to read secrets in any namespace.
+    kind: ClusterRoleBinding
+    metadata:
+      name: read-secrets-global
+    subjects:
+      - kind: Group
+        name: manager # Name is case sensitive
+        apiGroup: rbac.authorization.k8s.io
+      - kind: User
+        name: cluster-admin
+        apiGroup: rbac.authorization.k8s.io
+    roleRef:
+      kind: ClusterRole
+      name: cluster-admin
+      apiGroup: rbac.authorization.k8s.io
+
+#### AdmissionController
+
+Intercepts requests to the Kubernetes API server prior to persistence of the object, but after the request is authenticated and authorized.
+
+Admission controllers may be validating, mutating, or both. Mutating controllers may modify related objects to the requests they admit; validating controllers may not.
+
+Pre-built admission controllers:
+
+- AlwaysPullImages
+- DefaultStorageClass
+- EventRateLimit
+- NamespaceExists
+- ...
+
+![Admission Controller Phases](./img/admission-controller-phases.png)
+
+view enabled admission controllers
+
+    kube-apiserver -h | grep enable-admission-plugin
+
+    # in a kubeadm setup, run in kube apiserver controlplane pod
+    kubectl exec kube-apiserver-controlplane -n kube-system -- \
+      kube-apiserver -h | grep enable-admission-plugin
+
+add admission controller via command
+
+    /usr/local/bin/kube-apiserver \
+      ...
+      --enable-admission-plugins=NodeRestriction,...
+      --disable-admission-plugins=DefaultStorageClass,...
+      ...
+
+add admission controller via file
+
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: kube-apiserver
+      namespace: kube-system
+
+    spec:
+      containers:
+      - command:
+        - kube-apiserver
+        - ...
+        - --enable-admission-plugins=NodeRestriction,...
+        - --disable-admission-plugins=DefaultStorageClass,...
+        - ...
+        image: k8s.gcr.io/kube-apiserver-amd64:v1.11.3
+        name: kube-apiserver
+        ...
+
+##### Dynamic Admission Control
+
+In addition to compiled-in admission plugins, admission plugins can be developed as extensions and run as webhooks configured at runtime.
+
+Admission webhooks are HTTP callbacks that receive admission requests and do something with them.
+You can define two types of admission webhooks, **validating admission webhook** and **mutating admission webhook**.
+
+Mutating admission webhooks are invoked first, and can modify objects sent to the API server to enforce custom defaults.
+After all object modifications are complete, and after the incoming object is validated by the API server, validating admission webhooks are invoked and can reject requests to enforce custom policies.
+
+Steps:
+
+- deploy admission webhook server
+  sample admission server:
+  https://github.com/kubernetes/kubernetes/blob/release-1.21/test/images/agnhost/webhook/main.go
+- configure webhook on k8s
+
+configure validating webhook configuration
+
+    apiVersion: admissionregistration.k8s.io/v1
+    kind: ValidatingWebhookConfiguration
+    metadata:
+      name: "pod-policy.example.com"
+    webhooks:
+    - name: "pod-policy.example.com"
+      clientConfig:
+        # if webhook server deployed outside the cluster
+        # url: <webhook-server-url>
+        service:
+          namespace: "webhook-namespace"
+          name: "webhook-service"
+        # to comm w/ the webhook server
+        caBundle: <CA_BUNDLE>
+      rules:
+      - apiGroups:   [""]
+        apiVersions: ["v1"]
+        operations:  ["CREATE"]
+        resources:   ["pods"]
+        scope:       "Namespaced"
+      admissionReviewVersions: ["v1"]
+      sideEffects: None
+      timeoutSeconds: 5

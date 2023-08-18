@@ -25,9 +25,11 @@
           - [Minikube Steps](#minikube-steps)
   - [Kind index](#kind-index)
   - [Commands](#commands)
+    - [Config](#config)
+    - [Auth](#auth)
     - [Select - List - Namespaces](#select---list---namespaces)
       - [Objects](#objects)
-      - [Namespaces](#namespaces)
+    - [Namespaces](#namespaces)
     - [Export](#export)
     - [Creation, Deletion](#creation-deletion)
     - [Replace, Modify, Scale](#replace-modify-scale)
@@ -247,93 +249,127 @@ Steps:
 
 ## Commands
 
+### Config
+
+view KubeConfig
+
+    kubectl config view
+    kubectl config view --kubeconfig=my-custom-config
+
+change KubeConfig context
+
+    kubectl config use-context kubeadmin@kubeplayground
+
+get config commands
+
+    kubectl config -h
+
+### Auth
+
+get user access
+
+    kubectl auth can-i <verb> <resource> [--as <user-name>]
+
+view enabled admission controllers
+
+    kube-apiserver -h | grep enable-admission-plugin
+
+    # in a kubeadm setup, run in kube apiserver controlplane pod
+    kubectl exec kube-apiserver-controlplane -n kube-system -- \
+      kube-apiserver -h | grep enable-admission-plugin
+
 ### Select - List - Namespaces
 
 #### Objects
 
-**list resources**  and their shortcuts. _ex: pods, nodes, namespaces, ..._
+list resources
 
     kubectl api-resources
+    kubectl api-resources --namespaced=true
+    kubectl api-resources --namespaced=false
 
-**object selection methods** (not always interchangeable)
+object selection methods (not always interchangeable)
 
-    # object selection
+    # all objects
     all
+    [type]
+
+    # type and name selection
     [type] [name]
     [type]/[name]
+
+    # file def selection
     -f resource_definition.yaml
 
-**get resource**. _output_format: name, wide, yaml, json_
+get resource.
+_output_format: name, wide, yaml, json_
 
     kubectl get [resource]
     kubectl get [resource] -o [output_format]
 
-**get resource details**
-
     kubectl describe [resource]
 
-#### Namespaces
+### Namespaces
 
-**create namespace**
+create namespace
 
     kubectl create namespace my-namespace
     kubectl create -f namespace-definition.yaml
 
-**namespace selection**
+namespace selection
 
-    kubectl --all-namespaces             [command] [object]
-    kubectl --namespace=<namespace-name> [command] [object]
+    kubectl -A --all-namespaces             [command] [object]
+    kubectl  -n --namespace <namespace-name> [command] [object]
 
-**switch to namespace**
+switch to namespace
 
     kubectl config set-context $(kubectl config current-context) --namespace=dev
 
 ### Export
 
-**export resource definition file**. _output_format: name, wide, yaml, json_
+export resource definition file. _output_format: name, wide, yaml, json_
 
     kubectl get [resource] -o [output_format] > my-definition.yaml
 
-get **service url**
+get service url
 
     minikube service <service> --url
 
 ### Creation, Deletion
 
-**run image** on cluster
+run image on cluster
 
     kubectl run pod_name --image=image_name
 
-**create resource** from file or stdin
+create resource from file or stdin
 
     kubectl create -f file_path
 
-
-**delete resource**
+delete resource
 
     kubectl delete [resource]
 
 ### Replace, Modify, Scale
 
-**replace a resource**
+replace a resource
 
     kubectl replace [resource]
 
-**apply config to resource**
+apply config to resource
 
     kubectl apply -f [config_file]
 
-**edit resource** (opens editor to runtime config)
+edit resource (opens editor to runtime config)
 
     kubectl edit [resource]
 
-**scale resource**
+scale resource
 
 for a _deployment_, _replica set_, _replication controller_, or _stateful set_
 
     kubectl scale --replicas=3 [resource]
 
-**changes application resources**
+changes application resources
 
 _changes are to runtime config_
 
@@ -348,7 +384,7 @@ _changes are to runtime config_
 
 ### Rollout, Updates
 
-**controll rollouts**
+controll rollouts
 
 rollout is valid for _deployments_, _daemonsets_, or _statefulsets_
 
