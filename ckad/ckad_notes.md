@@ -37,6 +37,14 @@
     - [Ingress](#ingress)
     - [Network Policies](#network-policies)
   - [Section 8: State Persistance](#section-8-state-persistance)
+    - [Volume](#volume)
+    - [PersistentVolume](#persistentvolume)
+    - [PersistentVolumeClaim](#persistentvolumeclaim)
+    - [StorageClass](#storageclass)
+    - [StatefulSets](#statefulsets)
+    - [Headless Services](#headless-services)
+    - [volumeClaimTemplates](#volumeclaimtemplates)
+    - [Section 9: Post Sep-2021 Changes](#section-9-post-sep-2021-changes)
 
 <!-- /code_chunk_output -->
 
@@ -124,7 +132,7 @@ example: `db-service.dev.service.cluster.local`
 
 `IMAGE/entrypoint = K8S/command` and `IMAGE/cmd = K8S/args`
 
-**Containerfile**
+Containerfile
 
     ENTRYPOINT ["python", "app.py"]
     CMD ["--color", "red"]
@@ -201,7 +209,7 @@ env:
 
 #### Create ConfigMap
 
-- **imperative approach**
+- imperative approach
 
       # from-literal
       kubectl create configmap <config-name> \
@@ -225,7 +233,7 @@ env:
 
 #### Use ConfigMap
 
-**inject configmap**
+inject configmap
 
     apiVersion: v1
     kind: Pod
@@ -238,7 +246,7 @@ env:
             - configMapRef:
                 name: app-config-map
 
-**inject single variable**
+inject single variable
 
     apiVersion: v1
     kind: Pod
@@ -254,7 +262,7 @@ env:
                   name: app-config-map
                   key: APP_COLOR
 
-**inject configmap from volume**
+inject configmap from volume
 
     apiVersion: v1
     kind: Pod
@@ -292,7 +300,7 @@ Secrets are:
     # decode data
     echo -n 'mypassword' | base64 --decode
 
-- **imperative approach**
+- imperative approach
 
       # from-literal
       kubectl create secret generic <secret-name> \
@@ -319,7 +327,7 @@ Secrets are:
 
 #### Use Secret
 
-**inject secret**
+inject secret
 
     apiVersion: v1
     kind: Pod
@@ -332,7 +340,7 @@ Secrets are:
             - secretRef:
                 name: app-secrets
 
-**inject single variable**
+inject single variable
 
     apiVersion: v1
     kind: Pod
@@ -348,7 +356,7 @@ Secrets are:
                   name: app-secrets
                   key: DB_Host
 
-**inject secret from volume**
+inject secret from volume
 
     apiVersion: v1
     kind: Pod
@@ -446,7 +454,7 @@ Service account generates an access token in a secret object upon creation.
 
 #### Create ServiceAcounts and Secrets
 
-**create sa**
+create sa
 
     kubectl create sa/jenkins-sa
 
@@ -465,7 +473,7 @@ _serviceAccount must be created first_
       annotations:
         kubernetes.io/service-account.name: jenkins-sa
 
-**see sa token**
+see sa token
 
     kubectl describe serviceaccount jenkins-sa | grep -i token
 
@@ -473,12 +481,12 @@ _serviceAccount must be created first_
 
 #### Use ServiceAccounts
 
-**use sa token**
+use sa token
 
     curl htts://192.168.56.70:6443/api -insecure \
     --header "Authorization: Bearer <sa_access-token>"
 
-**use sa in a pod**
+use sa in a pod
 
     apiVersion: v1
     kind: Pod
@@ -490,7 +498,7 @@ _serviceAccount must be created first_
           ...
       serviceAccountName: jenkins-sa
 
-**disable default sa automount**
+disable default sa automount
 
     apiVersion: v1
     kind: Pod
@@ -569,7 +577,7 @@ set container **resource request** and **resource limits**
 - default limit values for pods created without requests or limits.
 - affect **only newly created pods.**
 
-**create cpu LimitRange**
+create cpu LimitRange
 
     apiVersion: v1
     kind: LimitRange
@@ -587,7 +595,7 @@ set container **resource request** and **resource limits**
           cpu: 100m
         type: Container
 
-**create memory LimitRange**
+create memory LimitRange
 
     apiVersion: v1
     kind: LimitRange
@@ -610,7 +618,7 @@ set container **resource request** and **resource limits**
 - are appplicable on the namespace level
 - limits total resource usage on the namespace
 
-**create ResourceQuota**
+create ResourceQuota
 
     apiVersion: v1
     kind: LimitRange
@@ -629,7 +637,7 @@ Are used to set **restrictions on what pods nodes _can (and not must)_ accept**.
 
 #### Taints (Node)
 
-**see a node's taints**
+see a node's taints
 
     k describe nodes <node-name> | grep -i taint
 
@@ -649,7 +657,7 @@ Are used to set **restrictions on what pods nodes _can (and not must)_ accept**.
 
 #### Tolerations
 
-**add toleration to a pod**
+add toleration to a pod
 
     apiVersion: v1
     kind: Pod
@@ -677,7 +685,7 @@ create **node label to be used as a selector** for pods
 
     kubectl label nodes <node-name> <label-key>=<label-value>
 
-**run pod on selected nodes**
+run pod on selected nodes
 
     apiVersion: v1
     kind: Pod
@@ -709,7 +717,7 @@ Possible node affinities:
     Preferred             Ignored
     Required              Required
 
-**add node affinity to a pod**
+add node affinity to a pod
 
       apiVersion: v1
       kind: Pod
@@ -741,7 +749,7 @@ Possible node affinities:
                 - key: size
                   operator: Exists
 
-**examlpe:**
+example:
 
     ---
     apiVersion: apps/v1
@@ -863,7 +871,7 @@ demo image: kodekloud/webapp-delayed-start
 - ContainerCreating
 - Running
 
-**get pod status**
+get pod status
 
     kubectl get pods
     kubectl describe pod <pod-name> | grep -i status
@@ -879,7 +887,7 @@ Pod conditions compliment pod status. Can be true or false.
 - ContainerReady (containers are running)
 - Ready (pod is running)
 
-**get pod conditions**
+get pod conditions
 
     kubectl describe pod <pod-name> | grep -iA5 conditions
 
@@ -891,7 +899,7 @@ Pod conditions compliment pod status. Can be true or false.
 - Port test
 - Script execution
 
-set **a readiness check on a acontainer**
+set a **container readiness check**
 
     apiVersion: v1
     kind: Pod
@@ -938,7 +946,7 @@ Defines **when an application in a conatainer is healthy**
 - Port test
 - Script execution
 
-set **a liveness check on a acontainer**
+set a **acontainer liveness check**
 
     apiVersion: v1
     kind: Pod
@@ -1057,7 +1065,7 @@ Rollout strategies:
 - Recreate strategy
 - Rolling update (default strategy)
 
-**apply rollout**
+apply rollout
 
     # apply yaml file
     kubectl apply -f deployment_def.yaml [--record]
@@ -1080,7 +1088,7 @@ get **rollout status and history**
     # rollout history
     kubectl rollout history deploy <deployment-name> [--revision <revision-num>]
 
-**rollback latest revision**
+rollback latest revision
 
     # rollback update
     kubectl rollback deploy <deployment-name>
@@ -1109,7 +1117,7 @@ define a pod **restart policy**
         command: ['expr', '3', '+', '2']
       restartPolicy: Always # Always, Never, OnFailure
 
-**create job**
+create job
 
     apiVersion: batch/v1
     kind: Job
@@ -1132,7 +1140,7 @@ define a pod **restart policy**
 
 Creates Jobs on a repeating schedule.
 
-**create CronJob**
+create CronJob
 
     apiVersion: batch/v1
     kind: CronJob
@@ -1203,7 +1211,7 @@ Ingress may provide load balancing, SSL termination and name-based virtual hosti
 
 ##### Ingress ConfigMap
 
-**create ingress config map**
+create ingress config map
 
     apiVersion: v1
     kind: ConfigMap
@@ -1220,7 +1228,7 @@ Ingress may provide load balancing, SSL termination and name-based virtual hosti
     metadata:
       name: nginx-ingress-serviceaccount
 
-**create serviceaccount roles**
+create serviceaccount roles
 
     #k get role --namespace ingress-nginx
 
@@ -1341,7 +1349,7 @@ Ingress may provide load balancing, SSL termination and name-based virtual hosti
         - get
         - create
 
-**create serviceaccount rolebindings**
+create serviceaccount rolebindings
 
     # for ingress-nginx
     apiVersion: v1
@@ -1394,7 +1402,7 @@ Ingress may provide load balancing, SSL termination and name-based virtual hosti
         name: ingress-nginx-admission
         namespace: ingress-nginx
 
-**create serviceaccount clustrerrole**
+create serviceaccount clustrerrole
 
     # for ingress-nginx
     apiVersion: rbac.authorization.k8s.io/v1
@@ -1492,7 +1500,7 @@ Ingress may provide load balancing, SSL termination and name-based virtual hosti
 
 ##### Ingress Controller Deployment
 
-**create controller deployment**
+create controller deployment
 
     apiVersion: apps/v1
     kind: Deployment
@@ -1536,7 +1544,7 @@ Ingress may provide load balancing, SSL termination and name-based virtual hosti
 
 ##### Ingress Service
 
-**create ingress service**
+create ingress service
 
     apiVersion: v1
     kind: Service
@@ -1572,11 +1580,11 @@ see:
 - Single/Mutliple paths
 - Single/Mutliple backend services
 
-**get ingress resources**
+get ingress resources
 
     kubectl get ingress --namespace <namespace-name>
 
-**create ingress imperatively**
+create ingress imperatively
 
     # format
     kubectl create ingress <ingress-name> --rule="host/path=service:port"
@@ -1586,13 +1594,13 @@ see:
 
 ##### Single URL - Single paths - Single backend
 
-**Routing schema**
+Routing schema
 
     # URL: www.my-online-store.com
         Path: /
         backend sevice: wear-service
 
-**create ingress object**
+create ingress object
 
     apiVersion: networking.k8s.io/v1
     kind: Ingress
@@ -1609,7 +1617,7 @@ see:
 
 Single rule, multiple paths each
 
-**Routing schema**
+Routing schema
 
     # URL: www.my-online-store.com
 
@@ -1623,7 +1631,7 @@ Single rule, multiple paths each
         Path: *
         backend service: default-http-backend
 
-**create ingress resource**
+create ingress resource
 
     apiVersion: networking.k8s.io/v1
     kind: Ingress
@@ -1660,7 +1668,7 @@ Single rule, multiple paths each
 
 Multiple rules, single path each
 
-**Routing schema**
+Routing schema
 
     # URL: www.wear.my-online-store.com
 
@@ -1672,7 +1680,7 @@ Multiple rules, single path each
         Path: *
         backend service: watch-service
 
-**create ingress resource**
+create ingress resource
 
     apiVersion: networking.k8s.io/v1
     kind: Ingress
@@ -1726,7 +1734,7 @@ Network solutions that **do not support network policy:**
 - Flannel
   if net policy created no error message will be displayed, the net policy will simply not work
 
-**create network policy**
+create network policy
 
     apiVersion: networking.k8s.io/v1
     kind: NetworkPolicy
@@ -1767,3 +1775,301 @@ Network solutions that **do not support network policy:**
               port: 5978
 
 ## Section 8: State Persistance
+
+### Volume
+
+Is a directory, possibly with some data in it, which is accessible to the containers in a pod.
+
+How that directory comes to be, the medium that backs it, and the contents of it are determined by the particular volume type used.
+
+Types of volumes:
+
+- nfs
+- cephfs
+- configMap
+- Cloud services (AWS, Azure, GCP, etc.)
+- hostPath
+- emptyDir
+- iscsi
+- local
+
+see: [kubernetes.io/docs - Volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
+
+create and mount hostPath volume
+
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: random-num-gen
+    spec:
+      containers:
+      - image: alpine
+        name: alpine
+        command: ["bin/sh", "-c"]
+        args: ["shuf -i 0-100 -n 1 >> /opt/number.out]
+        volumeMounts:
+        - mountPath: /opt
+          name: data-volume
+      volumes:
+      - name: data-volume
+        hostPath:
+          path: /data
+          type: Directory
+
+### PersistentVolume
+
+after claims, persistent volumes act upon `persistentVolumeReclaimPolicy` which can be `Retain` (default), `Delete` or `Recycle`
+
+create persistent volume
+
+    apiVersion: v1
+    kind: PersistentVolume
+    metadata:
+      name: pv-vol
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      capacity:
+        storage: 1Gi
+
+      # node storage
+      hostPath:
+        path: /tmp/data
+
+      # or AWS (deprecated)
+      awsElasticBlockStore:
+        volumeID: <colume-id>
+        fsType: ext4
+
+### PersistentVolumeClaim
+
+**Usage:**
+
+- Define PV
+- Create PVC
+- Use PVC in Pods, ReplicaSets or Deployments
+
+Claims can specify a `label` selector to further filter the set of volumes. Only the volumes whose labels match the selector can be bound to the claim.
+The selector can consist of two fields:
+
+- `matchLabels` - the volume must have a label with this value
+- `matchExpressions` - a list of requirements made by specifying key, list of values, and operator that relates the key and values. Valid operators include `In`, `NotIn`, `Exists`, and `DoesNotExist`.
+
+All of the requirements, from both matchLabels and matchExpressions, are ANDed together – **they must all be satisfied in order to match.**
+
+**PVC AccessModes:**
+
+- ReadWriteOnce
+- ReadOnlyMany
+- ReadWriteMany
+
+persistent volume claim example
+
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: vol-claim-1
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resourcecs:
+        requests:
+          storage: 500Mi
+
+use pvc in pod
+
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: mypod
+    spec:
+      containers:
+        - name: myfrontend
+          image: nginx
+          volumeMounts:
+          - mountPath: "/var/www/html"
+            name: pvc-vol
+      volumes:
+        - name: pvc-vol
+          persistentVolumeClaim:
+            claimName: vol-claim-1
+
+### StorageClass
+
+Does dynamic provisioning of volumes; upon a claim, the storage is created.
+
+StorageClass definition
+
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: google-storage
+    provisioner: kubernetes.io/gce-pd
+    parametes:
+      types: [ pd-standard | pd-ssd ]
+      replication-type: [ none | regional-pd ]
+
+use StorageClass in PersistentVolumeClaim
+
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: vol-claim-1
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      storageClassName: google-storage
+      resourcecs:
+        requests:
+          storage: 500Mi
+
+use persistentVolumeClaim in pod
+
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: random-num-gen
+      ...
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+            claimName: vol-claim-1
+
+### StatefulSets
+
+StatefulSets are valuable for applications that require one or more of the following.
+
+- Stable, unique network identifiers.
+- Stable, persistent storage.
+- Ordered, graceful deployment and scaling.
+- Ordered, automated rolling updates.
+
+StatefulSet allows you to relax ordering guarantees with `.spec.podManagementPolicy` field; it can be `Parallel` or `OrderedReady` (default).
+
+**Note:** StatefulSets must be configured with a headless service
+
+headless service and stateful set definitions
+
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      ports:
+      - port: 80
+        name: web
+      clusterIP: None
+      selector:
+        app: nginx
+    ---
+    apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+      name: web
+    spec:
+      selector:
+        matchLabels:
+          app: nginx # has to match .spec.template.metadata.labels
+      serviceName: "nginx"
+      replicas: 3 # by default is 1
+      template:
+        metadata:
+          labels:
+            app: nginx # has to match .spec.selector.matchLabels
+        spec:
+          containers:
+          - name: nginx
+            image: registry.k8s.io/nginx-slim:0.8
+            ports:
+            - containerPort: 80
+              name: web
+            volumeMounts:
+            - name: www
+              mountPath: /usr/share/nginx/html
+      volumeClaimTemplates:
+      - metadata:
+          name: www
+        spec:
+          accessModes: [ "ReadWriteOnce" ]
+          storageClassName: "my-storage-class"
+          resources:
+            requests:
+              storage: 1Gi
+
+### Headless Services
+
+Are services that
+
+- have NO load-balancing
+- have NO single Service IP address
+- used for service discovery mechanisms (DNS names)
+
+headless service definition
+
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      ports:
+      - port: 80
+        name: web
+      clusterIP: None
+      selector:
+        app: nginx
+
+subscribe a pod to a headless service
+
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: registry.k8s.io/nginx-slim:0.8
+        ports:
+        - containerPort: 80
+          name: web
+
+      # w/out hostname given, pod name:
+      # mysql-h.default.svc.cluster.local
+      subdomain: mysql-h
+
+      # w/ subdomain, pod name:
+      # mysql-pod.mysql-h.default.svc.cluster.local
+      hostname: mysql-pod
+
+### volumeClaimTemplates
+
+volumeClaimTemplates will provide stable storage using PersistentVolumes provisioned by a PersistentVolume Provisioner.
+
+On **pod failure/reschedules, volumeClaimTemplates-v PVCs are not removed** but are **instead attached to the recreated pods**
+
+use volumeClaimTemplates in a StatefulSet
+
+    apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+      name: web
+    spec:
+      selector:
+        matchLabels:
+          app: nginx # has to match .spec.template.metadata.labels
+      ...
+      volumeClaimTemplates:
+      - metadata:
+          name: www
+        spec:
+          accessModes: [ "ReadWriteOnce" ]
+          storageClassName: "my-storage-class"
+          resources:
+            requests:
+              storage: 1Gi
+
+### Section 9: Post Sep-2021 Changes
