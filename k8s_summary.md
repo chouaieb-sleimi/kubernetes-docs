@@ -7,8 +7,15 @@
 - [Kubernetes Resources](#kubernetes-resources)
   - [Documentation](#documentation)
   - [Labs](#labs)
-    - [Kubernetes for Beginners Lab](#kubernetes-for-beginners-lab)
-    - [Kubernetes Application Developer - CKAD Lab](#kubernetes-application-developer---ckad-lab)
+  - [Commands](#commands)
+    - [Config](#config)
+    - [Auth](#auth)
+      - [Objects](#objects)
+    - [Namespaces](#namespaces)
+    - [Export](#export)
+    - [Creation, Deletion](#creation-deletion)
+    - [Replace, Modify, Scale](#replace-modify-scale)
+    - [Rollout, Updates](#rollout-updates)
   - [Tools](#tools)
     - [Kubernetes on the Cloud](#kubernetes-on-the-cloud)
       - [Hosted Solutions](#hosted-solutions)
@@ -16,253 +23,81 @@
         - [Amazon Elastic Kubernetes Service (EKS)](#amazon-elastic-kubernetes-service-eks)
         - [Azure Kubernetes Service (AKS)](#azure-kubernetes-service-aks)
     - [Setup K8s cluster](#setup-k8s-cluster)
-        - [Kubeadm Setup](#kubeadm-setup)
-          - [References](#references)
-          - [Kubeadm Steps](#kubeadm-steps)
+      - [Kubeadm Setup](#kubeadm-setup)
         - [Minikube Setup](#minikube-setup)
-          - [References 1](#references-1)
-          - [References 2](#references-2)
-          - [Minikube Steps](#minikube-steps)
-  - [Kind index](#kind-index)
-  - [Commands](#commands)
-    - [Config](#config)
-    - [Auth](#auth)
-    - [Select - List - Namespaces](#select---list---namespaces)
-      - [Objects](#objects)
-    - [Namespaces](#namespaces)
-    - [Export](#export)
-    - [Creation, Deletion](#creation-deletion)
-    - [Replace, Modify, Scale](#replace-modify-scale)
-    - [Rollout, Updates](#rollout-updates)
 
 <!-- /code_chunk_output -->
 
 ## Documentation
 
-[github.com - Kubernetes](https://github.com/kubernetes/kubernetes)
+- [github.com - Kubernetes](https://github.com/kubernetes/kubernetes)
+- [kubernetes.io](https://kubernetes.io)
+- [kubernetes.io - Learn Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
+- [kubernetes.io - basic commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-strong-getting-started-strong-)
+- [kubernetes.io docs - Command line tool (kubectl)](https://kubernetes.io/docs/reference/kubectl/)
+- [kubernetes.io docs - kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
+- [opensource.com - A guide to Kubernetes architecture](https://opensource.com/article/22/2/kubernetes-architecture)
+- [opensource.com - A visual guide to Kubernetes networking fundamentals](https://opensource.com/article/22/6/kubernetes-networking-fundamentals?utm_medium=Email&utm_campaign=weekly&sc_cid=7013a00000311fXAAQ)
+- [opensource.com - A visual map of a Kubernetes deployment](https://opensource.com/article/22/3/visual-map-kubernetes-deployment)
+- [opensource.com - Migrate databases to Kubernetes using Konveyor](https://opensource.com/article/22/5/migrating-databases-kubernetes-using-konveyor)- [redhat.com - How Kubernetes creates and runs containers: An illustrated guide](https://www.redhat.com/architect/how-kubernetes-creates-runs-containers)
+- [medium.com - Scaling Kubernetes to Over 4k Nodes and 200k Pods](https://medium.com/paypal-tech/scaling-kubernetes-to-over-4k-nodes-and-200k-pods-29988fad6ed)
+- [kompose.io - DOCKER COMPOSE TO KUBERNETES](https://kompose.io)
+- [github.com/dockersamples - docker sample apps](https://github.com/dockersamples)
+- [Dockerhub - kodekloud voting app images](https://hub.docker.com/r/kodekloud/examplevotingapp_worker)
 
-[kubernetes.io](https://kubernetes.io)
+**Kodekloud images:**
 
-[kubernetes.io - Learn Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
-
-[kubernetes.io - basic commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-strong-getting-started-strong-)
-
-[kubernetes.io docs - Command line tool (kubectl)](https://kubernetes.io/docs/reference/kubectl/)
-
-[kubernetes.io docs - kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
-
-[opensource.com - A guide to Kubernetes architecture](https://opensource.com/article/22/2/kubernetes-architecture)
-
-[opensource.com - A visual guide to Kubernetes networking fundamentals](https://opensource.com/article/22/6/kubernetes-networking-fundamentals?utm_medium=Email&utm_campaign=weekly&sc_cid=7013a00000311fXAAQ)
-
-[opensource.com - A visual map of a Kubernetes deployment](https://opensource.com/article/22/3/visual-map-kubernetes-deployment)
-
-[opensource.com - Migrate databases to Kubernetes using Konveyor](https://opensource.com/article/22/5/migrating-databases-kubernetes-using-konveyor)
-[redhat.com - How Kubernetes creates and runs containers: An illustrated guide](https://www.redhat.com/architect/how-kubernetes-creates-runs-containers)
-
-[medium.com - Scaling Kubernetes to Over 4k Nodes and 200k Pods](https://medium.com/paypal-tech/scaling-kubernetes-to-over-4k-nodes-and-200k-pods-29988fad6ed)
-
-[kompose.io - DOCKER COMPOSE TO KUBERNETES](https://kompose.io)
-
-[github.com/dockersamples - docker sample apps](https://github.com/dockersamples)
-
-[Dockerhub - kodekloud voting app images](https://hub.docker.com/r/kodekloud/examplevotingapp_worker)
-
-voting app
-
-- https://github.com/kodekloudhub/example-voting-app
-
-- https://github.com/kodekloudhub/example-voting-app-kubernetes
+- ServiceAccount demo image: gcr.io/kodekloud/customimage/my-kubernetes-dashboard
+- Secrets demo image: `kodekloud/simple-webapp-mysql`
+- Readiness and Liveness Probes demo image: `kodekloud/webapp-delayed-start`
+- Container Logging demo image: `kodekloud/event-simulator`
+- Jobs and CronJobs demo image: `kodekloud/throw-dice`
+- Ingress demo images:
+  - `kodekloud/ecommerce:apparels`
+  - `kodekloud/ecommerce:video`
+  - `kodekloud/ecommerce:food`
+  - `kodekloud/ecommerce:404`
+- log events: `kodekloud/event-simulator`
+- voting app
+  - https://github.com/kodekloudhub/example-voting-app
+  - https://github.com/kodekloudhub/example-voting-app-kubernetes
 
 ## Labs
 
-### Kubernetes for Beginners Lab
-
-https://uklabs.kodekloud.com/courses/labs-kubernetes-for-the-absolute-beginners-hands-on
-
-Coupon:
-
-    kk-labs-k8b-lakjg328321095305
-
-### Kubernetes Application Developer - CKAD Lab
-
-https://uklabs.kodekloud.com/courses/labs-certified-kubernetes-application-developer
-
-Coupon:
-
-    udemystudent030485
-
-## Tools
-
-### Kubernetes on the Cloud
-
-- Self Hosted/ Turnkey Solutions
-
-  - Provision, configure, maintain vms
-  - Use scripts to deploy clusters
-  - AWS example: kops, KubeOne, etc.
-
-- Hosted/ Managed Solutions
-
-  - K8s as a service
-  - Provider provisions, maintains vms, installs k8s
-  - Cannot access master nodes
-  - GCP example: Google Container Engine (GKE)
-
-#### Hosted Solutions
-
-##### Google Kubernetes Engine (GKE)
-
-Pre-reqs:
-
-- Google Cloud Free Tier
-  https://cloud.google.com/free/
-  https://cloud.google.com/free/docs/gcp-free-tier
-  - 12-month free trial: $300 to use on any Google Cloud service
-  - Always free: provides limited access to mny common GC resources
-
-Kubernetes on Google Cloud: https://cloud.google.com/kubernetes-engine/docs/
-
-##### Amazon Elastic Kubernetes Service (EKS)
-
-Pre-reqs:
-
-- AWS Free Tier
-  https://aws.amazon.com/free
-
-Getting started: https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html
-
-##### Azure Kubernetes Service (AKS)
-
-Pre-reqs:
-
-- Azure account
-  https://azure.microsoft.com/en-us/free/free-account-faq
-
-### Setup K8s cluster
-
-deployment methods/modes/options:
-
-- Minikube
-- MicroK8s
-- Kubeadm
-
-##### Kubeadm Setup
-
-###### References
-
-Oracle VirtualBox: https://www.virtualbox.org/
-
-Vagrant: https://www.vagrantup.com/
-
-Link to download VM images: http://osboxes.org/
-
-Link to kubeadm installation instructions: https://kubernetes.io/docs/setup/independent/install-kubeadm/
-
-The link to Vagrant file:
-https://github.com/kodekloudhub/labs-certified-kubernetes-administrator-course
-
-If you are new to VirtualBox or Vagrant, please follow this pre-requisites course to learn about it: https://www.youtube.com/watch?v=Wvf0mBNGjXY
-
-How to use Podman inside of Kubernetes https://www.redhat.com/sysadmin/podman-inside-kubernetes
-
-###### Kubeadm Steps
-
-- **designate master and worker** nodes
-  kodekloud CKA github: https://github.com/kodekloudhub/labs-certified-kubernetes-administrator-course
-- install **container runtime**
-  https://kubernetes.io/docs/setup/production-environment/container-runtimes/#container-runtimes
-- **install kubeadm**: helps bootstraps kubernetes by installing all components on all nodes in the right order
-  https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
-- initialize: **install components on master** server
-  kubeadm cmd flags: `--pod-network-cidr` and `--apiserver-advertise-address`
-- setup **pod network**
-  install addons https://kubernetes.io/docs/concepts/cluster-administration/addons/
-  use `Weave Net` addon
-
-      kubectl get ds -A
-
-  - setup IPALLOC_RANGE after installation:
-    https://www.weave.works/docs/net/latest/kubernetes/kube-addon/#-things-to-watch-out-for
-
-        kubectl get ds -A
-        kubectl edit ds weave-net -n kube-system
-        ## add env var
-        ## https://www.weave.works/docs/net/latest/kubernetes/kube-addon/#-changing-configuration-options
-
-- **join workers to master** node
-  follow kubeadm bootstrap command output
-
-      kubeadm join ...
-
-##### Minikube Setup
-
-###### References 1
-
-The upcoming demo is completely optional, unless you want to setup a local environment on your laptop. Our hands-on labs will be sufficient for you to practice.
-
-Some links used in the upcoming demo may have changed. Please find the latest links to the documentation topics below:
-
-Install MiniKube: https://kubernetes.io/docs/tasks/tools/install-minikube/
-
-VirtualBox: https://www.virtualbox.org/wiki/Downloads
-
-MiniKube Download page for Windows: https://github.com/kubernetes/minikube/releases
-
-While using Minikube with Virtualization technologies, specify the --vm-driver option like this:
-
-minikube start --vm-driver=<driver_name>
-More about it here: https://kubernetes.io/docs/setup/learning-environment/minikube/#specifying-the-vm-driver
-
-###### References 2
-
-Install and set up the kubectl tool:
-https://kubernetes.io/docs/tasks/tools/
-
-Install Minikube:
-https://minikube.sigs.k8s.io/docs/start/
-
-Install VirtualBox:
-https://www.virtualbox.org/wiki/Downloads
-https://www.virtualbox.org/wiki/Linux_Downloads
-
-Minikube Tutorial:
-https://kubernetes.io/docs/tutorials/hello-minikube/
-
-If the minikube installation has been done on the macOS, then to access the URL on the local browser, we need to do a few steps to get the service URL to work. Those steps are covered on this documentation page:
-https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-service-with-tunnel
-
-###### Minikube Steps
-
-[ServerWorld - Install Minikube to configure Kubernetes Cluster on single node.](https://www.server-world.info/en/note?os=CentOS_Stream_8&p=minikube)
-
-Steps:
-
-- [1] Install a Hypervisor that is supported by Minikube.
-  On this example, Install KVM like here of [1] for it.
-- [2] Install Snappy, refer to here of [1].
-- [3] Install Minikube and other required tools.
-- [4] Add users who use Minikube to [libvirt] group.
-- [5] Start Minikube with a user who are in [libvirt] group.
-
-## Kind index
+- **Kubernetes for Beginners Lab**
+  https://uklabs.kodekloud.com/courses/labs-kubernetes-for-the-absolute-beginners-hands-on
+  Coupon `kk-labs-k8b-lakjg328321095305`
+
+- **Kubernetes Application Developer - CKAD Lab**
+  https://uklabs.kodekloud.com/courses/labs-certified-kubernetes-application-developer
+  Coupon `udemystudent030485`
+
+- **Kubernetes Challenges**
+  https://kodekloud.com/courses/kubernetes-challenge
+
+- **DevopsCube Ckad Exam Study Guide**
+  https://devopscube.com/ckad-exam-study-guide/
 
 ## Commands
 
 ### Config
 
-view KubeConfig
+kubectl global options
 
-    kubectl config view
-    kubectl config view --kubeconfig=my-custom-config
+    kubectl options
 
-change KubeConfig context
-
-    kubectl config use-context kubeadmin@kubeplayground
-
-get config commands
+kube config
 
     kubectl config -h
+    kubectl config view
+    kubectl config view --kubeconfig=/path/to/kubeconfig
+    kubectl config use-context kubeadmin@kubeplayground
+
+use `kubectl proxy`
+
+    # reads kubeconfig and adds auth conf to commands
+    kubectl proxy
+      Starting to serve on 127.0.0.1:8001
 
 ### Auth
 
@@ -278,36 +113,28 @@ view enabled admission controllers
     kubectl exec kube-apiserver-controlplane -n kube-system -- \
       kube-apiserver -h | grep enable-admission-plugin
 
-### Select - List - Namespaces
+|### Select - List - Namespaces
 
 #### Objects
 
-list resources
+object selection (not always interchangeable)
 
-    kubectl api-resources
-    kubectl api-resources --namespaced=true
-    kubectl api-resources --namespaced=false
+    [ all|<resource-type> ]           # all objects
+    [ <type> <name>|<type>/<name> ]   # type and name selection
+    -f resource_definition.yaml         # file def selection
 
-object selection methods (not always interchangeable)
+list/ get resources
 
-    # all objects
-    all
-    [type]
+    # documentation
+    kubectl api-resources [--namespaced=[ true|false ]]
+    kubectl explain <resource>[.<field-name>] [--recursive [ true|false ]]
 
-    # type and name selection
-    [type] [name]
-    [type]/[name]
-
-    # file def selection
-    -f resource_definition.yaml
-
-get resource.
-_output_format: name, wide, yaml, json_
-
-    kubectl get [resource]
-    kubectl get [resource] -o [output_format]
-
-    kubectl describe [resource]
+    # objects
+    kubectl describe <resource>
+    kubectl get <resource-type>[ ,<resource-type>,... ]
+    kubectl get <resource>
+    kubectl get <resource> [ -o <output-format> ]
+      # output-format: name, wide, yaml, json
 
 ### Namespaces
 
@@ -318,8 +145,8 @@ create namespace
 
 namespace selection
 
-    kubectl -A --all-namespaces             [command] [object]
-    kubectl  -n --namespace <namespace-name> [command] [object]
+    kubectl [command] [object] [ -A|--all-namespaces ]
+    kubectl [command] [object] [ [ -n|--namespace ] <namespace-name>]
 
 switch to namespace
 
@@ -396,3 +223,159 @@ rollout is valid for _deployments_, _daemonsets_, or _statefulsets_
         resume        Resume a paused resource
         status        Show the status of the rollout
         undo          Undo a previous rollout
+
+## Tools
+
+### Kubernetes on the Cloud
+
+- Self Hosted/ Turnkey Solutions
+
+  - Provision, configure, maintain vms
+  - Use scripts to deploy clusters
+  - AWS example: kops, KubeOne, etc.
+
+- Hosted/ Managed Solutions
+
+  - K8s as a service
+  - Provider provisions, maintains vms, installs k8s
+  - Cannot access master nodes
+  - GCP example: Google Container Engine (GKE)
+
+#### Hosted Solutions
+
+##### Google Kubernetes Engine (GKE)
+
+Pre-reqs:
+
+- Google Cloud Free Tier
+  https://cloud.google.com/free/
+  https://cloud.google.com/free/docs/gcp-free-tier
+  - 12-month free trial: $300 to use on any Google Cloud service
+  - Always free: provides limited access to mny common GC resources
+
+Kubernetes on Google Cloud: https://cloud.google.com/kubernetes-engine/docs/
+
+##### Amazon Elastic Kubernetes Service (EKS)
+
+Pre-reqs:
+
+- AWS Free Tier
+  https://aws.amazon.com/free
+
+Getting started: https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html
+
+##### Azure Kubernetes Service (AKS)
+
+Pre-reqs:
+
+- Azure account
+  https://azure.microsoft.com/en-us/free/free-account-faq
+
+### Setup K8s cluster
+
+deployment methods/modes/options:
+
+- Minikube
+- MicroK8s
+- Kubeadm
+
+#### Kubeadm Setup
+
+**References:**
+
+- Oracle VirtualBox
+  https://www.virtualbox.org/
+
+- Vagrant
+  https://www.vagrantup.com/
+
+- Link to download VM images
+  http://osboxes.org/
+
+- Link to kubeadm installation instructions
+  https://kubernetes.io/docs/setup/independent/install-kubeadm/
+
+- The link to Vagrant file
+  https://github.com/kodekloudhub/labs-certified-kubernetes-administrator-course
+
+- If you are new to VirtualBox or Vagrant, please follow this pre-requisites course to learn about it
+  https://www.youtube.com/watch?v=Wvf0mBNGjXY
+
+- How to use Podman inside of Kubernetes
+  https://www.redhat.com/sysadmin/podman-inside-kubernetes
+
+**Deployment steps:**
+
+- **designate master and worker** nodes
+  kodekloud CKA github: https://github.com/kodekloudhub/labs-certified-kubernetes-administrator-course
+- install **container runtime**
+  https://kubernetes.io/docs/setup/production-environment/container-runtimes/#container-runtimes
+- **install kubeadm**: helps bootstraps kubernetes by installing all components on all nodes in the right order
+  https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+- initialize: **install components on master** server
+  kubeadm cmd flags: `--pod-network-cidr` and `--apiserver-advertise-address`
+- setup **pod network**
+  install addons https://kubernetes.io/docs/concepts/cluster-administration/addons/
+  use `Weave Net` addon
+
+      kubectl get ds -A
+
+  - setup IPALLOC_RANGE after installation:
+    https://www.weave.works/docs/net/latest/kubernetes/kube-addon/#-things-to-watch-out-for
+
+        kubectl get ds -A
+        kubectl edit ds weave-net -n kube-system
+        ## add env var
+        ## https://www.weave.works/docs/net/latest/kubernetes/kube-addon/#-changing-configuration-options
+
+- **join workers to master** node
+  follow kubeadm bootstrap command output
+
+      kubeadm join ...
+
+##### Minikube Setup
+
+**References 1:**
+
+- Install MiniKube
+  https://kubernetes.io/docs/tasks/tools/install-minikube/
+
+- VirtualBox
+  https://www.virtualbox.org/wiki/Downloads
+
+- MiniKube Download page for Windows
+  https://github.com/kubernetes/minikube/releases
+
+- specify the `--vm-driver` option `minikube start --vm-driver=<driver_name>`
+  https://kubernetes.io/docs/setup/learning-environment/minikube/#specifying-the-vm-driver
+
+**References 2:**
+
+- Install and set up the kubectl tool:
+  https://kubernetes.io/docs/tasks/tools/
+
+- Install Minikube:
+  https://minikube.sigs.k8s.io/docs/start/
+
+- Install VirtualBox:
+  https://www.virtualbox.org/wiki/Downloads
+  https://www.virtualbox.org/wiki/Linux_Downloads
+
+- Minikube Tutorial:
+  https://kubernetes.io/docs/tutorials/hello-minikube/
+
+- If the minikube installation has been done on the macOS, then to access the URL on the local browser, we need to do a few steps to get the service URL to work. Those steps are covered on this documentation page:
+  https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-service-with-tunnel
+
+**Deployment steps:**
+
+[server-world.info - Install Minikube to configure Kubernetes Cluster on single node.](https://www.server-world.info/en/note?os=CentOS_Stream_8&p=minikube)
+
+Steps:
+
+1. Install a Hypervisor that is supported by Minikube.
+   On this example, Install KVM like here of [1] for it.
+2. Install Snappy, refer to here of [1].
+3. Install Minikube and other required tools.
+4. Add users who use Minikube to `libvirt` group.
+5. Start Minikube with a user who are in `libvirt` group.

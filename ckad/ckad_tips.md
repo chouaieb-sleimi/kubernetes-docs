@@ -15,6 +15,7 @@
     - [Edit Deployments](#edit-deployments)
   - [FAQ - What is the rewrite-target option?](#faq---what-is-the-rewrite-target-option)
   - [Setting up Basic Authentication on Kubernetes (Deprecated in 1.19)](#setting-up-basic-authentication-on-kubernetes-deprecated-in-119)
+  - [Use Shortcuts](#use-shortcuts)
 
 <!-- /code_chunk_output -->
 
@@ -290,7 +291,7 @@ Create the necessary roles and role bindings for these users:
     - apiGroups: [""] # "" indicates the core API group
       resources: ["pods"]
       verbs: ["get", "watch", "list"]
-    
+
     ---
     # This role binding allows "jane" to read pods in the "default" namespace.
     kind: RoleBinding
@@ -311,3 +312,27 @@ Once created, you may authenticate into the kube-api server using the users cred
 
     curl -v -k https://localhost:6443/api/v1/pods -u "user1:password123"
 
+## Use Shortcuts
+
+shortcuts / aliases
+
+    po          pods                          Pod
+    rc          replicationcontrollers        ReplicationController
+    rs          replicasets                   ReplicaSet
+    deploy      deployments                   Deployment
+    sts         statefulsets                  StatefulSet
+    cm          configmaps                    ConfigMap
+    cj          cronjobs                      CronJob
+    svc         services                      Service
+    sa          serviceaccounts               ServiceAccount
+    ing         ingresses                     Ingress
+    netpol      networkpolicies               NetworkPolicy
+    no          nodes                         Node
+    ns          namespaces                    Namespace
+    pv          persistentvolumes             PersistentVolume
+    sc          storageclasses                StorageClass
+    limits      limitranges                   LimitRange
+    pvc         persistentvolumeclaims        PersistentVolumeClaim
+    crd,crds    customresourcedefinitions     CustomResourceDefinition
+
+[Tips on preparing for Certified Kubernetes Application Developer (CKAD)](https://www.youtube.com/watch?v=rnemKrveZks)

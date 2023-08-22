@@ -334,8 +334,6 @@ inject configmap from volume
 
 ### Secrets
 
-demo image: kodekloud/simple-webapp-mysql
-
 - not encrypted, only encoded
 - secrets are not encrypted in ETCD
   - configure encryption at rest (they are stored encrypted in ETCD)
@@ -603,7 +601,7 @@ use cert auth in kubectl
 - **Users**
   example: `Admin`,`Dev-user`,`Prod-user`, `KubeAdmin`
 
-KubeConfig sample 1
+.`kube/config` sample 1
 
     apiVersion: v1
     kind: Config
@@ -626,7 +624,7 @@ KubeConfig sample 1
     - prod-user
     - kubeadmin
 
-KubeConfig sample 2
+`.kube/config` sample 2
 
     # <cert-base64-data>: cat ca.crt | base64
     apiVersion: v1
@@ -653,6 +651,28 @@ KubeConfig sample 2
       user
         client-certificate: /etc/kubernetes/pki/users/admin.crt
         client-key: /etc/kubernetes/pki/users/admin.key
+
+`.kube/config` sample 3
+
+    apiVersion: v1
+    kind: Config
+    preferences: {}
+    current-context: kubernetes-admin@kubernetes
+    clusters:
+    - cluster:
+        certificate-authority-data: LS0tLS1CRUdJT.....tCg==
+        server: https://controlplane:6443
+      name: kubernetes
+    contexts:
+    - context:
+        cluster: kubernetes
+        user: kubernetes-admin
+      name: kubernetes-admin@kubernetes
+    users:
+    - name: kubernetes-admin
+      user:
+        client-certificate-data: LS0tLS1CRUdJTiBDR.....S0tCg==
+        client-key-data: LS0tLS1CRUdJ.....ktLS0tLQo=
 
 #### Authorization
 
@@ -976,8 +996,6 @@ validating webhook configuration sample
       timeoutSeconds: 5
 
 ### ServiceAccount
-
-demo image: gcr.io/kodekloud/customimage/my-kubernetes-dashboard
 
 generates an access token in a secret object upon creation.
 
@@ -1419,8 +1437,6 @@ Failing:
 - **liveness probe:** restart container
 - **readiness probe:** stop container from serving traffic
 
-demo image: kodekloud/webapp-delayed-start
-
 ##### Pod Status
 
 **Pod States:**
@@ -1546,8 +1562,6 @@ probe types:
             - /app/is_ready
 
 #### Container Logging
-
-demo image: kodekloud/event-simulator
 
 get a container's logs
 
@@ -1749,8 +1763,6 @@ rollback latest revision
 
 ### Jobs and CronJobs
 
-demo image: kodekloud/throw-dice
-
 #### Jobs
 
 - creates one or more Pods and will **retry execution until one or many successes.**
@@ -1832,13 +1844,6 @@ Main types of services:
   - load balancing
   - SSL termination
   - name-based virtual hosting
-
-**demo images:**
-
-- kodekloud/ecommerce:apparels
-- kodekloud/ecommerce:video
-- kodekloud/ecommerce:food
-- kodekloud/ecommerce:404
 
 **Ingress components:**
 
@@ -2490,13 +2495,12 @@ PV sample
         - ReadWriteOnce
       capacity:
         storage: 1Gi
+      persistentVolumeReclaimPolicy: Recycle
 
-      # node storage
-      hostPath:
+      hostPath:                   # node storage
         path: /tmp/data
 
-      # or AWS (deprecated)
-      awsElasticBlockStore:
+      awsElasticBlockStore:       # AWS storage (deprecated)
         volumeID: <colume-id>
         fsType: ext4
 
@@ -2557,7 +2561,7 @@ use pvc in pod
 
 ### StorageClass
 
-Ddynamic provisioning of volumes; upon a claim, the storage is created.
+Dynamic provisioning of volumes; upon a claim, the storage is created.
 
 StorageClass sample
 
@@ -2566,6 +2570,7 @@ StorageClass sample
     metadata:
       name: google-storage
     provisioner: kubernetes.io/gce-pd
+    volumeBindingMode: [ ImmediateWaitForFirstConsumer ]
     parametes:
       types: [ pd-standard | pd-ssd ]
       replication-type: [ none | regional-pd ]
