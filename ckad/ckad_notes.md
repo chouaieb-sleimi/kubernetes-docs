@@ -29,12 +29,11 @@
         - [Certificates](#certificates)
         - [KubeConfig](#kubeconfig)
       - [Authorization](#authorization)
-        - [APIs hierarchy:](#apis-hierarchy)
         - [RBAC](#rbac)
           - [Roles and RoleBindings](#roles-and-rolebindings)
           - [ClusterRoles and ClusterRoleBindings](#clusterroles-and-clusterrolebindings)
-      - [AdmissionController](#admissioncontroller)
-        - [Dynamic AdmissionController](#dynamic-admissioncontroller)
+        - [AdmissionController](#admissioncontroller)
+          - [Dynamic AdmissionController](#dynamic-admissioncontroller)
     - [ServiceAccount](#serviceaccount)
       - [Create ServiceAcounts and Secrets](#create-serviceacounts-and-secrets)
       - [Use ServiceAccounts](#use-serviceaccounts)
@@ -61,9 +60,6 @@
       - [Monitoring Cluster](#monitoring-cluster)
         - [Metrics server Overview](#metrics-server-overview)
         - [Metrics Server Deployment](#metrics-server-deployment)
-    - [API Maintenance](#api-maintenance)
-      - [API Versions](#api-versions)
-      - [API Deprecation](#api-deprecation)
   - [Section 6: Pod Design](#section-6-pod-design)
     - [Define, Build, Modify Container Images](#define-build-modify-container-images)
     - [Labels Selectors and Annotations](#labels-selectors-and-annotations)
@@ -83,6 +79,7 @@
         - [Mutliple paths - Mutliple backends](#mutliple-paths---mutliple-backends)
         - [Multiple URLs - Mutliple backends](#multiple-urls---mutliple-backends)
     - [NetworkPolicy](#networkpolicy)
+    - [Port Forwarding](#port-forwarding)
   - [Section 8: State Persistance](#section-8-state-persistance)
     - [Volume](#volume)
     - [PersistentVolume](#persistentvolume)
@@ -93,8 +90,12 @@
     - [volumeClaimTemplates](#volumeclaimtemplates)
   - [Section 9: Post Sep-2021 Changes](#section-9-post-sep-2021-changes)
     - [Operator Framework](#operator-framework)
+      - [API Maintenance](#api-maintenance)
+        - [APIs hierarchy](#apis-hierarchy)
+        - [API Versions](#api-versions)
+        - [API Deprecation](#api-deprecation)
       - [CustomResourceDefinition](#customresourcedefinition)
-      - [Custom Controllers](#custom-controllers)
+      - [CustomControllers](#customcontrollers)
       - [Operators](#operators)
     - [Deployment Strategies](#deployment-strategies)
       - [Blue Green Deployments](#blue-green-deployments)
@@ -716,84 +717,17 @@ specify auth mode to `kube-apiserver`
       --authorization-mode=Node,RBAC,Webhook
       ...
 
-##### APIs hierarchy:
-
-discover API:
-`curl https://my-kube-playground:6443/version`
-`curl https://my-kube-playground:6443/api/v1/pods`
-
-API Groups:
-
-- /metrics
-- /healthz
-- /version
-- /api
-- /apis
-- /logs
-
-**core group**
-
-- `/api`
-  - `/v1`
-    - `namespaces`
-    - `pods`
-    - `rc`
-    - `events`
-    - `endpoints`
-    - `nodes`
-    - `bindings`
-    - `PV`
-    - `PVC`
-    - `configmaps`
-    - `secrets`
-    - `services`
-
-**named group**
-
-- `/apis`
-  **API groups:**
-  - `/extensions`
-  - `/storage.k8s.io`
-  - `/authentication.k8s.io`
-  - `/certificates.k8s.io`
-  - `/networking.k8s.io`
-    - `/v1`
-      - `/networkpolicies`
-  - `/apps`
-    - `/v1`
-      **resources:**
-      - `/deploymens`
-        **verbs**
-        - `list`
-        - `get`
-        - `create`
-        - `delete`
-        - `update`
-        - `watch`
-      - `/replicasets`
-      - `/statefulsets`
-
-discover API tree
-
-    curl https://localhost:8001 -k
-    curl https://localhost:8001/apis -k | grep name
-
 ##### RBAC
 
 Steps:
 
-- create Role/ClusterRole
-- create RoleBinding/ClusterRoleBinding
-
-get current user access
-
-    kubectl auth can-i create deployments
-    kubectl auth can-i delete pods
+- create `Role`/`ClusterRole`
+- create `RoleBinding`/`ClusterRoleBinding`
 
 get user access
 
-    kubectl auth can-i create deployments --as dev-user
-    kubectl auth can-i delete pods --as dev-user
+    kubectl auth can-i [--as dev-user] create deployments
+    kubectl auth can-i [--as dev-user] delete pods
 
 ###### Roles and RoleBindings
 
@@ -887,7 +821,7 @@ associate role with user using ClusterRoleBinding
       name: cluster-admin
       apiGroup: rbac.authorization.k8s.io
 
-#### AdmissionController
+##### AdmissionController
 
 intercepts requests to the kubernetes api server
 
@@ -897,15 +831,17 @@ intercepts requests to the kubernetes api server
   - **mutating controllers** may modify request objects
   - **validating controllers** may not
 
-Pre-built admission controllers:
+![Admission Controller Phases](./img/admission-controller-phases.png)
+
+**Pre-built** admission controllers:
 
 - AlwaysPullImages
 - DefaultStorageClass
 - EventRateLimit
 - NamespaceExists
+- NamespaceAutoProvision
+- DefaultStorageClass
 - ...
-
-![Admission Controller Phases](./img/admission-controller-phases.png)
 
 view enabled admission controllers
 
@@ -943,7 +879,7 @@ add admission controller via kube-apiserver definition file
         name: kube-apiserver
         ...
 
-##### Dynamic AdmissionController
+###### Dynamic AdmissionController
 
 In addition to
 
@@ -964,10 +900,72 @@ You can define two types of admission webhooks:
 
 **Dynamic AdmissionController deployment**
 
-1. deploy admission webhook server
-   _sample admission server:_
-   https://github.com/kubernetes/kubernetes/blob/release-1.21/test/images/agnhost/webhook/main.go
-2. configure webhook on k8s
+1.  deploy admission webhook server
+
+_sample admission server_
+https://github.com/kubernetes/kubernetes/blob/release-1.21/test/images/agnhost/webhook/main.go
+
+sample deployment
+
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: webhook-server
+      namespace: webhook-demo
+      labels:
+        app: webhook-server
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: webhook-server
+      template:
+        metadata:
+          labels:
+            app: webhook-server
+        spec:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1234
+          containers:
+          - name: server
+            image: stackrox/admission-controller-webhook-demo:latest
+            imagePullPolicy: Always
+            ports:
+            - containerPort: 8443
+              name: webhook-api
+            volumeMounts:
+            - name: webhook-tls-certs
+              mountPath: /run/secrets/tls
+              readOnly: true
+          volumes:
+          - name: webhook-tls-certs
+            secret:
+              secretName: webhook-server-tls
+
+Note: this webhook deployment:
+
+- Denies all request for pod to run as root in container if no securityContext is provided.
+- If no value is set for runAsNonRoot, a default of true is applied, and the user ID defaults to 1234
+- Allow to run containers as root if runAsNonRoot set explicitly to false in the securityContext
+
+2.  create webhook service
+
+sample service
+
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: webhook-server
+      namespace: webhook-demo
+    spec:
+      selector:
+        app: webhook-server
+      ports:
+        - port: 443
+          targetPort: webhook-api
+
+3.  configure webhook on k8s
 
 validating webhook configuration sample
 
@@ -979,12 +977,11 @@ validating webhook configuration sample
     - name: "pod-policy.example.com"
       clientConfig:
         # if webhook server deployed outside the cluster
-        # url: <webhook-server-url>
+        #url: <webhook-server-url>
         service:
           namespace: "webhook-namespace"
           name: "webhook-service"
-        # to comm w/ the webhook server
-        caBundle: <CA_BUNDLE>
+        caBundle: <CA_BUNDLE>       # to comm w/ the webhook server
       rules:
       - apiGroups:   [""]
         apiVersions: ["v1"]
@@ -994,6 +991,95 @@ validating webhook configuration sample
       admissionReviewVersions: ["v1"]
       sideEffects: None
       timeoutSeconds: 5
+
+sample mutating webhook configuration sample
+
+    apiVersion: admissionregistration.k8s.io/v1
+    kind: MutatingWebhookConfiguration
+    metadata:
+      name: demo-webhook
+    webhooks:
+      - name: webhook-server.webhook-demo.svc
+        clientConfig:
+          service:
+            name: webhook-server
+            namespace: webhook-demo
+            path: "/mutate"
+          caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURQekNDQWllZ0F3SUJBZ0lVRThTdVA5OEpKWlREcFp1Sm9NZHdGZG9JcDlFd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0x6RXRNQ3NHQTFVRUF3d2tRV1J0YVhOemFXOXVJRU52Ym5SeWIyeHNaWElnVjJWaWFHOXZheUJFWlcxdgpJRU5CTUI0WERUSXpNRGd5T1RFd05UazBNVm9YRFRJek1Ea3lPREV3TlRrME1Wb3dMekV0TUNzR0ExVUVBd3drClFXUnRhWE56YVc5dUlFTnZiblJ5YjJ4c1pYSWdWMlZpYUc5dmF5QkVaVzF2SUVOQk1JSUJJakFOQmdrcWhraUcKOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXhtVU13a2NBRHJFdURkQnVWSk9kbDJUaDFqWittS0tzc0NVQgpmbFR4b0pBeDZENHNRalJpSUh1R3R1cEFCNG9YS29pTHhTQ0VMNVEvenJzMzd5aVNpellwRlA1YnI0NElpejNQCjhUNGViemJzam9ac2YxcmpiNFRKSWZVUWd6YlJYRnIwOCs1VmNnREEwTzdla280R0dNSGw2WnFkTkVRUXJPTzMKbFlxUUlTenBlUm43eGowbXJ0Wk8raXBMeHIxdXJXcWoyTG5nd3RqcmVkaFFrRGVKNjh6dGdXaFlkRXRNOHhzeQovSWYvUGV6YU8yUW1CRldmaW9CMjIzQWswc2ZjTDdIY09DcWRyZ3B4b2xva1VVMGkxUG5wRzFVTmI0eEhPNW91Cksrb3NCalFXVTlDT1R0dnZpem5RL2grYnlFZ01IM3BTa2pKUGI2ZnBlWDJST3BkaXpRSURBUUFCbzFNd1VUQWQKQmdOVkhRNEVGZ1FVeFJXK2NOSHNhRVJEUi9pTWhUSDFuRlFIWUIwd0h3WURWUjBqQkJnd0ZvQVV4UlcrY05IcwphRVJEUi9pTWhUSDFuRlFIWUIwd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBTkJna3Foa2lHOXcwQkFRc0ZBQU9DCkFRRUFlN29WZlJCS1FRTW1XTy9VMG8vWGZqTG5BcForWkhKZG1BaGR4VTMrVVRPZFQzK1Jpa0JESW5DeFFPVGEKek8yYnJRcjZ4MllyQkpDNGFNNDRGb3hjd0RJSkxuak1WNlJYc2JuMHdDU0V3MGxYa0lpWVl4ZGkzbFEzWGVlLwo1TGRVa004TEZnOGFTMjc2Q0Q1R2M3RUdSRXhSWWVXUmprQWg1TGgrMnowL2p1Q3RmTUN0Tjk4YkphYUNYcFdlClVldUJDeldGUXlPRWJoK2Uxa1RDMTlGSnFzRTdrZWtBbGhZRzZieTAzWU9kR0NLM3ZwTVdJK3UzM3RzcU9xajgKbWR5aVpLemlHRlJmNXN3ZGFPY1pEZDllOUNmaVhVeHpJdmFFZUpQR1FiUlRMc3ltOCs4K0dkRlhBQVIrbFZyZQo1LythSlloNnpscm05NnhLLzhGSFpxYkc5UT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+        rules:
+          - operations: [ "CREATE" ]
+            apiGroups: [""]
+            apiVersions: ["v1"]
+            resources: ["pods"]
+        admissionReviewVersions: ["v1beta1"]
+        sideEffects: None
+
+pod samples (to test mutating admission controller above)
+
+    # A pod with no securityContext specified.
+    # Without the webhook, it would run as user root (0). The webhook mutates it
+    # to run as the non-root user with uid 1234.
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: pod-with-defaults
+      labels:
+        app: pod-with-defaults
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: busybox
+          image: busybox
+          command: ["sh", "-c", "echo I am running as user $(id -u)"]
+
+    ---
+    # A pod with a securityContext explicitly allowing it to run as root.
+    # The effect of deploying this with and without the webhook is the same. The
+    # explicit setting however prevents the webhook from applying more secure
+    # defaults.
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: pod-with-override
+      labels:
+        app: pod-with-override
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: false
+      containers:
+        - name: busybox
+          image: busybox
+          command: ["sh", "-c", "echo I am running as user $(id -u)"]
+
+    ---
+    # A pod with a conflicting securityContext setting: it has to run as a non-root
+    # user, but we explicitly request a user id of 0 (root).
+    # Without the webhook, the pod could be created, but would be unable to launch
+    # due to an unenforceable security context leading to it being stuck in a
+    # 'CreateContainerConfigError' status. With the webhook, the creation of
+    # the pod is outright rejected.
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: pod-with-conflict
+      labels:
+        app: pod-with-conflict
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 0
+      containers:
+        - name: busybox
+          image: busybox
+          command: ["sh", "-c", "echo I am running as user $(id -u)"]test admission controller pod
+
+    kubectl logs <pod-name>
+    kubectl get po <pod-name> -o yaml | grep -iA3 securitycontext
+
+    kubectl create -f /root/pod-with-conflict.yaml
+      Error from server: error when creating "/root/pod-with-conflict.yaml": admission webhook "webhook-server.webhook-demo.svc" denied the request: runAsNonRoot specified, but runAsUser set to 0 (the root user)
 
 ### ServiceAccount
 
@@ -1027,7 +1113,7 @@ create an access token in a secret object **post v1.24**:
 _serviceAccount must be created first_
 
     # expires after 1 hour
-    k create token jenkins-sa
+    kubectl create token jenkins-sa
 
     # doesn't expire
     apiVersion: v1
@@ -1203,7 +1289,7 @@ Are used to set **restrictions on what pods nodes CAN accept (NOT MUST)**.
 
 see node's taints
 
-    k describe nodes <node-name> | grep -i taint
+    kubectl describe nodes <node-name> | grep -i taint
 
 `taint-effect` is what happends to PODs **that DO NOT TOLERATE this taint**:
 
@@ -1623,97 +1709,6 @@ get performance metrics
     kubectl top node
     kubectl top pod
 
-### API Maintenance
-
-#### API Versions
-
-API versions:
-
-- **Alpha**
-  _vXalphaY_ (example, _v1alpha1_).
-
-  - disabled by default
-  - audience: expret users
-
-- **Beta**
-  _vXbetaY_ (example, _v2beta3_).
-
-  - disabled by default
-  - audience: beta testers
-
-- **stable/ GA (Generally Available)**
-  _vX_ (example, _v1_).
-
-  - enabled by default
-  - audience: all-users
-
-create pod using different versions
-
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: nginx
-    spec:
-      ...
-
-    apiVersion: apps/v1alpha1
-    kind: Deployment
-    metadata:
-      name: nginx
-    spec:
-      ...
-
-    apiVersion: apps/v1beta2
-    kind: Deployment
-    metadata:
-      name: nginx
-    spec:
-      ...
-
-**Preferred version:** default get/query version
-
-see preferred version for api group:
-
-    curl 127.0.0.1:8001/apis/batch | grep -iA5 preferredversion
-
-**Storage version:** version objects are stored in in etcd (regardless of the version in definition files)
-
-see storage version
-
-    ETCDCTL_API=3 etcdctl \
-      --endpoints=https://[127.0.0.1]:2379 \
-      --cacert=<path> \
-      --cert=<path> \
-      --key=<path> \
-      get "/registry/deployment/default/<deployment-name> --print-value-only
-
-enable/disable API group
-
-    ExecStart=/usr/local/bin/kube-apiserver \\
-      ...
-      --runtime-config=batch/v2alpha1,... \\
-      ...
-
-#### API Deprecation
-
-**Depreation Rules:**
-
-- **Rule #1:** API elements may only be removed by incrementing the version of the API group.
-- **Rule #2:** API objects must be able to round-trip between API versions in a given release without information loss, with the exception of whole REST resources that do not exist in some versions.
-- **Rule #3:** An API version in a given track may not be deprecated in favor of a less stable API version.
-- **Rule #4a:** API lifetime is determined by the API stability level
-
-  - GA API versions may be marked as deprecated, but must not be removed within a major version of Kubernetes
-  - Beta API versions are deprecated no more than 9 months or 3 minor releases after introduction (whichever is longer), and are no longer served 9 months or 3 minor releases after deprecation (whichever is longer)
-  - Alpha API versions may be removed in any release without prior deprecation notice
-
-- **Rule #4b:** The "preferred" API version and the "storage version" for a given group may not advance until after a release has been made that supports both the new version and the previous version
-
-bulk convert definition files form a version to another
-
-    # need to install the convert plugin
-    kubectl convert -f nginx_def.yaml --output-version <new-api>
-
 ## Section 6: Pod Design
 
 ### Define, Build, Modify Container Images
@@ -1890,13 +1885,13 @@ create ingress config map
 
 create serviceaccount roles
 
-    # k get role --namespace ingress-nginx
+    # kubectl get role --namespace ingress-nginx
 
     NAME                      CREATED AT
     ingress-nginx             2023-08-15T10:25:53Z
     ingress-nginx-admission   2023-08-15T10:25:53Z
 
-    # k get role ingress-nginx --namespace ingress-nginx -o yaml
+    # kubectl get role ingress-nginx --namespace ingress-nginx -o yaml
     apiVersion: v1
     items:
     - apiVersion: rbac.authorization.k8s.io/v1
@@ -1983,7 +1978,7 @@ create serviceaccount roles
         - create
         - patch
 
-    # k get role ingress-nginx-admission --namespace ingress-nginx -o yaml
+    # kubectl get role ingress-nginx-admission --namespace ingress-nginx -o yaml
     - apiVersion: rbac.authorization.k8s.io/v1
       kind: Role
       metadata:
@@ -2431,6 +2426,40 @@ network policy sample
             - protocol: TCP
               port: 5978
 
+### Port Forwarding
+
+Environment
+
+    kubectl get service mongo
+      NAME    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)     AGE
+      mongo   ClusterIP   10.96.41.183   <none>        27017/TCP   11s
+
+    kubectl get pods
+      NAME                     READY   STATUS    RESTARTS   AGE
+      mongo-75f59d57f4-4nd6q   1/1     Running   0          2m4s
+
+    kubectl get pod mongo-75f59d57f4-4nd6q --template='{{(index (index .spec.containers 0).ports 0).containerPort}}{{"\n"}}'
+      27017
+
+_`27017` is the TCP port allocated to `mongo` pod_
+
+Forward a local port to a port on the Pod
+
+    kubectl port-forward mongo-75f59d57f4-4nd6q       28015:27017
+                         pods mongo-75f59d57f4-4nd6q  28015:27017
+                         deployment mongo             28015:27017
+                         replicaset mongo-75f59d57f4  28015:27017
+                         service mongo                28015:27017
+
+      Forwarding from 127.0.0.1:28015 -> 27017
+      Forwarding from [::1]:28015 -> 27017
+
+let kubectl choose the local port
+
+    kubectl port-forward deployment/mongo :27017
+      Forwarding from 127.0.0.1:63753 -> 27017
+      Forwarding from [::1]:63753 -> 27017
+
 ## Section 8: State Persistance
 
 ### Volume
@@ -2744,11 +2773,174 @@ use volumeClaimTemplates in a StatefulSet
 
 ### Operator Framework
 
+#### API Maintenance
+
+##### APIs hierarchy
+
+discover API:
+`curl https://my-kube-playground:6443/version`
+`curl https://my-kube-playground:6443/api/v1/pods`
+
+API Groups:
+
+- /metrics
+- /healthz
+- /version
+- /api
+- /apis
+- /logs
+
+**core group**
+
+- `/api`
+  - `/v1`
+    - `namespaces`
+    - `pods`
+    - `rc`
+    - `events`
+    - `endpoints`
+    - `nodes`
+    - `bindings`
+    - `PV`
+    - `PVC`
+    - `configmaps`
+    - `secrets`
+    - `services`
+
+**named group**
+
+- `/apis`
+  **API groups:**
+  - `/extensions`
+  - `/storage.k8s.io`
+  - `/authentication.k8s.io`
+  - `/certificates.k8s.io`
+  - `/networking.k8s.io`
+    - `/v1`
+      - `/networkpolicies`
+  - `/apps`
+    - `/v1`
+      **resources:**
+      - `/deploymens`
+        **verbs**
+        - `list`
+        - `get`
+        - `create`
+        - `delete`
+        - `update`
+        - `watch`
+      - `/replicasets`
+      - `/statefulsets`
+
+discover API tree
+
+    curl https://localhost:8001 -k
+    curl https://localhost:8001/apis -k | grep name
+
+##### API Versions
+
+In Kubernetes versions : `X.Y.Z`
+`X` major, `Y` minor, `Z` patch version.
+
+get supported API versions on the server as "group/version"
+
+    kubectl api-versions
+
+API versions:
+
+- **Alpha**
+  _vXalphaY_ (example, _v1alpha1_).
+
+  - disabled by default
+  - audience: expret users
+
+- **Beta**
+  _vXbetaY_ (example, _v2beta3_).
+
+  - disabled by default
+  - audience: beta testers
+
+- **stable/ GA (Generally Available)**
+  _vX_ (example, _v1_).
+
+  - enabled by default
+  - audience: all-users
+
+create pod using different versions
+
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      ...
+
+    apiVersion: apps/v1alpha1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      ...
+
+    apiVersion: apps/v1beta2
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      ...
+
+**Preferred version:** default get/query version
+
+see preferred version for api group:
+
+    curl 127.0.0.1:8001/apis/batch | grep -iA5 preferredversion
+
+**Storage version:** version objects are stored in in etcd (regardless of the version in definition files)
+
+see storage version
+
+    ETCDCTL_API=3 etcdctl \
+      --endpoints=https://[127.0.0.1]:2379 \
+      --cacert=<path> \
+      --cert=<path> \
+      --key=<path> \
+      get "/registry/deployment/default/<deployment-name> --print-value-only
+
+enable/disable API group
+
+    ExecStart=/usr/local/bin/kube-apiserver \\
+      ...
+      --runtime-config=batch/v2alpha1,... \\
+      ...
+
+##### API Deprecation
+
+**Depreation Rules:**
+
+- **Rule #1:** API elements may only be removed by incrementing the version of the API group.
+- **Rule #2:** API objects must be able to round-trip between API versions in a given release without information loss, with the exception of whole REST resources that do not exist in some versions.
+- **Rule #3:** An API version in a given track may not be deprecated in favor of a less stable API version.
+- **Rule #4a:** API lifetime is determined by the API stability level
+
+  - GA API versions may be marked as deprecated, but must not be removed within a major version of Kubernetes
+  - Beta API versions are deprecated no more than 9 months or 3 minor releases after introduction (whichever is longer), and are no longer served 9 months or 3 minor releases after deprecation (whichever is longer)
+  - Alpha API versions may be removed in any release without prior deprecation notice
+
+- **Rule #4b:** The "preferred" API version and the "storage version" for a given group may not advance until after a release has been made that supports both the new version and the previous version
+
+bulk convert definition files form a version to another
+
+    # need to install the convert plugin
+    kubectl convert -f nginx_def.yaml --output-version <new-api>
+
+- install kubectl-convert:
+  https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-convert-plugin
+
 #### CustomResourceDefinition
 
 Represents a custom current/desired state of k8s resource.
 
-custom resource sample
+CRD/custom resource sample 1
 
     apiVersion: flights.com/v1
     kind: FlightTicket
@@ -2759,8 +2951,7 @@ custom resource sample
       to: London
       number: 2
 
-CRD sample
-
+    ---
     apiVersion: apiextensions.k8s.io/v1
     kind: CustomResourceDefinition
     metadata:
@@ -2798,7 +2989,50 @@ CRD sample
                   minimum: 1
                   maximum: 10
 
-#### Custom Controllers
+CRD/custom resource sample 2
+
+    apiVersion: traffic.controller/v1
+    kind: Global
+    metadata:
+      name: datacenter
+    spec:
+      dataField: 2
+      access: true
+
+    ---
+    apiVersion: apiextensions.k8s.io/v1
+    kind: CustomResourceDefinition
+    metadata:
+      name: globals.traffic.controller
+    spec:
+      conversion:
+        strategy: None
+      group: traffic.controller
+      names:
+        kind: Global
+        listKind: GlobalList
+        plural: globals
+        shortNames:
+        - gb
+        singular: global
+      scope: Namespaced
+      versions:
+      - name: v1
+        schema:
+          openAPIV3Schema:
+            properties:
+              spec:
+                properties:
+                  access:
+                    type: boolean
+                  dataField:
+                    type: integer
+                type: object
+            type: object
+        served: true
+        storage: true
+
+#### CustomControllers
 
 Customly keep the state of Kubernetes objects in sync with declared desired states.
 
@@ -2910,4 +3144,11 @@ manage helm releases and charts
 
 ## Section 10: Labs
 
-Kubernetes Challenges: [Kubernetes Challenges](https://kodekloud.com/courses/kubernetes-challenge)
+- Kubernetes Challenges
+  https://kodekloud.com/courses/kubernetes-challenge
+
+- KLLR SHLL - Linux Foundation Exam Simulators
+  https://killer.sh
+
+- KLLR CODA - Interactive environments
+  https://killercoda.com
