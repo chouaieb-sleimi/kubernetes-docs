@@ -10,8 +10,9 @@
   - [Commands](#commands)
     - [Config](#config)
     - [Auth](#auth)
-      - [Objects](#objects)
-    - [Namespaces](#namespaces)
+    - [API](#api)
+    - [Objects](#objects)
+    - [Admission Controllers](#admission-controllers)
     - [Export](#export)
     - [Creation, Deletion](#creation-deletion)
     - [Replace, Modify, Scale](#replace-modify-scale)
@@ -47,7 +48,7 @@
 
 **Kodekloud images:**
 
-- ServiceAccount demo image: gcr.io/kodekloud/customimage/my-kubernetes-dashboard
+- ServiceAccount demo image: `gcr.io/kodekloud/customimage/my-kubernetes-dashboard`
 - Secrets demo image: `kodekloud/simple-webapp-mysql`
 - Readiness and Liveness Probes demo image: `kodekloud/webapp-delayed-start`
 - Container Logging demo image: `kodekloud/event-simulator`
@@ -57,7 +58,8 @@
   - `kodekloud/ecommerce:video`
   - `kodekloud/ecommerce:food`
   - `kodekloud/ecommerce:404`
-- log events: `kodekloud/event-simulator`
+- log events demo image: `kodekloud/event-simulator`
+- custom admission controllers demo image: `stackrox/admission-controller-webhook-demo:latest`
 - voting app
   - https://github.com/kodekloudhub/example-voting-app
   - https://github.com/kodekloudhub/example-voting-app-kubernetes
@@ -113,9 +115,18 @@ view enabled admission controllers
     kubectl exec kube-apiserver-controlplane -n kube-system -- \
       kube-apiserver -h | grep enable-admission-plugin
 
-|### Select - List - Namespaces
+### API
 
-#### Objects
+    # get api preferred versions on the server as "group/preferred-version"
+    kubectl api-versions
+
+    # get api resources
+    kubectl api-resources [--namespaced=[ true|false ]]
+
+    # get resource structure
+    kubectl explain <resource>[.<field-name>] [--recursive [ true|false ]]
+
+### Objects
 
 object selection (not always interchangeable)
 
@@ -123,11 +134,16 @@ object selection (not always interchangeable)
     [ <type> <name>|<type>/<name> ]   # type and name selection
     -f resource_definition.yaml         # file def selection
 
-list/ get resources
+namespace selection
 
-    # documentation
-    kubectl api-resources [--namespaced=[ true|false ]]
-    kubectl explain <resource>[.<field-name>] [--recursive [ true|false ]]
+    # namespace selection
+    kubectl [command] [object] [ -A|--all-namespaces ]
+    kubectl [command] [object] [[ -n|--namespace ] <namespace-name>]
+
+    # switch to namespace
+    kubectl config set-context $(kubectl config current-context) --namespace=dev
+
+list get resources
 
     # objects
     kubectl describe <resource>
@@ -136,21 +152,18 @@ list/ get resources
     kubectl get <resource> [ -o <output-format> ]
       # output-format: name, wide, yaml, json
 
-### Namespaces
+### Admission Controllers
 
-create namespace
+    # see default controllers
+    k exec kube-apiserver-controlplane -n kube-system -- \
+      kube-apiserver -h | grep -i enable-admission-plugins
 
-    kubectl create namespace my-namespace
-    kubectl create -f namespace-definition.yaml
+    # see current controllers besides default
+    ps aux | grep -v grep | grep -i kube-apiserver | grep -i admission
 
-namespace selection
-
-    kubectl [command] [object] [ -A|--all-namespaces ]
-    kubectl [command] [object] [ [ -n|--namespace ] <namespace-name>]
-
-switch to namespace
-
-    kubectl config set-context $(kubectl config current-context) --namespace=dev
+    # add/remove admission controller
+    # valid for kubeadm deployments
+    vim /etc/kubernetes/manifests/kube-apiserver.yaml
 
 ### Export
 
