@@ -12,6 +12,7 @@
     - [Containerd CLIs:](#containerd-clis)
     - [Namespaces](#namespaces)
   - [Section 3: Configuration](#section-3-configuration)
+    - [Define, Build, Modify Container Images](#define-build-modify-container-images)
     - [Commands And Arguments](#commands-and-arguments)
     - [ConfigMap](#configmap)
       - [Intro: Environment Variables](#intro-environment-variables)
@@ -61,7 +62,6 @@
         - [Metrics server Overview](#metrics-server-overview)
         - [Metrics Server Deployment](#metrics-server-deployment)
   - [Section 6: Pod Design](#section-6-pod-design)
-    - [Define, Build, Modify Container Images](#define-build-modify-container-images)
     - [Labels Selectors and Annotations](#labels-selectors-and-annotations)
     - [Rolling Updates and Rollbacks in Deployments](#rolling-updates-and-rollbacks-in-deployments)
     - [Jobs and CronJobs](#jobs-and-cronjobs)
@@ -184,6 +184,8 @@ format: `<object-name>.<namespace-name>.<object-type>.<cluster-domain>`
 example: `db-service.dev.service.cluster.local`
 
 ## Section 3: Configuration
+
+### Define, Build, Modify Container Images
 
 ### Commands And Arguments
 
@@ -1711,8 +1713,6 @@ get performance metrics
 
 ## Section 6: Pod Design
 
-### Define, Build, Modify Container Images
-
 ### Labels Selectors and Annotations
 
 The API currently supports **two types of selectors: equality-based and set-based**.
@@ -2775,6 +2775,11 @@ use volumeClaimTemplates in a StatefulSet
 
 #### API Maintenance
 
+discover API tree
+
+    curl https://localhost:8001 -k
+    curl https://localhost:8001/apis -k | grep name
+
 ##### APIs hierarchy
 
 discover API:
@@ -2789,23 +2794,6 @@ API Groups:
 - /api
 - /apis
 - /logs
-
-**core group**
-
-- `/api`
-  - `/v1`
-    - `namespaces`
-    - `pods`
-    - `rc`
-    - `events`
-    - `endpoints`
-    - `nodes`
-    - `bindings`
-    - `PV`
-    - `PVC`
-    - `configmaps`
-    - `secrets`
-    - `services`
 
 **named group**
 
@@ -2832,10 +2820,22 @@ API Groups:
       - `/replicasets`
       - `/statefulsets`
 
-discover API tree
+**core group**
 
-    curl https://localhost:8001 -k
-    curl https://localhost:8001/apis -k | grep name
+- `/api`
+  - `/v1`
+    - `namespaces`
+    - `pods`
+    - `rc`
+    - `events`
+    - `endpoints`
+    - `nodes`
+    - `bindings`
+    - `PV`
+    - `PVC`
+    - `configmaps`
+    - `secrets`
+    - `services`
 
 ##### API Versions
 
@@ -3090,6 +3090,7 @@ Installation pre-reqs:
 - kubectl (configured)
 
 install helm
+see: https://helm.sh/docs/intro/install
 
     # using snap
     sudo snap install helm --classic
@@ -3097,6 +3098,13 @@ install helm
     # using package manager
     sudo dnf install helm
     sudo apt-get install helm
+
+check helm installation
+
+    helm version
+
+    # get helm client env information
+    helm env
 
 define helm variables
 

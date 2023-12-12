@@ -97,7 +97,7 @@ Maintains a stable set of replica Pods running at any given time. Can manage pod
 
 - A ReplicaSet is linked to its Pods via the Pods' `metadata.ownerReferences` field, which specifies what resource the current object is owned by. All Pods acquired by a ReplicaSet have their owning ReplicaSet's identifying information within their `ownerReferences` field. It's through this link that the ReplicaSet knows of the state of the Pods it is maintaining and plans accordingly.
 
-  A ReplicaSet identifies new Pods to acquire by using its `selector`. If there is a Pod that has no `OwnerReference` or the `OwnerReference` is not a ` ` and it matches a ReplicaSet's selector, it will be immediately acquired by said ReplicaSet.
+- A ReplicaSet identifies new Pods to acquire by using its `selector`. If there is a Pod that has no `OwnerReference` or the `OwnerReference` is not a ` ` and it matches a ReplicaSet's selector, it will be immediately acquired by said ReplicaSet.
 
 - When a replicaset is deleted via `kubectl delete` its pods are also deleted
 

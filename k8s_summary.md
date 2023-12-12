@@ -17,6 +17,7 @@
     - [Creation, Deletion](#creation-deletion)
     - [Replace, Modify, Scale](#replace-modify-scale)
     - [Rollout, Updates](#rollout-updates)
+    - [Helm](#helm)
   - [Tools](#tools)
     - [Kubernetes on the Cloud](#kubernetes-on-the-cloud)
       - [Hosted Solutions](#hosted-solutions)
@@ -177,16 +178,13 @@ get service url
 
 ### Creation, Deletion
 
-run image on cluster
-
+    # run image on cluster
     kubectl run pod_name --image=image_name
 
-create resource from file or stdin
-
+    # create resource from file or stdin
     kubectl create -f file_path
 
-delete resource
-
+    # delete resource
     kubectl delete [resource]
 
 ### Replace, Modify, Scale
@@ -236,6 +234,30 @@ rollout is valid for _deployments_, _daemonsets_, or _statefulsets_
         resume        Resume a paused resource
         status        Show the status of the rollout
         undo          Undo a previous rollout
+
+### Helm
+
+install helm: https://helm.sh/docs/intro/install
+
+    # get helm client env information
+    helm env
+
+    # configure repos
+    helm repo [ add|index|list|remove|update ] [ OPTIONS ]
+
+    # search for a chart
+    helm search [ hub|repo ] <chart-name>
+
+    # download chart
+    helm pull [ <chartURL>|<repo>/<chartname> ] [ --untar ] [ --destination <path> ]
+
+    # install chart
+    helm install <chart-name> <repo>/<chartname>
+
+    helm list
+    helm status <chart-release-name>
+    helm uninstall <chart-release-name>
+
 
 ## Tools
 
