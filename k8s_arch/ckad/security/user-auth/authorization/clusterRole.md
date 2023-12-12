@@ -1,0 +1,19 @@
+# K8S ClusterRole
+
+tags: #security
+
+---
+
+create cluster role
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  # "namespace" omitted since ClusterRoles are not namespaced
+  name: cluster-admin
+rules:
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "watch", "list", "create", "delete"]
+```

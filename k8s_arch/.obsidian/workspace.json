@@ -1,0 +1,193 @@
+{
+  "main": {
+    "id": "6d25a7521b548073",
+    "type": "split",
+    "children": [
+      {
+        "id": "168d62780365c5d8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "705f16e5743d31e2",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "graph",
+              "state": {},
+              "pinned": true
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "7e39b9e9811f4f46",
+    "type": "split",
+    "children": [
+      {
+        "id": "c06059b7a80390f0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "20e92baa2460ed0a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "0367948143470a09",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "805dfcbe8c487126",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 209.5,
+    "collapsed": true
+  },
+  "right": {
+    "id": "962e8988738bf7be",
+    "type": "split",
+    "children": [
+      {
+        "id": "a8d61b11c4ac42c1",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3a2d8727c711cd0f",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "b3443e376e8b409d",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "a4ae24a086720206",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "79f0ba6ee1b8749a",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "705f16e5743d31e2",
+  "lastOpenFiles": [
+    "ckad/lib/helm/template.md",
+    "ckad/lib/helm/chart_yaml.md",
+    "ckad/lib/helm/chart.yaml",
+    "ckad/lib/helm/variables.md",
+    "ckad/lib/helm/chart.md",
+    "ckad/lib/helm/helm.md",
+    "ckad/lib/helm",
+    "ckad/lib/helm.md",
+    "ckad/workloads/helm.md",
+    "ckad/workloads/operator/operator.md",
+    "ckad/workloads/operator/customResourceDefinition.md",
+    "ckad/workloads/operator/customController.md",
+    "ckad/workloads/operator",
+    "ckad/security/customResourceDefinition.md",
+    "ckad/security/customController.md",
+    "ckad/security/operator.md",
+    "ckad/lib/cert-changes_sep-2021.png",
+    "ckad/storage/volumeClaimTemplates.md",
+    "ckad/workloads/statefulSet.md",
+    "ckad/storage/storageClass.md",
+    "ckad/storage/persistentVolumeClaim.md",
+    "ckad/storage/persistentVolume.md",
+    "ckad/storage/storage.md",
+    "ckad/storage/volumes_types/volume_types.md",
+    "ckad/storage/volume_types.md",
+    "ckad/storage/volume.md",
+    "ckad/storage/volumes_types/volume.md",
+    "ckad/storage/volumes_types/nfs.md",
+    "ckad/storage/volumes_types/local.md",
+    "ckad/storage/volumes_types/iscsi.md",
+    "ckad/storage/volumes_types",
+    "ckad/storage/volumes",
+    "ckad/storage",
+    "ckad/security/user-auth/authentication",
+    "ckad/security/user-auth/authorization/admission_controller/admission-controller-phases.png",
+    "ckad/security/user-auth/authorization/admission_controller",
+    "ckad/security/user-auth/authorization",
+    "ckad/security/user-auth/admission-controller-phases.png",
+    "ckad/security/user-auth",
+    "api/named_groups/api-named-groups-arch.webp",
+    "api/core_group/api-core-groups-arch.webp",
+    "api/api-core-groups-arch.webp",
+    "api/api-named-groups-arch.webp",
+    "ckad/api/api-named-groups-arch.webp",
+    "ckad/api/api-named-groups.webp",
+    "ckad/security/admission-controller-phases.png"
+  ]
+}
