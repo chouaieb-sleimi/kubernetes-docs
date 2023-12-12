@@ -76,7 +76,7 @@
         - [Ingress Service](#ingress-service)
       - [Ingress Resources](#ingress-resources)
         - [Single URL - Single paths - Single backend](#single-url---single-paths---single-backend)
-        - [Mutliple paths - Mutliple backends](#mutliple-paths---mutliple-backends)
+        - [Single URL - Mutliple paths - Mutliple backends](#single-url---mutliple-paths---mutliple-backends)
         - [Multiple URLs - Mutliple backends](#multiple-urls---mutliple-backends)
     - [NetworkPolicy](#networkpolicy)
     - [Port Forwarding](#port-forwarding)
@@ -1170,7 +1170,7 @@ disable default sa automount
 When exceeding **CPU**, pods are throttled.
 When exceeding **MEM**, pods are terminated to free memory and are re-created because of an **OOM**.
 
-**CPU** must be >0.1cpu or >1m (`1cpu = 1000m`; `m: milli`)
+**CPU** must be >0.1**cpu** or >1**m** (`1cpu = 1000m`; `m: milli`)
 **MEM** can be 256Mi = 268 M = 268435456
 
 possible **requests/limits scenarios:**
@@ -1178,9 +1178,9 @@ possible **requests/limits scenarios:**
 - **NO REQUESTS / NO LIMITS**
 
   - **CPU**
-    pods can consume all the resources ans starve others
+    pods can consume all the resources and starve others
   - **MEM**
-    pods can consume all the resources ans starve others
+    pods can consume all the resources and starve others
 
 - **NO REQUESTS / LIMITS**
 
@@ -1192,9 +1192,9 @@ possible **requests/limits scenarios:**
 - **REQUESTS / LIMITS**
 
   - **CPU**
-    requests are guaranteed, exceeding limits results in throtelling
+    requests are guaranteed, exceeding limits results in **throtelling**
   - **MEM**
-    requests are guaranteed, exceeding limits results in recreation
+    requests are guaranteed, exceeding limits results in **recreation**
 
 - **REQUESTS / NO LIMITS**
 
@@ -2268,7 +2268,7 @@ ingress object sample
         port:
           number: 80
 
-##### Mutliple paths - Mutliple backends
+##### Single URL - Mutliple paths - Mutliple backends
 
 schema
 
