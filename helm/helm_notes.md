@@ -12,6 +12,9 @@
     - [Partials and \_ files](#partials-and-_-files)
     - [`define` and `template` Actions](#define-and-template-actions)
     - [`include` Function](#include-function)
+  - [Accessing Files Inside Templates](#accessing-files-inside-templates)
+    - [Path helpers](#path-helpers)
+    - [Glob patterns](#glob-patterns)
 
 <!-- /code_chunk_output -->
 
@@ -21,12 +24,42 @@
 
 https://helm.sh/docs/chart_template_guide/builtin_objects/
 
-- **Chart**
-- **Values**
-- **Release**
-- **Files**
-- **Capabilities**
-- **Template**
+- **`Values`**
+  variables from `values.yaml` file and from user-supplied files
+- **`Chart`**
+  contents of the `Chart.yaml` file
+- **`Release`**
+  describes the release itself
+  - `Release.Name`
+  - `Release.Namespace`
+  - `Release.IsUpgrade`
+  - `Release.IsInstall`
+  - `Release.Revision`
+  - `Release.Service`
+- **`Template`**
+  information about the current template that is being executed`
+  - `Template.Name`
+  - `Template.BasePath
+- **`Files`**
+  provides access to all non-special files in a chart
+  - `Files.Get`
+  - `Files.GetBytes`
+  - `Files.Glob`
+  - `Files.Lines`
+  - `Files.AsSecrets`
+  - `Files.AsConfig`
+- **`Capabilities`**
+  provides information about what capabilities the k8s cluster supports
+  - `Capabilities.APIVersions`
+  - `Capabilities.APIVersions.Has`
+  - `Capabilities.KubeVersion`
+  - `Capabilities.KubeVersion.Major`
+  - `Capabilities.KubeVersion.Minor`
+  - `Capabilities.HelmVersion`
+  - `Capabilities.HelmVersion.Version`
+  - `Capabilities.HelmVersion.GitCommit`
+  - `Capabilities.HelmVersion.GitTreeState`
+  - `Capabilities.HelmVersion.GoVersion`
 
 ## Flow Control
 
@@ -218,4 +251,96 @@ data:
   food: "pizza"
   app_name: mychart
   app_version: "0.1.0"
+```
+
+## Accessing Files Inside Templates
+
+> Note:
+>
+> - Charts must be smaller than 1M due to storage limitations of k8s objects
+> - file-level permissions will have no impact on the availability of a file when it comes to the `.Files` object.
+> - some files cannot be accessed through `.Files` object for security reasons:
+>   - files in `templates/` cannot be accessed.
+>   - files excluded using `.helmignore` cannot be accessed.
+>   - files outside of a helm application `subchart`, including those of the parent, cannot be accessed
+
+```yaml
+
+# config1.toml:
+# message = Hello from config 1
+#
+# config2.toml:
+# message = This is config 2
+#
+# config3.toml:
+# message = Goodbye from config 3
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  {{- $files := .Files }}
+  {{- range tuple "config1.toml" "config2.toml" "config3.toml" }}
+  {{ . }}: |-
+        {{ $files.Get . }}
+  {{- end }}
+
+---
+# Source: mychart/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quieting-giraf-configmap
+data:
+  config1.toml: |-
+        message = Hello from config 1
+
+  config2.toml: |-
+        message = This is config 2
+
+  config3.toml: |-
+        message = Goodbye from config 3
+```
+
+### Path helpers
+
+functions from Go's `path` package are all accessible with the same names as in the Go package (`Base` becomes `base`, etc.)
+
+The imported functions are:
+
+- Base
+- Dir
+- Ext
+- IsAbs
+- Clean
+
+### Glob patterns
+
+- GOPlang docs: glob patterns
+  https://pkg.go.dev/github.com/gobwas/glob
+
+```yaml
+#foo/:
+#  foo.txt foo.yaml
+#
+#bar/:
+#  bar.go bar.conf baz.yaml
+
+---
+# option 1
+{{ $currentScope := .}}
+{{ range $path, $_ :=  .Files.Glob  "**.yaml" }}
+    {{- with $currentScope}}
+        {{ .Files.Get $path }}
+    {{- end }}
+{{ end }}
+
+
+---
+# option 2
+{{ range $path, $_ :=  .Files.Glob  "**.yaml" }}
+      {{ $.Files.Get $path }}
+{{ end }}
 ```
