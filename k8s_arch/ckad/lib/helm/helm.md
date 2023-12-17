@@ -1,6 +1,6 @@
 # K8S Helm
 
-tags: #workloads
+tags: #helm #workloads
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 

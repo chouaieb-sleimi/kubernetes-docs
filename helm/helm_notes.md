@@ -1,11 +1,21 @@
-# Helm Notes
+# Table of Contents
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
+- [Table of Contents](#table-of-contents)
+- [Helm Resources](#helm-resources)
 - [Helm Notes](#helm-notes)
+  - [YAML Syntax](#yaml-syntax)
+    - [Scalars and Collections](#scalars-and-collections)
+    - [Strings in YAML](#strings-in-yaml)
+    - [Embedding Multiple Documents in One File](#embedding-multiple-documents-in-one-file)
+    - [YAML is a Superset of JSON](#yaml-is-a-superset-of-json)
+    - [YAML Anchors](#yaml-anchors)
   - [Built-in Objects](#built-in-objects)
+  - [Values Files](#values-files)
+  - [Functions and Pipelines](#functions-and-pipelines)
   - [Flow Control](#flow-control)
   - [Variables](#variables)
   - [Named Templates](#named-templates)
@@ -15,8 +25,217 @@
   - [Accessing Files Inside Templates](#accessing-files-inside-templates)
     - [Path helpers](#path-helpers)
     - [Glob patterns](#glob-patterns)
+    - [ConfigMap and Secrets utility functions](#configmap-and-secrets-utility-functions)
+    - [Encoding](#encoding)
+    - [Lines](#lines)
+  - [Sub-Charts and Global Values](#sub-charts-and-global-values)
+  - [`.helmignore` File](#helmignore-file)
+  - [Debugging Templates](#debugging-templates)
 
 <!-- /code_chunk_output -->
+
+---
+
+# Helm Resources
+
+- **Helm docs**
+  https://helm.sh
+- **Charts Workflow**
+  https://helm.sh/docs/topics/charts/
+- **Go template docs - template syntax**
+  https://godoc.org/text/template
+- **Helm Charts Tips and Tricks**
+  https://helm.sh/docs/howto/charts_tips_and_tricks/
+- **Helm Chart Hooks Guide - lifecycle hooks**
+  https://helm.sh/docs/topics/charts_hooks/
+- **Sprig: more than sixty of the template functions.**
+  https://github.com/Masterminds/sprig
+- **Schelm tool: debugging charts**
+  https://github.com/databus23/schelm
+- **CNCF Artifact Hub charts repo**
+  https://artifacthub.io/packages/search?kind=0
+- **K8S resources**
+  https://kubernetes.io/docs/home/
+
+---
+
+# Helm Notes
+
+---
+
+## YAML Syntax
+
+- YAML format
+  https://helm.sh/docs/chart_template_guide/yaml_techniques/
+
+### Scalars and Collections
+
+- **collection types:**
+
+  - **maps**
+  - **sequences**
+
+```yaml
+map:
+  one: 1
+  two: 2
+  three: 3
+
+sequence:
+  - one
+  - two
+  - three
+```
+
+- **scalar types:** (individual values as opposed to collections)
+
+```yaml
+count: 1 # int
+size: 2.34 # float
+---
+count: "1" # <-- string, not int
+size: "2.34" # <-- string, not float
+---
+isGood: true # bool
+answer: "true" # string
+```
+
+- `!!str` tells parser that `age` is a string, even if it looks like an int
+- `port` is treated as an int, even though it is quoted
+
+```yaml
+coffee: "yes, please"
+age: !!str 21
+port: !!int "80"
+```
+
+### Strings in YAML
+
+multi-line strings
+
+```yaml
+# coffee:'Latte\nCappuccino\nEspresso\n'
+
+coffee: |
+  Latte
+  Cappuccino
+  Espresso
+```
+
+controlling spaces in multi-line strings
+
+```yaml
+# strip off the trailing newline
+# coffee: 'Latte\nCappuccino\nEspresso'
+coffee: |-
+  Latte
+  Cappuccino
+  Espresso
+
+---
+# preserve all trailing whitespace
+# coffee: 'Latte\nCappuccino\nEspresso\n\n\n'
+coffee: |+
+  Latte
+  Cappuccino
+  Espresso  
+
+
+another: value
+---
+# preserve indentation inside text block
+# coffee: 'Latte\n 12 oz\n 16 oz\nCappuccino\nEspresso'
+coffee: |-
+  Latte
+    12 oz
+    16 oz
+  Cappuccino
+  Espresso
+```
+
+folded multi-line strings
+
+```yaml
+# declare a folded block
+# coffee: 'Latte Cappuccino Espresso\n'
+coffee: >
+  Latte
+  Cappuccino
+  Espresso
+
+
+# trim all newlines
+# coffee: 'Latte\n 12 oz\n 16 oz\nCappuccino Espresso'
+coffee: >-
+  Latte
+    12 oz
+    16 oz
+  Cappuccino
+  Espresso
+```
+
+### Embedding Multiple Documents in One File
+
+- some files in Helm cannot contain more than one doc
+  - if more than one document is provided in `values.yaml` file, only the first will be used.
+- template files w/ more than one document is treated as one object during template rendering
+  - resulting YAML is split into multiple documents before it is fed to k8s
+
+```yaml
+---
+document:1
+---
+document: 2
+```
+
+### YAML is a Superset of JSON
+
+- files such as `values.yaml` may contain JSON data
+  - Helm does not treat the file extension `.json` as a valid suffix.
+
+```json
+// JSON representation
+{
+  "coffee": "yes, please",
+  "coffees": ["Latte", "Cappuccino", "Espresso"]
+}
+```
+
+```yaml
+# YAML representation
+coffees:
+  - Latte
+  - Cappuccino
+  - Espresso
+```
+
+```yaml
+# YAML and JSON can be mixed (with care)
+coffee: "yes, please"
+coffees: ["Latte", "Cappuccino", "Espresso"]
+```
+
+### YAML Anchors
+
+- a way to store a reference to a value, and later refer to that value by reference
+- first time the YAML is consumed, the reference is expanded and then discarded.
+
+```yaml
+coffee: "yes, please"
+favorite: &favoriteCoffee "Cappuccino"
+coffees:
+  - Latte
+  - *favoriteCoffee
+  - Espresso
+---
+# resulting manifest
+coffee: yes, please
+favorite: Cappuccino
+coffees:
+  - Latte
+  - Cappuccino
+  - Espresso
+```
 
 ---
 
@@ -60,6 +279,22 @@ https://helm.sh/docs/chart_template_guide/builtin_objects/
   - `Capabilities.HelmVersion.GitCommit`
   - `Capabilities.HelmVersion.GitTreeState`
   - `Capabilities.HelmVersion.GoVersion`
+
+---
+
+## Values Files
+
+- see:
+  https://helm.sh/docs/chart_template_guide/values_files/
+
+---
+
+## Functions and Pipelines
+
+- see:
+  https://helm.sh/docs/chart_template_guide/functions_and_pipelines/
+
+---
 
 ## Flow Control
 
@@ -124,6 +359,8 @@ data:
 - `toppings: |-` line is declaring a multi-line string
   the list of toppings is not a YAML list. It's a big string
 
+---
+
 ## Variables
 
 https://helm.sh/docs/chart_template_guide/variables/
@@ -159,6 +396,8 @@ toppings: |-
   2: peppers
   3: onions
 ```
+
+---
 
 ## Named Templates
 
@@ -253,6 +492,8 @@ data:
   app_version: "0.1.0"
 ```
 
+---
+
 ## Accessing Files Inside Templates
 
 > Note:
@@ -343,4 +584,142 @@ The imported functions are:
 {{ range $path, $_ :=  .Files.Glob  "**.yaml" }}
       {{ $.Files.Get $path }}
 {{ end }}
+```
+
+### ConfigMap and Secrets utility functions
+
+> Note: available **after version 2.0.2**
+
+```yaml
+# using folder structure in previous section:
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: conf
+data:
+{{ (.Files.Glob "foo/*").AsConfig | indent 2 }}
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: very-secret
+type: Opaque
+data:
+{{ (.Files.Glob "bar/*").AsSecrets | indent 2 }}
+```
+
+### Encoding
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-secret
+type: Opaque
+data:
+  token: |-
+        {{ .Files.Get "config1.toml" | b64enc }}
+
+---
+# Source: mychart/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: lucky-turkey-secret
+type: Opaque
+data:
+  token: |-
+        bWVzc2FnZSA9IEhlbGxvIGZyb20gY29uZmlnIDEK
+```
+
+### Lines
+
+used to access each line of a file in template
+
+```yaml
+data:
+  some-file.txt: {{ range .Files.Lines "foo/bar.txt" }}
+    {{ . }}{{ end }}
+```
+
+---
+
+## Sub-Charts and Global Values
+
+---
+
+## `.helmignore` File
+
+differences from `.gitignore`:
+
+- `**` syntax is not supported.
+- globbing library is Go's `filepath.Match`, not `fnmatch(3)`
+- trailing spaces are always ignored (there is no supported escape sequence)
+- no support for `!` as a special leading sequence.
+- does not exclude itself by default, you have to add an explicit entry for `.helmignore`
+
+`.helmignore` example
+
+```bash
+# comment
+
+# Match any file or path named .helmignore
+.helmignore
+
+# Match any file or path named .git
+.git
+
+# Match any text file
+*.txt
+
+# Match only directories named mydir
+mydir/
+
+# Match only text files in the top-level directory
+/*.txt
+
+# Match only the file foo.txt in the top-level directory
+/foo.txt
+
+# Match any file named ab.txt, ac.txt, or ad.txt
+a[b-d].txt
+
+# Match any file under subdir matching temp*
+*/temp*
+
+*/*/temp*
+temp?
+```
+
+---
+
+## Debugging Templates
+
+```yaml
+# debug templates
+# verify chart follows best practices
+helm lint
+
+# test render templates locally
+helm template --debug
+
+# render templates, then return resulting manifest files
+helm install --dry-run --debug
+
+# see what templates are installed on server
+helm get manifest
+```
+
+skip YAML parse errors blockings
+
+```yaml
+apiVersion: v2
+# some: problem section
+# {{ .Values.foo | quote }}
+The above will be rendered and returned with the comments intact:
+
+apiVersion: v2
+# some: problem section
+#  "bar"
 ```

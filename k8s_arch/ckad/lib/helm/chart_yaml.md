@@ -1,5 +1,5 @@
 # K8S Helm Chart.yaml
 
-tags: #workloads
+tags: #helm #workloads
 
 ---

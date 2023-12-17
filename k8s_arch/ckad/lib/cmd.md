@@ -325,7 +325,7 @@ kubectl get pod mongo-75f59d57f4-4nd6q --template='{{(index (index .spec.contain
 # 27017
 ```
 
-> Note: `27017` is the TCP port allocated to `mongo` pod_
+> Note: `27017` is the TCP port allocated to `mongo` pod
 
 Forward a local port to a port on the Pod
 
@@ -390,4 +390,17 @@ helm install <chart-name> <repo>/<chartname>
 helm list
 helm status <chart-release-name>
 helm uninstall <chart-release-name>
+
+# debug templates
+# verify chart follows best practices
+helm lint
+
+# test render templates locally
+helm template --debug
+
+# render templates, then return resulting manifest files
+helm install --dry-run --debug
+
+# see what templates are installed on server
+helm get manifest
 ```

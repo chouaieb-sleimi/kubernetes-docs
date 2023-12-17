@@ -19,7 +19,3 @@ tags: #k8s
 ## Labs
 
 [[labs]]
-
-## Helm
-
-[[helm]]

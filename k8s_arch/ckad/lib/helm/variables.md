@@ -1,6 +1,6 @@
 # K8S Helm Chart Variables
 
-tags: #workloads
+tags: #helm #workloads
 
 ---
 
