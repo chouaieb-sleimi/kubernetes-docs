@@ -96,6 +96,12 @@ Keep the code - 20KLOUD handy while registering for the CKA or CKAD exams at Lin
 
 - Kubernetes The Hard Way
   https://github.com/mmumshad/kubernetes-the-hard-way
+- kubernetes io
+  https://kubernetes.io
+- github - Kubernetes
+  https://github.com/kubernetes/kubernetes
+- helm docs
+  https://helm.sh/docs/
 
 ## Section 2: Core Concepts
 

@@ -1,4 +1,4 @@
-# K8S Tools
+# K8S Tools and Utilities
 
 tags: #tools_utils
 
@@ -6,7 +6,9 @@ tags: #tools_utils
 
 <!-- code_chunk_output -->
 
-- [K8S Tools](#k8s-tools)
+- [K8S Tools and Utilities](#k8s-tools-and-utilities)
+  - [Documentation](#documentation)
+  - [Images](#images)
   - [Commands](#commands)
   - [Kubernetes on the Cloud](#kubernetes-on-the-cloud)
     - [Hosted Solutions](#hosted-solutions)
@@ -21,9 +23,51 @@ tags: #tools_utils
 
 ---
 
+## Documentation
+
+- [kubernetes.io docs - Command line tool (kubectl)](https://kubernetes.io/docs/reference/kubectl/)
+- [kubernetes.io - basic commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-strong-getting-started-strong-)
+- [kubernetes.io docs - kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
+
+- [kompose.io - DOCKER COMPOSE TO KUBERNETES](https://kompose.io)
+- [github.com/dockersamples - docker sample apps](https://github.com/dockersamples)
+- [Dockerhub - kodekloud voting app images](https://hub.docker.com/r/kodekloud/examplevotingapp_worker)
+- [opensource.com - Migrate databases to Kubernetes using Konveyor](https://opensource.com/article/22/5/migrating-databases-kubernetes-using-konveyor)
+
+---
+
+## Images
+
+**sample admission controller servers**
+
+- sample k8s GOLang controller: `https://github.com/kubernetes/kubernetes/blob/release-1.21/test/images/agnhost/webhook/main.go`
+
+**Kodekloud images:**
+
+- ServiceAccount demo image: `gcr.io/kodekloud/customimage/my-kubernetes-dashboard`
+- Secrets demo image: `kodekloud/simple-webapp-mysql`
+- Readiness and Liveness Probes demo image: `kodekloud/webapp-delayed-start`
+- Container Logging demo image: `kodekloud/event-simulator`
+- Jobs and CronJobs demo image: `kodekloud/throw-dice`
+- Ingress demo images:
+  - `kodekloud/ecommerce:apparels`
+  - `kodekloud/ecommerce:video`
+  - `kodekloud/ecommerce:food`
+  - `kodekloud/ecommerce:404`
+- log events demo image: `kodekloud/event-simulator`
+- custom admission controllers demo image: `stackrox/admission-controller-webhook-demo:latest`
+- voting app
+  - https://hub.docker.com/r/kodekloud/examplevotingapp_worker
+  - https://github.com/kodekloudhub/example-voting-app
+  - https://github.com/kodekloudhub/example-voting-app-kubernetes
+
+---
+
 ## Commands
 
 [[cmd]]
+
+---
 
 ## Kubernetes on the Cloud
 
@@ -69,6 +113,8 @@ Pre-reqs:
 
 - Azure account
   https://azure.microsoft.com/en-us/free/free-account-faq
+
+---
 
 ## Setup K8s cluster
 

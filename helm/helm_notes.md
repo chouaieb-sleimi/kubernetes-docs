@@ -17,6 +17,10 @@
   - [Values Files](#values-files)
   - [Functions and Pipelines](#functions-and-pipelines)
   - [Flow Control](#flow-control)
+    - [`if/else` conditional blocks](#ifelse-conditional-blocks)
+    - [`with` scope definitions](#with-scope-definitions)
+    - [`range` Looping Action](#range-looping-action)
+    - [Controlling Whitespace `{{-` `-}}`](#controlling-whitespace----)
   - [Variables](#variables)
   - [Named Templates](#named-templates)
     - [Partials and \_ files](#partials-and-_-files)
@@ -258,7 +262,7 @@ https://helm.sh/docs/chart_template_guide/builtin_objects/
 - **`Template`**
   information about the current template that is being executed`
   - `Template.Name`
-  - `Template.BasePath
+  - `Template.BasePath`
 - **`Files`**
   provides access to all non-special files in a chart
   - `Files.Get`
@@ -302,9 +306,10 @@ https://helm.sh/docs/chart_template_guide/control_structures/
 
 flow controls:
 
-- `if/else` conditional blocks
-- `with` scope definitions
-- `range` Looping Action
+### `if/else` conditional blocks
+### `with` scope definitions
+### `range` Looping Action
+### Controlling Whitespace `{{-` `-}}`
 
 ```yaml
 # values.yaml
@@ -708,7 +713,7 @@ helm template --debug
 helm install --dry-run --debug
 
 # see what templates are installed on server
-helm get manifest
+helm get manifest RELEASE_NAME
 ```
 
 skip YAML parse errors blockings

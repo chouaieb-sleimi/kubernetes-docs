@@ -8,10 +8,6 @@ tags: #k8s
 
 [[objects_list]]
 
-## Documentation
-
-[[doc]]
-
 ## Tools
 
 [[tools_utils]]

@@ -47,7 +47,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClass: google-storage
+  storageClassName: google-storage
   resourcecs:
     requests:
       storage: 500Mi

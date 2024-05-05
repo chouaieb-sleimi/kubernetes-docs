@@ -1,4 +1,4 @@
-# K8S Commands
+# K8S Labs
 
 tags: #labs
 
