@@ -1,7 +1,6 @@
 # K8S Volume Types
 
-tags: #objects #storage
-
+tags: #storage
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
@@ -12,14 +11,13 @@ tags: #objects #storage
   - [emptyDir Volume](#emptydir-volume)
   - [hostPath Volume](#hostpath-volume)
   - [local Volume](#local-volume)
+  - [projected Volume](#projected-volume)
   - [nfs Volume](#nfs-volume)
   - [iscsi Volume](#iscsi-volume)
   - [cephfs Volume](#cephfs-volume)
   - [Cloud Service](#cloud-service)
 
 <!-- /code_chunk_output -->
-
-
 
 ---
 
@@ -38,6 +36,10 @@ tags: #objects #storage
 ## local Volume
 
 [[local]]
+
+## projected Volume
+
+[[projected]]
 
 ## nfs Volume
 

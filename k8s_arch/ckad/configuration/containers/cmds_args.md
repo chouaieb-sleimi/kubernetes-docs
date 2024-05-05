@@ -1,15 +1,16 @@
 ## K8S Containers Commands And Arguments
 
-tags: #objects #configuration #workloads
+tags: #configuration #workloads
 
 ---
 
-define commands and arguments to [[containers]]
-
-`IMAGE/entrypoint = K8S/command` and `IMAGE/cmd = K8S/args`
-
+- define commands and arguments to [[containers]]
+- `Dockerfile/entrypoint` = `pod.container/command`
+- `Dockerfile/cmd` = `pod.container/args`
+  - `pod.container` takes precedence over `Dockerfile`
 Containerfile
 
+    ...
     ENTRYPOINT ["python", "app.py"]
     CMD ["--color", "red"]
 

@@ -71,29 +71,41 @@ jq -R 'split(".") | select(length > 0) | .[0],.[1] | @base64 | fromjson' <<< <se
 
 use sa token
 
-    curl htts://192.168.56.70:6443/api -insecure \
-    --header "Authorization: Bearer <sa_access-token>"
+```bash
+curl htts://192.168.56.70:6443/api -insecure \
+  --header "Authorization: Bearer <sa_access-token>"
+```
 
 configure sa in a pod
 
-    apiVersion: v1
-    kind: Pod
-    metadata:
-      ...
-    spec:
-      containers:
-        - name:
-          ...
-      serviceAccountName: jenkins-sa
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  #...
+spec:
+  containers:
+    - name:
+      #...
+  serviceAccountName: jenkins-sa
+```
+
+update sa of a resource
+
+```bash
+kubectl set serviceaccount deploy/web-dashboard dashboard-sa
+```
 
 disable default sa automount
 
-    apiVersion: v1
-    kind: Pod
-    metadata:
-      ...
-    spec:
-      containers:
-        - name:
-          ...
-          automountServiceAccountToken: false
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  #...
+spec:
+  containers:
+    - name:
+      #...
+      automountServiceAccountToken: false
+```
