@@ -1,4 +1,4 @@
-# K8S Observability & Monitoring
+v# K8S Observability & Monitoring
 
 tags: #api
 
@@ -6,12 +6,11 @@ tags: #api
 
 <!-- code_chunk_output -->
 
-- [K8S Observability & Monitoring](#k8s-observability--monitoring)
-  - [Global Object List](#global-object-list)
-  - [API Maintenance](#api-maintenance)
-    - [API hierarchy](#api-hierarchy)
-      - [API Versioning](#api-versioning)
-    - [API Deprecation](#api-deprecation)
+- [Global Object List](#global-object-list)
+- [API Maintenance](#api-maintenance)
+  - [API hierarchy](#api-hierarchy)
+    - [API Versioning](#api-versioning)
+  - [API Deprecation](#api-deprecation)
 
 <!-- /code_chunk_output -->
 
@@ -130,16 +129,16 @@ enable/disable API group
 
 **Depreation Rules:**
 
-- **Rule #1:** API elements may only be removed by incrementing the version of the API group.
-- **Rule #2:** API objects must be able to round-trip between API versions in a given release without information loss, with the exception of whole REST resources that do not exist in some versions.
-- **Rule #3:** An API version in a given track may not be deprecated in favor of a less stable API version.
-- **Rule #4a:** API lifetime is determined by the API stability level
+- **Rule 1:** API elements may only be removed by incrementing the version of the API group.
+- **Rule 2:** API objects must be able to round-trip between API versions in a given release without information loss, with the exception of whole REST resources that do not exist in some versions.
+- **Rule 3:** An API version in a given track may not be deprecated in favor of a less stable API version.
+- **Rule 4a:** API lifetime is determined by the API stability level
 
   - GA API versions may be marked as deprecated, but must not be removed within a major version of Kubernetes
   - Beta API versions are deprecated no more than 9 months or 3 minor releases after introduction (whichever is longer), and are no longer served 9 months or 3 minor releases after deprecation (whichever is longer)
   - Alpha API versions may be removed in any release without prior deprecation notice
 
-- **Rule #4b:** The "preferred" API version and the "storage version" for a given group may not advance until after a release has been made that supports both the new version and the previous version
+- **Rule 4b:** The "preferred" API version and the "storage version" for a given group may not advance until after a release has been made that supports both the new version and the previous version
 
 bulk convert definition files form a version to another
 

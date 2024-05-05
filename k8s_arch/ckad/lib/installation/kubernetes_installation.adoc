@@ -1,0 +1,7 @@
+== Documentation
+
+https://faun.pub/installing-minikube-on-virtual-machine-centos-using-container-getting-started-with-kubernetes-fea63893263[Installing MiniKube on CentOs Virtual Machine Using Container]
+
+https://www.server-world.info/en/note?os=CentOS_Stream_8&p=minikube[Install Minikube Using Virtual Machine]
+
+== Installtion

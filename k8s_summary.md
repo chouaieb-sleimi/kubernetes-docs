@@ -27,6 +27,7 @@
     - [Setup K8s cluster](#setup-k8s-cluster)
       - [Kubeadm Setup](#kubeadm-setup)
         - [Minikube Setup](#minikube-setup)
+        - [Other Setups](#other-setups)
 
 <!-- /code_chunk_output -->
 
@@ -414,3 +415,11 @@ Steps:
 3. Install Minikube and other required tools.
 4. Add users who use Minikube to `libvirt` group.
 5. Start Minikube with a user who are in `libvirt` group.
+
+##### Other Setups
+
+- Installing MiniKube on CentOs Virtual Machine Using Container
+https://faun.pub/installing-minikube-on-virtual-machine-centos-using-container-getting-started-with-kubernetes-fea63893263
+
+- Install Minikube Using Virtual Machine
+https://www.server-world.info/en/note?os=CentOS_Stream_8&p=minikube

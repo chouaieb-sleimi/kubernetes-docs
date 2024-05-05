@@ -4,17 +4,29 @@
     "type": "split",
     "children": [
       {
-        "id": "168d62780365c5d8",
+        "id": "0c8c3da4059aa691",
         "type": "tabs",
         "children": [
           {
-            "id": "705f16e5743d31e2",
+            "id": "817bcf3c3a459af7",
             "type": "leaf",
             "pinned": true,
             "state": {
               "type": "graph",
               "state": {},
               "pinned": true
+            }
+          },
+          {
+            "id": "2d0a7c6e686ec8ad",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ckad/security/security_context.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -63,7 +75,8 @@
               "state": {}
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -141,8 +154,28 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "705f16e5743d31e2",
+  "active": "817bcf3c3a459af7",
   "lastOpenFiles": [
+    "ckad/security/security_context.md",
+    "ckad/workloads/pod.md",
+    "ckad/configuration/containers/cmds_args.md",
+    "ckad/storage/volumes_types/projected.md",
+    "ckad/configuration/pod/node_selector.md",
+    "ckad/configuration/pod/toleration.md",
+    "ckad/configuration/pod/node_affinity.md",
+    "ckad/storage/volumes_types/volume_types.md",
+    "ckad/configuration/pod/limitRange.md",
+    "ckad/configuration/containers/resource.md",
+    "ckad/configuration/taint.md",
+    "ckad/configuration/configuration.md",
+    "ckad/workloads/containers.md",
+    "ckad/networking/networking.md",
+    "ckad/storage/storage.md",
+    "ckad/security/security.md",
+    "ckad/workloads/workloads.md",
+    "ckad/networking/networkPolicy.md",
+    "ckad/workloads/deployment.md",
+    "ckad/storage/volumeClaimTemplates.md",
     "ckad/lib/helm/template.md",
     "ckad/lib/helm/chart_yaml.md",
     "ckad/lib/helm/chart.yaml",
@@ -151,28 +184,8 @@
     "ckad/lib/helm/helm.md",
     "ckad/lib/helm",
     "ckad/lib/helm.md",
-    "ckad/workloads/helm.md",
-    "ckad/workloads/operator/operator.md",
-    "ckad/workloads/operator/customResourceDefinition.md",
-    "ckad/workloads/operator/customController.md",
     "ckad/workloads/operator",
-    "ckad/security/customResourceDefinition.md",
-    "ckad/security/customController.md",
-    "ckad/security/operator.md",
     "ckad/lib/cert-changes_sep-2021.png",
-    "ckad/storage/volumeClaimTemplates.md",
-    "ckad/workloads/statefulSet.md",
-    "ckad/storage/storageClass.md",
-    "ckad/storage/persistentVolumeClaim.md",
-    "ckad/storage/persistentVolume.md",
-    "ckad/storage/storage.md",
-    "ckad/storage/volumes_types/volume_types.md",
-    "ckad/storage/volume_types.md",
-    "ckad/storage/volume.md",
-    "ckad/storage/volumes_types/volume.md",
-    "ckad/storage/volumes_types/nfs.md",
-    "ckad/storage/volumes_types/local.md",
-    "ckad/storage/volumes_types/iscsi.md",
     "ckad/storage/volumes_types",
     "ckad/storage/volumes",
     "ckad/storage",

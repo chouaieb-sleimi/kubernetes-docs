@@ -1,0 +1,5 @@
+= Kubernetes Labs
+
+== Installation
+
+include::kubernetes_installation.adoc[leveloffset=+1]
