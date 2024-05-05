@@ -1,6 +1,6 @@
 # K8S Ingress
 
-tags: #object #network
+tags: #objects #network
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 

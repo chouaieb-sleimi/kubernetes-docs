@@ -1,6 +1,6 @@
 # K8S Node Affinity
 
-tags: #objects #configuration
+tags: #configuration
 
 ---
 

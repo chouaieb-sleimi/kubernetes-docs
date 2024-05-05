@@ -1,6 +1,6 @@
 # K8S RoleBinding
 
-tags: #security
+tags: #objects #security
 
 ---
 

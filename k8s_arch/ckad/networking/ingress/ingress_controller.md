@@ -1,6 +1,6 @@
 # K8S Ingress Controller Deployment
 
-tags: #network
+tags: #objects #network
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 

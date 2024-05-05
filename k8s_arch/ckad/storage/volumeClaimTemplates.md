@@ -1,6 +1,6 @@
 # K8S volumeClaimTemplates
 
-tags: #objects #storage
+tags: #storage
 
 ---
 

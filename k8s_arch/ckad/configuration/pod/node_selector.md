@@ -1,6 +1,6 @@
 # K8S Node Selectors
 
-tags: #objects #configuration
+tags: #configuration
 
 ---
 

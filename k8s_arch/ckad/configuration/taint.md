@@ -1,6 +1,6 @@
 # K8S Node Taint
 
-tags: #objects #configuration
+tags: #configuration
 
 ---
 

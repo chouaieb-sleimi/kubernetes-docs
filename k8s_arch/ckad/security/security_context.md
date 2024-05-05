@@ -1,6 +1,6 @@
 # K8S Security Context
 
-tags: #objects #security
+tags: #security
 
 ---
 

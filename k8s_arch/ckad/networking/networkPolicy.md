@@ -1,6 +1,6 @@
 # K8S Ingress
 
-tags: #object #network #security
+tags: #objects #network #security
 
 ---
 

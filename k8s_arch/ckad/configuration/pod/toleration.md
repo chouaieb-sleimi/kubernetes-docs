@@ -1,6 +1,6 @@
 # K8S Pod Toleration
 
-tags: #objects #configuration #workloads
+tags: #configuration #workloads
 
 ---
 

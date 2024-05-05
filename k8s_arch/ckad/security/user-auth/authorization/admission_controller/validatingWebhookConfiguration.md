@@ -1,6 +1,6 @@
 # K8S ValidatingWebhookConfiguration
 
-tags: #security
+tags: #objects #security
 
 ---
 

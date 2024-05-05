@@ -1,6 +1,6 @@
 # K8S Pod Resource Limits and Requests
 
-tags: #objects #configuration #workloads
+tags: #configuration #workloads
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 

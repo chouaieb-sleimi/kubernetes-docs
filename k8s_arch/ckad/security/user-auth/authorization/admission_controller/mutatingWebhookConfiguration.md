@@ -1,6 +1,6 @@
 # K8S MutatingWebhookConfiguration
 
-tags: #security
+tags: #objects #security
 
 ---
 

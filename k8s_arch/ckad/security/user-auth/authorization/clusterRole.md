@@ -1,6 +1,6 @@
 # K8S ClusterRole
 
-tags: #security
+tags: #objects #security
 
 ---
 

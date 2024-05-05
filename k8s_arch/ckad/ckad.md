@@ -1,6 +1,6 @@
 # Certified Kubernetes Application Developer - CKAD
 
-tags: #objects
+tags: #k8s #arch
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 

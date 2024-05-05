@@ -1,6 +1,6 @@
 # K8S ClusterRoleBinding
 
-tags: #security
+tags: #objects #security
 
 ---
 

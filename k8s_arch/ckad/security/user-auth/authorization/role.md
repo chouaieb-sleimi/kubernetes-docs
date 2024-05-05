@@ -1,6 +1,6 @@
 # K8S Role
 
-tags: #security
+tags: #objects #security
 
 ---
 

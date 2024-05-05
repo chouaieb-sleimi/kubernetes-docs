@@ -1,6 +1,6 @@
 # K8S Networking
 
-tags: #objects #network
+tags:  #network
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 

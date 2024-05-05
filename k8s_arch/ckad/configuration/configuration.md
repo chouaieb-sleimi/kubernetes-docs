@@ -1,6 +1,6 @@
 # K8S Configuration
 
-tags: #objects #configuration
+tags: #configuration
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 

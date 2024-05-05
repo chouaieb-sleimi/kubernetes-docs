@@ -1,6 +1,6 @@
 # K8S Security
 
-tags: #objects #security
+tags: #security
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 

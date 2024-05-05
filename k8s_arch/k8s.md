@@ -1,6 +1,6 @@
 # Kubernetes Resources
 
-tags: #k8s #arch #docs #objects #tools_utils #labs
+tags: #k8s #arch #docs #tools_utils #labs
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
