@@ -10,8 +10,8 @@ tags: #k8s
 
 ## Tools
 
-[[tools_utils]]
+
 
 ## Labs
 
-[[labs]]
+

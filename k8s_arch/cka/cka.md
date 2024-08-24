@@ -37,4 +37,7 @@ Keep the code - 20KLOUD handy while registering for the CKA or CKAD exams at Lin
 - Certified Kubernetes Administrator (CKA) Course
   https://github.com/kodekloudhub/certified-kubernetes-administrator-course
 
+---
+
 ## Section 2: Core Concepts
+
