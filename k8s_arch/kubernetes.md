@@ -10,6 +10,7 @@ tags: #k8s #arch #docs #tools_utils #labs
   - [Architecture](#architecture)
   - [API Maintenance](#api-maintenance)
   - [CKAD](#ckad)
+- [CKA](#cka)
 
 <!-- /code_chunk_output -->
 
@@ -26,3 +27,7 @@ tags: #k8s #arch #docs #tools_utils #labs
 ## CKAD
 
 [[ckad]]
+
+# CKA
+
+[[cka]]
