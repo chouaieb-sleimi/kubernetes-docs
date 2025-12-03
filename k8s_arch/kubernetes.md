@@ -9,6 +9,7 @@ tags: #k8s #arch #docs #tools_utils #labs
 - [Kubernetes Resources](#kubernetes-resources)
   - [Architecture](#architecture)
   - [API Maintenance](#api-maintenance)
+  - [Library](#library)
   - [CKAD](#ckad)
 - [CKA](#cka)
 
@@ -18,16 +19,20 @@ tags: #k8s #arch #docs #tools_utils #labs
 
 ## Architecture
 
-[[arch]]
+[arch](arch/arch.md)
 
 ## API Maintenance
 
-[[api-maintenance]]
+[api-maintenance](api/api-maintenance.md)
+
+## Library
+
+[kubernetes library](../lib/kubernetes_lib.md)
 
 ## CKAD
 
-[[ckad]]
+[ckad](ckad/ckad.md)
 
 # CKA
 
-[[cka]]
+[cka](cka/cka.md)

@@ -12,6 +12,9 @@ tags: #k8s
   - [Images](#images)
   - [Commands](#commands)
   - [Objects List](#objects-list)
+  - [Docker vs ContainerD](#docker-vs-containerd)
+    - [Containerd CLI Tools:](#containerd-cli-tools)
+    - [CRI CLI Tools:](#cri-cli-tools)
   - [Kubernetes on the Cloud](#kubernetes-on-the-cloud)
     - [Hosted Solutions](#hosted-solutions)
       - [Google Kubernetes Engine (GKE)](#google-kubernetes-engine-gke)
@@ -91,13 +94,68 @@ tags: #k8s
 
 ## Commands
 
-[[cmd]]
+[[commands.md]]
 
 ---
 
 ## Objects List
 
 [[objects_list]]
+
+---
+
+## Docker vs ContainerD
+
+K8s **supports containerd** and **not docker**.
+
+Supported K8s runtimes:
+
+- containerd
+- CRI-O
+- ~~Docker~~ (deprecated)
+- Docker Engine (cri-dockerd)
+
+### Containerd CLI Tools:
+
+| Tool | Purpose | Community | Works With |
+|------|---------|-----------|-----------|
+| **ctr** | Debugging | containerd | `containerd` |
+| **nerdctl** | General purpose | containerd | `containerd` |
+| **crictl** | Debugging | kubernetes | CRI compatible runtimes |
+
+- **ctr**
+  - comes w/ containerd
+  - not user friendly
+  - limited features
+
+- **nerdctl**
+  - docker-like cli
+  - supports docker-compose
+  - supports containerd features:
+    - encrypted container images
+    - lazy pulling
+    - image signing and verifying
+    - namespaces w/ k8s
+
+### CRI CLI Tools:
+
+- **crictl**
+  - installed separately
+  - inspect and debug runtimes
+    - not to create containers
+      (any created containers will be removed by kubelet)
+  - cross containre runtimes
+  - default sockets:
+
+    ```bash
+    # crictl --runtime-endpoint
+    unix:///run/containerd/containerd.sock
+    unix:///run/crio/crio.sock
+    unix:///var/run/cri-dockerd.sock
+
+    # set endpoint w/ env var
+    export CRICTL_RUNTIME_ENDPOINT=unix:///run/containerd/containerd.sock
+    ```
 
 ---
 

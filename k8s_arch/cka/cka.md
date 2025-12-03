@@ -8,8 +8,12 @@ tags: #objects
 
 - [Certified Kubernetes Administrator - CKA](#certified-kubernetes-administrator---cka)
   - [CKA Library](#cka-library)
+  - [kubernetes library](#kubernetes-librarylibkubernetes_libmd)
   - [Section 1: Resources](#section-1-resources)
   - [Section 2: Core Concepts](#section-2-core-concepts)
+    - [Cluster Architecture](#cluster-architecture)
+    - [Docker vs ContainerD](#docker-vs-containerd)
+    - [ETCD](#etcd)
 
 <!-- /code_chunk_output -->
 
@@ -17,9 +21,7 @@ tags: #objects
 
 ## CKA Library
 
-[[cka_lib]]
-
----
+## [kubernetes library](../lib/kubernetes_lib.md)
 
 ## Section 1: Resources
 
@@ -41,3 +43,14 @@ Keep the code - 20KLOUD handy while registering for the CKA or CKAD exams at Lin
 
 ## Section 2: Core Concepts
 
+### Cluster Architecture
+
+[arch](arch/arch.md)
+
+### Docker vs ContainerD
+
+[docker-vs-containerd](../lib/kubernetes_lib.md#docker-vs-containerd)
+
+### ETCD
+
+[etcd](../arch/etcd.md)

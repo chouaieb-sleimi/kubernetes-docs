@@ -1,6 +1,6 @@
 # K8S Control Plane
 
-tags: #arch
+tags: #arch #controlplane
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
@@ -8,6 +8,10 @@ tags: #arch
 
 - [K8S Control Plane](#k8s-control-plane)
   - [Components](#components)
+    - [API-Server](#api-serverapi-servermd)
+    - [ETCD](#etcdetcdmd)
+    - [Scheduler](#schedulerschedulermd)
+    - [Controller-Manager](#controller-managercontroller-managermd)
     - [Controllers](#controllers)
 
 <!-- /code_chunk_output -->
@@ -19,14 +23,20 @@ tags: #arch
 
 ## Components
 
-- **[[api-server]]**
+can be run in containers or directly on the host machine
+
+### [API-Server](api-server.md)
   - exposes the k8S API
   - front end for the k8S control plane
   - designed to scale horizontally
     - can run several instances of apiserver and balance traffic between then
-- **[[etcd]]**
-- **[[scheduler]]**
-
+### [ETCD](etcd.md)
+  - consistent and highly-available key value store
+  - used as k8S backing store for all cluster data
+  - all cluster states are stored here
+  - version 3 is used by k8S
+    - provides a watch mechanism to get notified of changes
+### [Scheduler](scheduler.md)
   - watches for newly created Pods with no assigned node
   - selects a node for them to run on
   - **scheduling factors** include:
@@ -37,7 +47,7 @@ tags: #arch
     - inter-workload interference,
     - deadlines.
 
-- **[[controller-manager]]**
+### [Controller-Manager](controller-manager.md)
   - runs controller processes
   - logically, each controller is a separate process
     - **to reduce complexity**, all are compiled into a **single binary** and run in a **single process**
@@ -48,6 +58,9 @@ tags: #arch
     - cascading-deletion garbage collection,
     - node garbage collection
     - ...
+
+- **[[container-runtime]]**
+  see [node.md#components](node.md#components) > container-runtime
 
 ### Controllers
 

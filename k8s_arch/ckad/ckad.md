@@ -11,8 +11,6 @@ tags: #k8s #arch
   - [Section 1: Resources](#section-1-resources)
   - [Section 2: Core Concepts](#section-2-core-concepts)
     - [Docker vs ContainerD](#docker-vs-containerd)
-    - [Containerd CLIs:](#containerd-clis)
-    - [CRI CLIs:](#cri-clis)
     - [Namespaces](#namespaces)
   - [Section 3: Configuration](#section-3-configuration)
     - [Define, Build, Modify Container Images](#define-build-modify-container-images)
@@ -80,7 +78,7 @@ tags: #k8s #arch
 
 ## CKAD Library
 
-[[ckad_lib]]
+[kubernetes library](../lib/kubernetes_lib.md)
 
 ---
 
@@ -107,52 +105,7 @@ Keep the code - 20KLOUD handy while registering for the CKA or CKAD exams at Lin
 
 ### Docker vs ContainerD
 
-K8s **supports containerd** and **not docker**.
-
-Supported K8s runtimes:
-
-- containerd
-- CRI-O
-- Docker Engine (cri-dockerd)
-
-### Containerd CLIs:
-
-- **ctr**
-  **purpose: debugging**
-  **community: containerd**
-  **works with: containerd**
-
-  - comes w/ containerd
-  - not user friendly
-  - limited features
-
-- **nerdctl**
-  **purpose: general purrpose**
-  **community: containerd**
-  **works with: containerd**
-  - docker-like cli
-  - supports docker-compose
-  - supports containerd features:
-    - encrypted container images
-    - lazy pulling
-    - image signing and verifying
-    - namespaces w/ k8s
-
-### CRI CLIs:
-
-- **crictl**
-  **purpose: debugging**
-  **community: kubernetes**
-  **works with: CRI compatible runtimes**
-  - installed separately
-  - inspect and debug runtimes
-    - not to create containers
-      (any created containers will be removed by kubelet)
-  - cross containre runtimes
-  - should manually set runtime endpoints (`crictl --runtime-endpoint`):
-    unix:///run/containerd/containerd.sock
-    unix:///run/crio/crio.sock
-    unix:///var/run/cri-dockerd.sock
+see [docker-vs-containerd](../lib/kubernetes_lib.md#Docker-vs-ContainerD)
 
 ### Namespaces
 

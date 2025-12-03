@@ -10,9 +10,9 @@ tags: #arch
   - [References](#references)
   - [Documentation](#documentation)
   - [K8S Components](#k8s-components)
-    - [Control Plane](#control-plane)
-    - [Nodes](#nodes)
-    - [Namespace](#namespace)
+    - [Control Plane](#control-planecontrolmd)
+    - [Nodes](#nodesnodemd)
+    - [Namespace](#namespacenamespacemd)
 
 <!-- /code_chunk_output -->
 
@@ -37,23 +37,27 @@ tags: #arch
 
 ## K8S Components
 
-### Control Plane
+### [Control Plane](control.md)
 
-[[control]]
+**components:**
 
 - api-server
 - etcd
 - scheduler
 - controller manager
 
-### Nodes
+### [Nodes](node.md)
 
-[[node]]
+**components:**
 
 - kubelet
 - kube-proxy
 - container runtime
 
-### Namespace
+### [Namespace](namespace.md)
 
-[[namespace]]
+**components:**
+
+- resource quota
+- network policy
+- limit range

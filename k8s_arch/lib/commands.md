@@ -2,23 +2,23 @@
 
 tags: #tools_utils
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Commands](#k8s-commands)
-  - [Config](#config)
-  - [Auth](#auth)
-  - [API Maintenance](#api-maintenance)
-  - [Objects](#objects)
-    - [Selection](#selection)
-    - [Export](#export)
-    - [Creation, Deletion](#creation-deletion)
-    - [Replace, Modify, Scale](#replace-modify-scale)
-  - [Rollout, Updates](#rollout-updates)
-  - [Port Forwarding](#port-forwarding)
-  - [Admission Controllers](#admission-controllers)
-  - [Helm](#helm)
+- [Config](#config)
+- [Auth](#auth)
+- [API Maintenance](#api-maintenance)
+- [Objects](#objects)
+  - [Selection](#selection)
+  - [Export](#export)
+  - [Creation, Deletion](#creation-deletion)
+  - [Replace, Modify, Scale](#replace-modify-scale)
+- [Rollout, Updates](#rollout-updates)
+- [Port Forwarding](#port-forwarding)
+- [ETCD](#etcd)
+- [Admission Controllers](#admission-controllers)
+- [Helm](#helm)
 
 <!-- /code_chunk_output -->
 
@@ -346,6 +346,16 @@ let kubectl choose the local port
 kubectl port-forward deployment/mongo :27017
 # Forwarding from 127.0.0.1:63753 -> 27017
 # Forwarding from [::1]:63753 -> 27017
+```
+
+---
+
+## ETCD
+
+```bash
+# version 3 API
+etcdctl put key1 value1
+etcdctl get key1
 ```
 
 ---

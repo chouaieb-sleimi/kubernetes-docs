@@ -1,6 +1,6 @@
 # K8S Worker Nodes
 
-tags: #arch
+tags: #arch #dataplane
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
@@ -20,8 +20,8 @@ tags: #arch
   - ensures that **containers are running in a Pod**
   - ensures that containers described in **PodSpecs** are running and healthy.
   - doesn't manage containers which were not created by k8S
-- **[[kube-proxy]]**
 
+- **[[kube-proxy]]**
   - network proxy that runs on each node in cluster
   - **maintains network rules** on nodes.
     - network rules allow network communication to Pods from network sessions inside or outside the cluster
@@ -29,11 +29,13 @@ tags: #arch
     - Otherwise, **forwards the traffic itself**
 
 - **[[container-runtime]]**
-  - responsible for managing the execution and lifecycle of containers
-  - supported container runtimes:
+  - software that is responsible for running containers
+  - examples of container runtimes:
     - **containerd**,
-    - **CRI-O**,
-    - any other **implementation of k8s CRI** (Container Runtime Interface).
+    - ~~**docker**~~ (deprecated),
+    - **rkt**,
+    - **cri-o**,
+    - any other implementation of k8s CRI (Container Runtime Interface).
       - **cri-o**
       - **cri-containerd**
       - ...
