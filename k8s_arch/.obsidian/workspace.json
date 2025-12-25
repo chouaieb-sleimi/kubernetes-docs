@@ -20,31 +20,45 @@
             }
           },
           {
-            "id": "2d0a7c6e686ec8ad",
+            "id": "de9189dba65be2cc",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ckad/security/security_context.md",
+                "file": "arch/node.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "security_context"
+              "title": "node"
             }
           },
           {
-            "id": "c3d6b6a4ccaf5dde",
+            "id": "da97c713372b7aa8",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ckad/networking/networkPolicy.md",
+                "file": "api/api-maintenance.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "networkPolicy"
+              "title": "api-maintenance"
+            }
+          },
+          {
+            "id": "ea38b40b5fe71de9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "lib/kubernetes_lib.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "kubernetes_lib"
             }
           }
         ]
@@ -100,8 +114,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -179,8 +192,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -195,51 +207,51 @@
   },
   "active": "817bcf3c3a459af7",
   "lastOpenFiles": [
-    "kubernetes.md",
-    "ckad/networking/networkPolicy.md",
+    "lib/kubernetes_lib.md",
+    "lib/api-resources-ckad.md",
+    "lib/objects_list.md",
+    "api/api-maintenance.md",
+    "api/api-resources.md",
     "api/objects_list.md",
-    "ckad/security/security_context.md",
-    "ckad/workloads/pod.md",
-    "ckad/configuration/containers/cmds_args.md",
-    "ckad/storage/volumes_types/projected.md",
-    "ckad/configuration/pod/node_selector.md",
-    "ckad/configuration/pod/toleration.md",
-    "ckad/configuration/pod/node_affinity.md",
-    "ckad/storage/volumes_types/volume_types.md",
-    "ckad/configuration/pod/limitRange.md",
-    "ckad/configuration/containers/resource.md",
-    "ckad/configuration/taint.md",
-    "ckad/configuration/configuration.md",
-    "ckad/workloads/containers.md",
-    "ckad/networking/networking.md",
-    "ckad/storage/storage.md",
-    "ckad/security/security.md",
-    "ckad/workloads/workloads.md",
-    "ckad/workloads/deployment.md",
-    "ckad/storage/volumeClaimTemplates.md",
-    "ckad/lib/helm/template.md",
-    "ckad/lib/helm/chart_yaml.md",
+    "api/api-resources_all.md",
+    "arch/data-plane/kube-proxy.md",
+    "arch/data-plane/kubelet.md",
+    "arch/node.md",
+    "data-plane",
+    "arch/control-plane/controllers.md",
+    "arch/control.md",
+    "lib/installation/installation-manual.md",
+    "cka/cka.md",
+    "ckad/networking/networkPolicy.md",
+    "arch/control-plane/scheduler.md",
+    "arch/control-plane/etcd.md",
+    "arch/control-plane/controller-manager.md",
+    "arch/control-plane/api-server.md",
+    "arch/data-plane",
+    "arch/control-plane",
+    "arch/controller-manager.md",
+    "arch/scheduler.md",
+    "arch/api-server.md",
+    "arch/etcd.md",
+    "lib/commands.md",
+    "controller-manager.md",
+    "ckad/ckad.md",
+    "lib/installation/minikube_start.log",
+    "lib/installation/kubernetes_labs.adoc",
+    "lib/installation/kubernetes_installation.adoc",
+    "lib/installation",
+    "lib/cert-changes_sep-2021.png",
+    "lib",
     "ckad/lib/helm/chart.yaml",
-    "ckad/lib/helm/variables.md",
-    "ckad/lib/helm/chart.md",
     "ckad/lib/helm",
-    "ckad/workloads/operator",
     "ckad/lib/cert-changes_sep-2021.png",
-    "ckad/storage/volumes_types",
-    "ckad/storage/volumes",
-    "ckad/storage",
-    "ckad/security/user-auth/authentication",
     "ckad/security/user-auth/authorization/admission_controller/admission-controller-phases.png",
-    "ckad/security/user-auth/authorization/admission_controller",
-    "ckad/security/user-auth/authorization",
     "ckad/security/user-auth/admission-controller-phases.png",
-    "ckad/security/user-auth",
     "api/named_groups/api-named-groups-arch.webp",
     "api/core_group/api-core-groups-arch.webp",
     "api/api-core-groups-arch.webp",
     "api/api-named-groups-arch.webp",
     "ckad/api/api-named-groups-arch.webp",
-    "ckad/api/api-named-groups.webp",
-    "ckad/security/admission-controller-phases.png"
+    "ckad/api/api-named-groups.webp"
   ]
 }
