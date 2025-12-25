@@ -8,6 +8,9 @@ tags: #arch #dataplane
 
 - [K8S Worker Nodes](#k8s-worker-nodes)
   - [Components](#components)
+    - [kubelet](#kubelet)
+    - [kube-proxy](#kube-proxy)
+    - [container-runtime](#container-runtime)
 
 <!-- /code_chunk_output -->
 
@@ -15,27 +18,25 @@ tags: #arch #dataplane
 
 ## Components
 
-- **[[kubelet]]**
-  - agent that runs on each node in the cluster
-  - ensures that **containers are running in a Pod**
-  - ensures that containers described in **PodSpecs** are running and healthy.
-  - doesn't manage containers which were not created by k8S
+### kubelet
 
-- **[[kube-proxy]]**
-  - network proxy that runs on each node in cluster
-  - **maintains network rules** on nodes.
-    - network rules allow network communication to Pods from network sessions inside or outside the cluster
-    - uses **os packet filtering layer if there is one** and it's available
-    - Otherwise, **forwards the traffic itself**
+see: [kubelet.md](./data-plane/kubelet.md)
 
-- **[[container-runtime]]**
-  - software that is responsible for running containers
-  - examples of container runtimes:
-    - **containerd**,
-    - ~~**docker**~~ (deprecated),
-    - **rkt**,
-    - **cri-o**,
-    - any other implementation of k8s CRI (Container Runtime Interface).
-      - **cri-o**
-      - **cri-containerd**
-      - ...
+### kube-proxy
+
+see: [kube-proxy.md](./data-plane/kube-proxy.md)
+
+### container-runtime
+
+see: [container-runtime.md](./data-plane/container-runtime.md)
+
+- software that is responsible for running containers
+- examples of container runtimes:
+  - **containerd**,
+  - ~~**docker**~~ (deprecated),
+  - **rkt**,
+  - **cri-o**,
+  - any other implementation of k8s CRI (Container Runtime Interface).
+    - **cri-o**
+    - **cri-containerd**
+    - ...

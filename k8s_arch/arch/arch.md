@@ -10,9 +10,9 @@ tags: #arch
   - [References](#references)
   - [Documentation](#documentation)
   - [K8S Components](#k8s-components)
-    - [Control Plane](#control-planecontrolmd)
-    - [Nodes](#nodesnodemd)
-    - [Namespace](#namespacenamespacemd)
+    - [Control Plane](#control-plane)
+    - [Nodes](#nodes)
+    - [Namespace](#namespace)
 
 <!-- /code_chunk_output -->
 
@@ -37,16 +37,20 @@ tags: #arch
 
 ## K8S Components
 
-### [Control Plane](control.md)
+### Control Plane
+
+see [control.md](control.md)
 
 **components:**
 
-- api-server
-- etcd
-- scheduler
-- controller manager
+  - api-server
+  - etcd
+  - scheduler
+  - controller manager
 
-### [Nodes](node.md)
+### Nodes
+
+see [node.md](node.md)
 
 **components:**
 
@@ -54,7 +58,9 @@ tags: #arch
 - kube-proxy
 - container runtime
 
-### [Namespace](namespace.md)
+### Namespace
+
+see [namespace.md](namespace.md)
 
 **components:**
 

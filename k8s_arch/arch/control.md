@@ -8,66 +8,108 @@ tags: #arch #controlplane
 
 - [K8S Control Plane](#k8s-control-plane)
   - [Components](#components)
-    - [API-Server](#api-serverapi-servermd)
-    - [ETCD](#etcdetcdmd)
-    - [Scheduler](#schedulerschedulermd)
-    - [Controller-Manager](#controller-managercontroller-managermd)
-    - [Controllers](#controllers)
+    - [Required Components](#required-components)
+      - [API-Server](#api-server)
+      - [ETCD](#etcd)
+      - [Scheduler](#scheduler)
+      - [Controller-Manager](#controller-manager)
+    - [Optional Components](#optional-components)
+      - [kubelet](#kubelet)
+      - [kube-proxy](#kube-proxy)
+      - [container-runtime](#container-runtime)
+  - [Addons / Other Components](#addons--other-components)
 
 <!-- /code_chunk_output -->
 
 ---
 
-- control plane components doc:
-  https://kubernetes.io/docs/concepts/overview/components/#control-plane-components
-
 ## Components
 
 can be run in containers or directly on the host machine
+**documentation:** https://kubernetes.io/docs/concepts/overview/components/#control-plane-components
 
-### [API-Server](api-server.md)
-  - exposes the k8S API
-  - front end for the k8S control plane
-  - designed to scale horizontally
-    - can run several instances of apiserver and balance traffic between then
-### [ETCD](etcd.md)
-  - consistent and highly-available key value store
-  - used as k8S backing store for all cluster data
-  - all cluster states are stored here
-  - version 3 is used by k8S
-    - provides a watch mechanism to get notified of changes
-### [Scheduler](scheduler.md)
-  - watches for newly created Pods with no assigned node
-  - selects a node for them to run on
-  - **scheduling factors** include:
-    - individual and collective resource requirements,
-    - hardware/software/policy constraints,
-    - affinity and anti-affinity specifications,
-    - data locality,
-    - inter-workload interference,
-    - deadlines.
+### Required Components
 
-### [Controller-Manager](controller-manager.md)
-  - runs controller processes
-  - logically, each controller is a separate process
-    - **to reduce complexity**, all are compiled into a **single binary** and run in a **single process**
-  - also performs lifecycle functions
-    - namespace creation and lifecycle,
-    - event garbage collection,
-    - terminated-pod garbage collection,
-    - cascading-deletion garbage collection,
-    - node garbage collection
-    - ...
+#### API-Server
 
-- **[[container-runtime]]**
-  see [node.md#components](node.md#components) > container-runtime
+see: [api-server.md](./control-plane/api-server.md)
 
-### Controllers
+#### ETCD
 
-- loops that watch the state of your cluster (API server)
-  - tracks **at least** one Kubernetes resource type
-    - these objects have a spec field that represents the **desired state**
-- make or request changes where needed
-- use the **watch mechanism** to get notified of changes
+see: [etcd.md](./control-plane/etcd.md)
 
-See [Cloud Controller Manager for more information](https://kubernetes.io/docs/concepts/architecture/cloud-controller/).
+#### Scheduler
+
+see: [scheduler.md](./control-plane/scheduler.md)
+
+#### Controller-Manager
+
+see: [controller-manager.md](./control-plane/controller-manager.md)
+### Optional Components
+
+allows scheduling and running workloads; not recommended for production
+
+#### kubelet
+
+see [node.md#components](node.md#components) > kubelet
+
+#### kube-proxy
+
+see [node.md#components](node.md#components) > kube-proxy
+
+#### container-runtime
+
+see [node.md#components](node.md#components) > container-runtime
+
+---
+
+## Addons / Other Components
+
+- **cloud-controller-manager**
+
+  Runs cloud-specific controllers that interact with the cloud API; usually deployed by cloud integrations.
+
+  - **Type:** Control-plane component (optional)
+  - **Origin:** Upstream Kubernetes component (cloud-provider specific)
+
+- **dns (CoreDNS)**
+
+  Provides service discovery and DNS for pods/services; required for normal cluster name resolution.
+
+  - **Type:** Add-on (cluster DNS)
+  - **Origin:** Upstream/default add-on (CoreDNS is the Kubernetes default)
+
+- **dashboard**
+
+  Web UI for cluster management and troubleshooting; not required for cluster operation.
+
+  - **Type:** Add-on (optional)
+  - **Origin:** Community-maintained project (kubernetes-dashboard)
+
+- **monitoring**
+
+  Collects metrics and alerts; recommended for production but not part of the core control plane.
+
+  - **Type:** Add-on (observability stack)
+  - **Origin:** Generally third‑party/community projects (Prometheus, Grafana, etc.)
+
+- **logging**
+
+  Aggregates, stores and queries logs; optional and implemented via external components.
+
+  - **Type:** Add-on (cluster logging)
+  - **Origin:** Third‑party/community projects (Fluentd/Fluent Bit, Elasticsearch, Loki, etc.)
+
+- **cluster-autoscaler**
+
+  Automatically scales node groups based on pod scheduling needs; runs as a controller in the cluster.
+
+  - **Type:** Add-on (controller)
+  - **Origin:** Upstream/community project (integrates with cloud providers)
+
+- **network add-ons (CNI plugins)**
+
+  Provide pod networking, policies, and overlays; a CNI implementation must be installed for a functional cluster.
+
+  - **Type:** Add-on (required for pod networking)
+  - **Origin:** Third‑party/community projects (Calico, Flannel, Weave, Cilium, etc.)
