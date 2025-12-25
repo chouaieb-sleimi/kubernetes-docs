@@ -16,7 +16,9 @@ tags: #tools_utils
   - [Replace, Modify, Scale](#replace-modify-scale)
 - [Rollout, Updates](#rollout-updates)
 - [Port Forwarding](#port-forwarding)
-- [ETCD](#etcd)
+- [Control+Data Plane Components](#controldata-plane-components)
+  - [etcd](#etcd)
+- [Data Plane Components](#data-plane-components)
 - [Admission Controllers](#admission-controllers)
 - [Helm](#helm)
 
@@ -350,15 +352,77 @@ kubectl port-forward deployment/mongo :27017
 
 ---
 
-## ETCD
+## Control+Data Plane Components
+
+get Control Plane components pods
+
+```bash
+# get etcd pods
+kubectl get pods -n kube-system | grep etcd
+                                  grep kube-apiserver
+                                  grep controller-manager
+                                  grep scheduler
+
+# get kube-apiserver pods
+kubectl get pods -n kube-system -l component=etcd
+                                -l component=kube-apiserver
+                                -l component=kube-controller-manager
+                                -l component=kube-scheduler
+```
+
+get Control Plane components pods
+
+```bash
+kubectl get pods -n kube-system | grep kubelet
+                                  grep kube-proxy
+
+kubectl get pods -n kube-system -l component=kubelet
+                                -l component=kube-proxy
+```
+
+### etcd
+
+configure client
+
+```bash
+# set API version (if not set defaults to v2)
+export ETCDCTL_API=3
+
+# set connection parameters
+export ETCDCTL_CACERT=/etc/kubernetes/pki/etcd/ca.cr
+export ETCDCTL_CERT=/etc/kubernetes/pki/etcd/peer.crt
+export ETCDCTL_KEY=/etc/kubernetes/pki/etcd/peer.key
+export ETCDCTL_ENDPOINTS=https://127.0.0.1:2379
+
+# etcdctl CLI options
+--cacert=/etc/kubernetes/pki/etcd/ca.crt \
+--cert=/etc/kubernetes/pki/etcd/peer.crt \
+--key=/etc/kubernetes/pki/etcd/peer.key \
+--endpoints=https://127.0.0.1:2379
+
+# example:
+# list keys used by k8s w/ options
+kubectl exec etcd-master -n kube-system -- \
+  sh -c "ETCDCTL_API=3 \
+    etcdctl get / --prefix --keys-only --limit=100 \
+    --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+    --cert=/etc/kubernetes/pki/etcd/peer.crt \
+    --key=/etc/kubernetes/pki/etcd/peer.key"
+```
 
 ```bash
 # version 3 API
 etcdctl put key1 value1
 etcdctl get key1
+
+# list keys used by k8s
+kubectl exec etcd-master -n kube-system -- \
+  etcdctl get / --prefix --keys-only
 ```
 
 ---
+
+## Data Plane Components
 
 ## Admission Controllers
 
