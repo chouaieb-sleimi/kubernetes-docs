@@ -100,7 +100,7 @@ tags: #k8s
 
 ## Objects List
 
-[[objects_list]]
+[[api-resources-ckad]]
 
 ---
 
@@ -210,6 +210,7 @@ Pre-reqs:
 
 deployment methods/modes/options:
 
+- from scratch (manual)
 - Minikube
 - MicroK8s
 - Kubeadm

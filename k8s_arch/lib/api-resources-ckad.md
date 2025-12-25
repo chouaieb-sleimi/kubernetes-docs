@@ -1,4 +1,4 @@
-# CKAD Objects List
+# CKAD Resources
 
 tags: #api 
 
@@ -23,23 +23,23 @@ tags: #api
 |                                 |            |                                 |            |                                |
 | storageclasses                  | sc         | storage.k8s.io/v1               | false      | StorageClass                   |
 |                                 |            |                                 |            |                                |
-| mutatingwebhookconfigurations   |            | admissionregistration.k8s.io/v1 | false      | MutatingWebhookConfiguration   |
-| validatingwebhookconfigurations |            | admissionregistration.k8s.io/v1 | false      | ValidatingWebhookConfiguration |
-| customresourcedefinitions       | crd,crds   | apiextensions.k8s.io/v1         | false      | CustomResourceDefinition       |
-|                                 |            |                                 |            |                                |
 | deployments                     | deploy     | apps/v1                         | true       | Deployment                     |
 | replicasets                     | rs         | apps/v1                         | true       | ReplicaSet                     |
 | statefulsets                    | sts        | apps/v1                         | true       | StatefulSet                    |
 | jobs                            |            | batch/v1                        | true       | Job                            |
 | cronjobs                        | cj         | batch/v1                        | true       | CronJob                        |
 |                                 |            |                                 |            |                                |
-| clusterroles                    |            | rbac.authorization.k8s.io/v1    | false      | ClusterRole                    |
-| clusterrolebindings             |            | rbac.authorization.k8s.io/v1    | false      | ClusterRoleBinding             |
-| roles                           |            | rbac.authorization.k8s.io/v1    | true       | Role                           |
-| rolebindings                    |            | rbac.authorization.k8s.io/v1    | true       | RoleBinding                    |
-|                                 |            |                                 |            |                                |
 | ingresses                       | ing        | networking.k8s.io/v1            | true       | Ingress                        |
 | networkpolicies                 | netpol     | networking.k8s.io/v1            | true       | NetworkPolicy                  |
 |                                 |            |                                 |            |                                |
 | helmchartconfigs                |            | helm.cattle.io/v1               | true       | HelmChartConfig                |
 | helmcharts                      |            | helm.cattle.io/v1               | true       | HelmChart                      |
+|                                 |            |                                 |            |                                |
+| clusterroles                    |            | rbac.authorization.k8s.io/v1    | false      | ClusterRole                    |
+| clusterrolebindings             |            | rbac.authorization.k8s.io/v1    | false      | ClusterRoleBinding             |
+| roles                           |            | rbac.authorization.k8s.io/v1    | true       | Role                           |
+| rolebindings                    |            | rbac.authorization.k8s.io/v1    | true       | RoleBinding                    |
+|                                 |            |                                 |            |                                |
+| mutatingwebhookconfigurations   |            | admissionregistration.k8s.io/v1 | false      | MutatingWebhookConfiguration   |
+| validatingwebhookconfigurations |            | admissionregistration.k8s.io/v1 | false      | ValidatingWebhookConfiguration |
+| customresourcedefinitions       | crd,crds   | apiextensions.k8s.io/v1         | false      | CustomResourceDefinition       |

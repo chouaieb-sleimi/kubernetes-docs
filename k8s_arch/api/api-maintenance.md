@@ -18,7 +18,7 @@ tags: #api
 
 ## Global Object List
 
-[[objects_list]]
+[[api-resources]]
 
 ## API Maintenance
 
