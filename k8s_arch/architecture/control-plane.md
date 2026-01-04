@@ -51,15 +51,15 @@ allows scheduling and running workloads; not recommended for production
 
 #### kubelet
 
-see [node.md#components](node.md#components) > kubelet
+see [[data-plane#kubelet]] > kubelet
 
 #### kube-proxy
 
-see [node.md#components](node.md#components) > kube-proxy
+see [[data-plane#kube-proxy]] > kube-proxy
 
 #### container-runtime
 
-see [node.md#components](node.md#components) > container-runtime
+see [[data-plane#container-runtime]] > container-runtime
 
 ---
 

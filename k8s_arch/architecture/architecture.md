@@ -39,7 +39,7 @@ tags: #arch
 
 ### Control Plane
 
-see [control.md](control.md)
+see [[control-plane]]
 
 **components:**
 
@@ -50,7 +50,7 @@ see [control.md](control.md)
 
 ### Nodes
 
-see [node.md](node.md)
+see [[data-plane]]
 
 **components:**
 

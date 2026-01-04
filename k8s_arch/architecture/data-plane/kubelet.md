@@ -23,4 +23,4 @@ tags: #arch #dataplane #kubelet
 
 ## Manual Installation
 
-see: [installation-manual.md](../../lib/installation/installation-manual.md#etcd)
+see: [[installation-manual]]

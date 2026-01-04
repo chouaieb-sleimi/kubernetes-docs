@@ -30,11 +30,13 @@ tags: #arch #controlplane #controllers
 
 - **[[Node Controller]]:** responsible for noticing and responding when nodes go down
 - **[[Namespace Controller]]:** manages namespace creation and deletion
+- **[[Admission_Controller]]:** governs and enforces how the cluster is used
+
 - **[[PV-binder Controller]]:** binds PersistentVolumes to PersistentVolumeClaims
 - **[[PV-Protection Controller]]:** marks PersistentVolumes as "released" when their claim is deleted
 - **[[PV-Reclaim Controller]]:** cleans up PersistentVolumes after their release
-- **[[Service Account & Token Controllers]]:** create default accounts and API access tokens for new namespaces
 
+- **[[Service Account & Token Controllers]]:** create default accounts and API access tokens for new namespaces
 - **[[Deployment Controller]]:** provides declarative updates for Pods and ReplicaSets
 - **[[DaemonSet Controller]]:** ensures that all (or some) Nodes run a copy of a Pod
 - **[[StatefulSet Controller]]:** manages the deployment and scaling of a set of Pods, and provides guarantees about the ordering and uniqueness of these Pods

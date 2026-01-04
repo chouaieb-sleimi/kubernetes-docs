@@ -31,4 +31,4 @@ kubeadm apiserver options path (pod definition file):
 
 ## Manual Installation
 
-see: [installation-manual.md](../../lib/installation/installation-manual.md#api-server)
+see: [[installation-manual]]

@@ -24,4 +24,4 @@ tags: #arch #controlplane #etcd
 
 ## Manual Installation
 
-see: [installation-manual.md](../../lib/installation/installation-manual.md#etcd)
+see: [[installation-manual]]

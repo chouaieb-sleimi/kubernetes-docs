@@ -35,4 +35,4 @@ see: [controllers.md](./controllers.md)
 
 ## Manual Installation
 
-see: [installation-manual.md](../../lib/installation/installation-manual.md#etcd)
+see: [[installation-manual]]
