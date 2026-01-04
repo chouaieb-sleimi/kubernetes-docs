@@ -1,5 +1,7 @@
 # Kubernetes Manual Installation
 
+tags: #k8s
+
 <!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->

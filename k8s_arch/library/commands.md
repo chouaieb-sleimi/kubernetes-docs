@@ -6,18 +6,23 @@ tags: #tools_utils
 
 <!-- code_chunk_output -->
 
-- [Config](#config)
-- [Auth](#auth)
+- [Cluster Maintenance](#cluster-maintenance)
+  - [Component and Node Management](#component-and-node-management)
+  - [Cluster Upgrade](#cluster-upgrade)
+  - [ETCD](#etcd)
+  - [Backup & Restore](#backup--restore)
+  - [TLS Setup](#tls-setup)
+  - [TLS Management](#tls-management)
+  - [Kubeconfig](#kubeconfig)
+  - [User Authorization](#user-authorization)
 - [API Maintenance](#api-maintenance)
 - [Objects](#objects)
   - [Selection](#selection)
-  - [Export](#export)
+  - [Monitoring, Export](#monitoring-export)
   - [Creation, Deletion](#creation-deletion)
   - [Replace, Modify, Scale](#replace-modify-scale)
 - [Rollout, Updates](#rollout-updates)
 - [Port Forwarding](#port-forwarding)
-- [Control+Data Plane Components](#controldata-plane-components)
-  - [etcd](#etcd)
 - [Data Plane Components](#data-plane-components)
 - [Admission Controllers](#admission-controllers)
 - [Helm](#helm)
@@ -26,7 +31,281 @@ tags: #tools_utils
 
 ---
 
-## Config
+## Cluster Maintenance
+
+### Component and Node Management
+
+**get control/data plane pods**
+
+```bash
+# get etcd pods
+kubectl get pods -n kube-system | grep etcd
+                                  grep kube-apiserver
+                                  grep controller-manager
+                                  grep scheduler
+                                  grep kubelet
+                                  grep kube-proxy
+
+# get kube-apiserver pods
+kubectl get pods -n kube-system -l component=etcd
+                                -l component=kube-apiserver
+                                -l component=kube-controller-manager
+                                -l component=kube-scheduler
+                                -l component=kubelet
+                                -l component=kube-proxy
+```
+
+**node management**
+
+```bash
+kubectl get nodes # list nodes and kubelet versions
+
+kubectl node cordon <node-name>      # mark node as unschedulable
+kubectl node uncordon <node-name>    # mark node as schedulable
+kubectl node drain <node-name>       # evict pods and mark node as unschedulable
+```
+
+### Cluster Upgrade
+
+**upgrade commands**
+
+```bash
+# control node upgrade
+dnf update kubeadm=<version>   # upgrade kubeadm on control plane node
+kubeadm upgrade plan
+kubeadm upgrade apply <version>
+systemctl restart kubelet      # restart kubelet to pick up new version
+
+# worker node upgrade
+kubectl drain <node-name> --ignore-daemonsets # master
+dnf update kubeadm=<version> kubectl=<version>
+kubeadm upgrade node config --kubelet-version <version>
+systemctl restart kubelet
+kubectl uncordon <node-name> # master
+```
+
+### ETCD
+
+**configure etcd client**
+
+```bash
+# set API version (if not set defaults to v2)
+export ETCDCTL_API=3
+
+# set connection parameters
+export ETCDCTL_CACERT=/etc/kubernetes/pki/etcd/ca.cr
+export ETCDCTL_CERT=/etc/kubernetes/pki/etcd/peer.crt
+export ETCDCTL_KEY=/etc/kubernetes/pki/etcd/peer.key
+export ETCDCTL_ENDPOINTS=https://127.0.0.1:2379
+
+# etcdctl CLI options
+--cacert=/etc/kubernetes/pki/etcd/ca.crt \
+--cert=/etc/kubernetes/pki/etcd/peer.crt \
+--key=/etc/kubernetes/pki/etcd/peer.key \
+--endpoints=https://127.0.0.1:2379
+
+# example:
+# list keys used by k8s w/ options
+kubectl exec etcd-master -n kube-system -- \
+  sh -c "ETCDCTL_API=3 \
+    etcdctl get / --prefix --keys-only --limit=100 \
+    --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+    --cert=/etc/kubernetes/pki/etcd/peer.crt \
+    --key=/etc/kubernetes/pki/etcd/peer.key"
+```
+
+**get/put etcd data**
+
+```bash
+# version 3 API
+etcdctl put key1 value1
+etcdctl get key1
+
+# list keys used by k8s
+kubectl exec etcd-master -n kube-system -- \
+  etcdctl get / --prefix --keys-only
+```
+
+### Backup & Restore
+
+**backup and restore resources**
+
+```bash
+# backup all resource definitions
+kubectl get all --all-namespaces -o yaml > all-deployments-backup.yaml
+```
+
+**backup/restore etcd w/ `etcdutl`**
+
+```bash
+# etcd must be stopped for file-based backup/restore
+# raw file-level backup of etcd data and WAL files
+etcdutl backup  \
+  --data-dir=/var/lib/etcd \
+  --backup-dir=/var/lib/etcd-backup
+
+# etcd restore
+cp /var/lib/etcd-backup /var/lib/etcd
+```
+
+**backup/restore etcd w/ `etcdctl`**
+
+```bash
+# etcd must be running for snapshot-based backup/restore
+# snapshot-based backup
+etcdctl snapshot save path/to/snapshot.db \
+  --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/peer.crt \
+  --key=/etc/kubernetes/pki/etcd/peer.key
+etcdctl snapshot status path/to/snapshot.db \
+  --write-out-table # check snapshot file info/metadata
+
+# etcd restore
+systemctl stop kube-apiserver
+etcdutl snapshot restore path/to/snapshot.db --data-dir /var/lib/etcd-from-backup
+# adjust etcd service definition to point to new data dir
+systemctl daemon-reload
+systemctl restart etcd
+systemctl start kube-apiserver
+```
+
+### TLS Setup
+
+**view certificate details:**
+
+```bash
+openssl x509 -in /etc/kubernetes/manifests/pki/apiserver.crt -text -noout
+
+# service setup
+journalctl -u etcd.service -l
+
+# kubeadm/pod setup
+kubectl logs etcd-master
+crictl ps -a
+crictl logs <container-id>
+```
+
+**generate `CA` keys and certificates**
+
+```bash
+# create ca.key
+openssl genrsa -out ca.key 2048
+
+# create ca.csr
+openssl req -new -key -subj "/CN=KUBERNETES-CA" -out ca.csr
+
+# self-sign ca.crt
+openssl x509 -req -in ca.csr -signkey ca.key -out ca.crt
+```
+
+**generate `admin` keys and certificates** (follow same logic for other client/server component certs)
+
+```bash
+# create admin.key
+openssl genrsa -out admin.key 2048
+
+# create admin.csr
+openssl req -new -key admin.key -subj "/CN=kube-admin/OU=system:masters" -out admin.csr
+
+# sign admin.crt using CA
+openssl x509 -req -in admin.csr -CA ca.crt -CAkey ca.key -out admin.crt
+```
+
+**kube-api openssl config file**
+
+pass it to `.csr` use:
+
+```bash
+openssl req -new -key apiserver.key -subj "/CN=kube-apiserver" \
+  -out apiserver.csr -config openssl.cnf
+```
+
+to **sign `.csr`** run:
+
+```bash
+openssl x509 -req -in apiserver.csr \
+  -CA ca.crt -CAkey ca.key -CAcreateserial \
+  -extensions v3_req -extfile openssl.cnf \
+  -out apiserver.crt -days 1000
+```
+
+```ini
+# openssl.cnf
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+
+[req_distinguished_name]
+countryName = Country Name (2 letter code)
+stateOrProvinceName = State or Province Name (full name)
+localityName = Locality Name (eg, city)
+organizationalUnitName = Organizational Unit Name (eg, section)
+commonName = Common Name (eg, YOUR name)
+emailAddress = Email Address
+
+[v3_req]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = kubernetes
+DNS.2 = kubernetes.default
+DNS.3 = kubernetes.default.svc
+DNS.4 = kubernetes.default.svc.cluster.local
+IP.1 = 10.96.0.1
+IP.1 = 172.17.0.87
+```
+
+**use `admin` cert + key** in requests
+
+```bash
+curl https://kube-apiserver:64433/api/v1/pods \
+  --key admin.key --cert admin.crt \
+  --cacert ca.crt
+```
+
+### TLS Management
+
+**issue certificates through API**
+
+```bash
+# generate .key and .csr
+openssl genrsa -out jane.key 2048
+openssl req -new -key jane.key -subj "/CN=jane" -out jane.csr
+
+# define CSR yaml
+cat jane.csr ∣ base64
+kubectl create -f jane.yaml
+```
+
+`jane.yaml`:
+
+```yaml
+apiVersion: certificates.k8s.io/v1beta1
+kind: CertificateSigningRequest
+metadata:
+  name: jane
+spec:
+  groups:
+    - system:authenticated
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+  request: <certificate-goes-here>
+```
+
+**manage certificate signing by admin**
+
+```bash
+kubectl get csr
+        certificate approve jane
+        get csr jane -o yaml # .status.certificate
+```
+
+### Kubeconfig
 
 kubectl global options
 
@@ -51,11 +330,16 @@ kubectl proxy
   Starting to serve on 127.0.0.1:8001
 ```
 
----
+### User Authorization
 
-## Auth
+**describe roles and rolebindings**
 
-get user access
+```bash
+kubectl describe role developer
+kubectl describe rolebinding devuser-developer-binding
+```
+
+**check user access**
 
 ```bash
 kubectl auth can-i [--as <user-name>] <verb> <resource>
@@ -64,7 +348,7 @@ kubectl auth can-i [--as dev-user] create deployments
 kubectl auth can-i [--as dev-user] delete pods
 ```
 
-view enabled admission controllers
+view **enabled admission controllers**
 
 ```bash
 kube-apiserver -h | grep enable-admission-plugin
@@ -78,7 +362,7 @@ kubectl exec kube-apiserver-controlplane -n kube-system -- \
 
 ## API Maintenance
 
-explore k8s objects
+**explore k8s objects**
 
 ```bash
 # get api preferred versions on the server as "group/preferred-version"
@@ -91,22 +375,25 @@ kubectl api-resources [--namespaced=[ true|false ]]
 kubectl explain <resource>[.<field-name>] [--recursive [ true|false ]]
 ```
 
-discover API tree
+**discover API tree**
 
 ```bash
-curl https://api-server-url:8001 -k
-curl https://api-server-url:8001/apis -k | grep name
+# bypass required auth (uses creds in kubeconfig)
+kubectl proxy # serves on localhost:8001
+
+curl https://api-server-url:8001 -k # API endpoints under "paths"
+curl https://api-server-url:8001/apis -k | grep "name"
 curl https://my-kube-playground:6443/version
 curl https://my-kube-playground:6443/api/v1/pods
 ```
 
-see preferred version for api group:
+see **api-group preferred version:**
 
 ```bash
 curl 127.0.0.1:8001/apis/batch | grep -iA5 preferredversion
 ```
 
-see storage version (must have `etcdctl` installed)
+see **storage version**
 
 ```bash
 ETCDCTL_API=3 etcdctl \
@@ -117,7 +404,7 @@ ETCDCTL_API=3 etcdctl \
   get "/registry/deployment/default/<deployment-name> --print-value-only
 ```
 
-enable/disable API group
+**enable/disable API group**
 
 ```bash
 ExecStart=/usr/local/bin/kube-apiserver \\
@@ -126,7 +413,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   ...
 ```
 
-bulk convert definition files form a version to another
+bulk **convert definition files** form a version to another
 
 ```bash
 # need to install the convert plugin
@@ -160,7 +447,7 @@ kubectl config set-context $(kubectl config current-context) --namespace=dev
 
 ---
 
-### Export
+### Monitoring, Export
 
 export resource definition file. _output_format: name, wide, yaml, json_
 
@@ -176,6 +463,13 @@ get service url
 
 ```bash
 minikube service <service> --url
+```
+
+get a container's logs
+
+```bash
+# <container-name> is necessary for multi-container pods.
+kubectl logs -f <pod-name> [<container-name>]
 ```
 
 ---
@@ -280,17 +574,6 @@ kubectl set [resource] [deployment] [container_name]=[new_image_name]
 
 ---
 
-Monitoring
-
-get a container's logs
-
-```bash
-# <container-name> is necessary for multi-container pods.
-kubectl logs -f <pod-name> [<container-name>]
-```
-
----
-
 ## Rollout, Updates
 
 controll rollouts
@@ -348,76 +631,6 @@ let kubectl choose the local port
 kubectl port-forward deployment/mongo :27017
 # Forwarding from 127.0.0.1:63753 -> 27017
 # Forwarding from [::1]:63753 -> 27017
-```
-
----
-
-## Control+Data Plane Components
-
-get Control Plane components pods
-
-```bash
-# get etcd pods
-kubectl get pods -n kube-system | grep etcd
-                                  grep kube-apiserver
-                                  grep controller-manager
-                                  grep scheduler
-
-# get kube-apiserver pods
-kubectl get pods -n kube-system -l component=etcd
-                                -l component=kube-apiserver
-                                -l component=kube-controller-manager
-                                -l component=kube-scheduler
-```
-
-get Control Plane components pods
-
-```bash
-kubectl get pods -n kube-system | grep kubelet
-                                  grep kube-proxy
-
-kubectl get pods -n kube-system -l component=kubelet
-                                -l component=kube-proxy
-```
-
-### etcd
-
-configure client
-
-```bash
-# set API version (if not set defaults to v2)
-export ETCDCTL_API=3
-
-# set connection parameters
-export ETCDCTL_CACERT=/etc/kubernetes/pki/etcd/ca.cr
-export ETCDCTL_CERT=/etc/kubernetes/pki/etcd/peer.crt
-export ETCDCTL_KEY=/etc/kubernetes/pki/etcd/peer.key
-export ETCDCTL_ENDPOINTS=https://127.0.0.1:2379
-
-# etcdctl CLI options
---cacert=/etc/kubernetes/pki/etcd/ca.crt \
---cert=/etc/kubernetes/pki/etcd/peer.crt \
---key=/etc/kubernetes/pki/etcd/peer.key \
---endpoints=https://127.0.0.1:2379
-
-# example:
-# list keys used by k8s w/ options
-kubectl exec etcd-master -n kube-system -- \
-  sh -c "ETCDCTL_API=3 \
-    etcdctl get / --prefix --keys-only --limit=100 \
-    --cacert=/etc/kubernetes/pki/etcd/ca.crt \
-    --cert=/etc/kubernetes/pki/etcd/peer.crt \
-    --key=/etc/kubernetes/pki/etcd/peer.key"
-```
-
-```bash
-# version 3 API
-etcdctl put key1 value1
-etcdctl get key1
-
-# list keys used by k8s
-kubectl exec etcd-master -n kube-system -- \
-  etcdctl get / --prefix --keys-only
 ```
 
 ---

@@ -1,4 +1,4 @@
-# CKAD Library
+# Kubernetes Library
 
 tags: #k8s
 
@@ -6,7 +6,7 @@ tags: #k8s
 
 <!-- code_chunk_output -->
 
-- [CKAD Library](#ckad-library)
+- [Kubernetes Library](#kubernetes-library)
   - [Documentation](#documentation)
   - [Labs](#labs)
   - [Images](#images)
@@ -33,11 +33,16 @@ tags: #k8s
 - [kubernetes.io docs - Command line tool (kubectl)](https://kubernetes.io/docs/reference/kubectl/)
 - [kubernetes.io - basic commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-strong-getting-started-strong-)
 - [kubernetes.io docs - kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
-
+- [kubernetes.io docs - declarative config](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/)
+- 
 - [kompose.io - DOCKER COMPOSE TO KUBERNETES](https://kompose.io)
 - [github.com/dockersamples - docker sample apps](https://github.com/dockersamples)
 - [Dockerhub - kodekloud voting app images](https://hub.docker.com/r/kodekloud/examplevotingapp_worker)
 - [opensource.com - Migrate databases to Kubernetes using Konveyor](https://opensource.com/article/22/5/migrating-databases-kubernetes-using-konveyor)
+-
+- [CNCF Exam Corriculum](https://github.com/cncf/curriculum)
+- [Linux Foundation Exam Tips](https://docs.linuxfoundation.org/tc-docs/certification/tips-cka-and-ckad)
+- [Linux Foundation Handbook](https://docs.linuxfoundation.org/tc-docs/certification/lf-handbook2/exam-preparation-checklist)
 
 ---
 
@@ -50,6 +55,14 @@ tags: #k8s
 - **Kubernetes Application Developer - CKAD Lab**
   https://uklabs.kodekloud.com/courses/labs-certified-kubernetes-application-developer
   Coupon `udemystudent030485`
+
+- **Kubernetes Administration - CKA Lab**
+  https://learn.kodekloud.com/user/courses/udemy-labs-certified-kubernetes-administrator-with-practice-tests
+  Coupon `kk-labs-cka-lakjg328321095305`
+
+- **Kubernetes Networking Lab**
+  https://uklabs.kodekloud.com/courses/labs-kubernetes-networking
+  Coupon `kk-labs-k8n-lakjg328321095305`
 
 - **Kubernetes Challenges**
   https://kodekloud.com/courses/kubernetes-challenge
