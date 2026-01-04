@@ -13,11 +13,14 @@ tags: #objects #configuration
 
 ---
 
-- not encrypted, only encoded
+- not encrypted, only base64 encoded
 - secrets are not encrypted in ETCD
-  - configure encryption at rest (they are stored encrypted in ETCD)
+- **further security measures/features**
+  - can configure encryption at rest (they are stored encrypted in ETCD)
     see: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/
-- anyone that cat create pods/deployments can see secrets
+  - are sent to a node **only when a pod require it** is scheduled on that node
+    - if the pod is deleted, the secret is removed from the node
+- anyone that can create pods/deployments can see secrets
   - configure least-privilege access to secrets - RBAC
 - consider third-party secrets store providers (AWS, Azure, GCP, Vault, etc.)
 

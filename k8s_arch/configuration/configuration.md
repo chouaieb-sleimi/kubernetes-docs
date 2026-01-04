@@ -49,10 +49,6 @@ podman push
 
 [[cmds_args]]
 
-## KubeConfig
-
-[[kube_config]]
-
 ## ConfigMap
 
 [[configMap]]
@@ -60,10 +56,6 @@ podman push
 ## Secrets
 
 [[secret]]
-
-## ServiceAccount
-
-[[serviceAccount]]
 
 ## Resource Requirements
 

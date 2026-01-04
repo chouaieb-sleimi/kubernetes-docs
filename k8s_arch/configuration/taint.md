@@ -4,7 +4,7 @@ tags: #configuration
 
 ---
 
-- are added to [[node]]
+- are added to nodes
 - `taint-effect` is what happends to PODs **that DO NOT TOLERATE this taint**:
   - **NoSchedule**
     pods will not be scheduled on the node
