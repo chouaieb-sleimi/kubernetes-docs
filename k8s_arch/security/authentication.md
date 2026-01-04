@@ -8,10 +8,11 @@ tags: #security
 
 - [K8S User Authentication](#k8s-user-authentication)
   - [Configure Users - Server](#configure-users---server)
-    - [Static Password File](#static-password-file)
+    - [Static Password File (Deprecated in 1.19)](#static-password-file-deprecated-in-119)
     - [Static Token File](#static-token-file)
     - [Certificates](#certificates)
-  - [Configure Users - Client](#configure-users---client)
+  - [KubeConfig](#kubeconfig)
+      - [ServiceAccount](#serviceaccount)
 
 <!-- /code_chunk_output -->
 
@@ -34,7 +35,7 @@ Types of accounts:
 
 ## Configure Users - Server
 
-### Static Password File
+### Static Password File (Deprecated in 1.19)
 
 static password file sample
 
@@ -52,6 +53,8 @@ use static password file in `kube-apiserver`
       ...
       --base-file-auth=user-details.csv
       ...
+
+> Note: you must create the appropriate RBAC roles for the users to be able to access the cluster resources
 
 use account auth in API call
 
@@ -97,6 +100,11 @@ use cert auth in kubectl
       --client-certificate admin.crt \
       --certificate-authority ca.crt
 
-## Configure Users - Client
+## KubeConfig
 
-[[kube_config]]
+[[kubeconfig]]
+
+
+#### ServiceAccount
+
+[[serviceaccount]]
