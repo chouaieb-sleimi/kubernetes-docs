@@ -73,7 +73,7 @@ get a container's logs
 
 ## Monitoring Cluster
 
-Monitoring metrics:
+**metrics:**
 
 - **node-level metrics**
 
@@ -91,7 +91,8 @@ Monitoring metrics:
     - cpu
     - memory
 
-K8s **monitoring solutions:**
+
+other K8s **monitoring solutions:**
 
 - heapster **(deprecated)**
 - metric server

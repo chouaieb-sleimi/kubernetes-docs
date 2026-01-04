@@ -30,6 +30,9 @@ deploy metrics server in minikube as an addon
 minikube addons enable metrics-server
 ```
 
+kubeadm docs: https://kubernetes.io/docs/tasks/debug-application-cluster/resource-metrics-pipeline/
+
+
 deploy metrics server in other clusters
 
 ```bash
