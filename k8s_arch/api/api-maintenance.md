@@ -33,7 +33,7 @@ curl https://my-kube-playground:6443/api/v1/pods
 
 ### API hierarchy
 
-[[api_groups]] hierarchy:
+[[api-groups]] hierarchy:
 
 - `/metrics`
 - `/healthz`
@@ -44,8 +44,8 @@ curl https://my-kube-playground:6443/api/v1/pods
     - `resources`
       - `verbs`
 - `/apis` (named groups)
-  - `named group`
-    - `version`
+  - `/named.group`; `/certificates.k8s.io`
+    - `vX`
       - `resources`
         - `verbs`
 

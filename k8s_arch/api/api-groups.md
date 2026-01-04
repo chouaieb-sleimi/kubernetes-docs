@@ -8,11 +8,10 @@ tags: #api
 
 - [[/metrics]]
 - [[/healthz]]
-- [[/version]]
-- [[/logs]]
-- /[[api]]
-  **API versions:**
-  - `/v1`
+- [[/version]] # cluster version
+- [[/logs]] # 3rd party logging apps
+- /[[api-core_group]] # called **core group**
+  - `/v1` # _API versions_
     **resources:**
     - `namespaces`
     - `pods`
@@ -27,27 +26,25 @@ tags: #api
     - `secrets`
     - `services`
       **verbs:**
-      - `list`
-      - `get`
-      - `create`
-      - `delete`
-      - `update`
-      - `watch`
-- /[[apis]]
-  **API named groups:**
+    - `list`
+    - `get`
+    - `create`
+    - `delete`
+    - `update`
+    - `watch`
+- /[[apis-named_groups]] # called **named groups**
   - /extensions
   - /storage.k8s.io
   - /authentication.k8s.io
   - /certificates.k8s.io
   - /networking.k8s.io
   - /apps
-    **API versions:**
-    - `/v1`
+    - `/v1` # _API versions_
       **resources:**
       - `/replicasets`
       - `/statefulsets`
       - `/deployments`
         **verbs:**
-        - `list`
-        - `get`
-        - ...
+      - `list`
+      - `get`
+      - ...
