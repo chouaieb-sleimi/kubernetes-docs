@@ -19,7 +19,7 @@ tags: #k8s #arch #docs #tools_utils #labs
 
 ## Architecture
 
-[arch](arch/arch.md)
+[[architecture]]
 
 ## API Maintenance
 
@@ -27,7 +27,7 @@ tags: #k8s #arch #docs #tools_utils #labs
 
 ## Library
 
-[kubernetes library](../lib/kubernetes_lib.md)
+[[library]]
 
 ## CKAD
 

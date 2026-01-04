@@ -76,9 +76,9 @@ tags: #k8s #arch
 
 ---
 
-## CKAD Library
+## Kubernetes Library
 
-[kubernetes library](../lib/kubernetes_lib.md)
+[[library]]
 
 ---
 
@@ -105,7 +105,7 @@ Keep the code - 20KLOUD handy while registering for the CKA or CKAD exams at Lin
 
 ### Docker vs ContainerD
 
-see [docker-vs-containerd](../lib/kubernetes_lib.md#Docker-vs-ContainerD)
+see [[library#Docker vs ContainerD]]
 
 ### Namespaces
 
