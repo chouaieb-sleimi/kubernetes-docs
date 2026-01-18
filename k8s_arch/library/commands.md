@@ -13,8 +13,11 @@ tags: #tools_utils
   - [Backup & Restore](#backup--restore)
   - [TLS Setup](#tls-setup)
   - [TLS Management](#tls-management)
+  - [Access to Private Registry](#access-to-private-registry)
+- [Authentication](#authentication)
   - [Kubeconfig](#kubeconfig)
-  - [User Authorization](#user-authorization)
+  - [Kubectx and Kubens](#kubectx-and-kubens)
+- [Authorization](#authorization)
 - [API Maintenance](#api-maintenance)
 - [Objects](#objects)
   - [Selection](#selection)
@@ -305,6 +308,37 @@ kubectl get csr
         get csr jane -o yaml # .status.certificate
 ```
 
+### Access to Private Registry
+
+**create a `docker-registry` secret object**
+
+```bash
+kubectl create secret docker-registry regcred \
+    --docker-server=private-registry.io \
+    --docker-username=registry-user \
+    --docker-password=registry-password \
+    --docker-email=registry-user@org.com
+```
+
+**specify the secret in pod definition file**
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  containers:
+    - name: nginx
+      image: private-registry.io/apps/internal-app
+  imagePullSecrets:
+    - name: regcred
+```
+
+---
+
+## Authentication
+
 ### Kubeconfig
 
 kubectl global options
@@ -330,7 +364,25 @@ kubectl proxy
   Starting to serve on 127.0.0.1:8001
 ```
 
-### User Authorization
+### Kubectx and Kubens
+
+`kubectx`: switch between contexts easily
+
+```bash
+kubectx                  # list all contexts
+kubectx -c               # list current context
+kubectx <context_name>   # switch to context
+kubectx -                # switch to last context
+```
+
+`kubens`: switch between namespaces easily
+
+```bash
+kubens <namespace>  # switch to namespace
+kubens -            # switch to last namespace
+```
+
+## Authorization
 
 **describe roles and rolebindings**
 
@@ -357,8 +409,6 @@ kube-apiserver -h | grep enable-admission-plugin
 kubectl exec kube-apiserver-controlplane -n kube-system -- \
   kube-apiserver -h | grep enable-admission-plugin
 ```
-
----
 
 ## API Maintenance
 

@@ -6,18 +6,12 @@
 
 - [Kubernetes Resources](#kubernetes-resources)
   - [Documentation](#documentation)
+  - [Architecture](#architecture)
+  - [Certifications](#certifications)
+    - [CKA](#cka)
+    - [CKAD](#ckad)
   - [Labs](#labs)
   - [Commands](#commands)
-    - [Config](#config)
-    - [Auth](#auth)
-    - [API](#api)
-    - [Objects](#objects)
-    - [Admission Controllers](#admission-controllers)
-    - [Export](#export)
-    - [Creation, Deletion](#creation-deletion)
-    - [Replace, Modify, Scale](#replace-modify-scale)
-    - [Rollout, Updates](#rollout-updates)
-    - [Helm](#helm)
   - [Tools](#tools)
     - [Kubernetes on the Cloud](#kubernetes-on-the-cloud)
       - [Hosted Solutions](#hosted-solutions)
@@ -48,23 +42,19 @@
 - [github.com/dockersamples - docker sample apps](https://github.com/dockersamples)
 - [Dockerhub - kodekloud voting app images](https://hub.docker.com/r/kodekloud/examplevotingapp_worker)
 
-**Kodekloud images:**
+## Architecture
 
-- ServiceAccount demo image: `gcr.io/kodekloud/customimage/my-kubernetes-dashboard`
-- Secrets demo image: `kodekloud/simple-webapp-mysql`
-- Readiness and Liveness Probes demo image: `kodekloud/webapp-delayed-start`
-- Container Logging demo image: `kodekloud/event-simulator`
-- Jobs and CronJobs demo image: `kodekloud/throw-dice`
-- Ingress demo images:
-  - `kodekloud/ecommerce:apparels`
-  - `kodekloud/ecommerce:video`
-  - `kodekloud/ecommerce:food`
-  - `kodekloud/ecommerce:404`
-- log events demo image: `kodekloud/event-simulator`
-- custom admission controllers demo image: `stackrox/admission-controller-webhook-demo:latest`
-- voting app
-  - https://github.com/kodekloudhub/example-voting-app
-  - https://github.com/kodekloudhub/example-voting-app-kubernetes
+k8s_arch/[[kubernetes]]
+
+## Certifications
+
+### CKA
+
+[[cka]]
+
+### CKAD
+
+[[ckad]]
 
 ## Labs
 
@@ -84,181 +74,7 @@
 
 ## Commands
 
-### Config
-
-kubectl global options
-
-    kubectl options
-
-kube config
-
-    kubectl config -h
-    kubectl config view
-    kubectl config view --kubeconfig=/path/to/kubeconfig
-    kubectl config use-context kubeadmin@kubeplayground
-
-use `kubectl proxy`
-
-    # reads kubeconfig and adds auth conf to commands
-    kubectl proxy
-      Starting to serve on 127.0.0.1:8001
-
-### Auth
-
-get user access
-
-    kubectl auth can-i <verb> <resource> [--as <user-name>]
-
-view enabled admission controllers
-
-    kube-apiserver -h | grep enable-admission-plugin
-
-    # in a kubeadm setup, run in kube apiserver controlplane pod
-    kubectl exec kube-apiserver-controlplane -n kube-system -- \
-      kube-apiserver -h | grep enable-admission-plugin
-
-### API
-
-    # get api preferred versions on the server as "group/preferred-version"
-    kubectl api-versions
-
-    # get api resources
-    kubectl api-resources [--namespaced=[ true|false ]]
-
-    # get resource structure
-    kubectl explain <resource>[.<field-name>] [--recursive [ true|false ]]
-
-### Objects
-
-object selection (not always interchangeable)
-
-    [ all|<resource-type> ]           # all objects
-    [ <type> <name>|<type>/<name> ]   # type and name selection
-    -f resource_definition.yaml         # file def selection
-
-namespace selection
-
-    # namespace selection
-    kubectl [command] [object] [ -A|--all-namespaces ]
-    kubectl [command] [object] [[ -n|--namespace ] <namespace-name>]
-
-    # switch to namespace
-    kubectl config set-context $(kubectl config current-context) --namespace=dev
-
-list get resources
-
-    # objects
-    kubectl describe <resource>
-    kubectl get <resource-type>[ ,<resource-type>,... ]
-    kubectl get <resource>
-    kubectl get <resource> [ -o <output-format> ]
-      # output-format: name, wide, yaml, json
-
-### Admission Controllers
-
-    # see default controllers
-    k exec kube-apiserver-controlplane -n kube-system -- \
-      kube-apiserver -h | grep -i enable-admission-plugins
-
-    # see current controllers besides default
-    ps aux | grep -v grep | grep -i kube-apiserver | grep -i admission
-
-    # add/remove admission controller
-    # valid for kubeadm deployments
-    vim /etc/kubernetes/manifests/kube-apiserver.yaml
-
-### Export
-
-export resource definition file. _output_format: name, wide, yaml, json_
-
-    kubectl get [resource] -o [output_format] > my-definition.yaml
-
-get service url
-
-    minikube service <service> --url
-
-### Creation, Deletion
-
-    # run image on cluster
-    kubectl run pod_name --image=image_name
-
-    # create resource from file or stdin
-    kubectl create -f file_path
-
-    # delete resource
-    kubectl delete [resource]
-
-### Replace, Modify, Scale
-
-replace a resource
-
-    kubectl replace [resource]
-
-apply config to resource
-
-    kubectl apply -f [config_file]
-
-edit resource (opens editor to runtime config)
-
-    kubectl edit [resource]
-
-scale resource
-
-for a _deployment_, _replica set_, _replication controller_, or _stateful set_
-
-    kubectl scale --replicas=3 [resource]
-
-changes application resources
-
-_changes are to runtime config_
-
-    kubectl set [resource] [deployment] [container_name]=[new_image_name]
-      # resources:
-        env              Update environment variables on a pod template
-        image            Update the image of a pod template
-        resources        Update resource requests/limits on objects with pod templates
-        selector         Set the selector on a resource
-        serviceaccount   Update the service account of a resource
-        subject          Update the user, group, or service account in a role binding or cluster role binding
-
-### Rollout, Updates
-
-controll rollouts
-
-rollout is valid for _deployments_, _daemonsets_, or _statefulsets_
-
-    kubectl rollout [command] [deployment]
-      # commands
-        history       View rollout history
-        pause         Mark the provided resource as paused
-        restart       Restart a resource
-        resume        Resume a paused resource
-        status        Show the status of the rollout
-        undo          Undo a previous rollout
-
-### Helm
-
-install helm: https://helm.sh/docs/intro/install
-
-    # get helm client env information
-    helm env
-
-    # configure repos
-    helm repo [ add|index|list|remove|update ] [ OPTIONS ]
-
-    # search for a chart
-    helm search [ hub|repo ] <chart-name>
-
-    # download chart
-    helm pull [ <chartURL>|<repo>/<chartname> ] [ --untar ] [ --destination <path> ]
-
-    # install chart
-    helm install <chart-name> <repo>/<chartname>
-
-    helm list
-    helm status <chart-release-name>
-    helm uninstall <chart-release-name>
-
+see [[library]] > commands
 
 ## Tools
 
@@ -419,7 +235,7 @@ Steps:
 ##### Other Setups
 
 - Installing MiniKube on CentOs Virtual Machine Using Container
-https://faun.pub/installing-minikube-on-virtual-machine-centos-using-container-getting-started-with-kubernetes-fea63893263
+  https://faun.pub/installing-minikube-on-virtual-machine-centos-using-container-getting-started-with-kubernetes-fea63893263
 
 - Install Minikube Using Virtual Machine
-https://www.server-world.info/en/note?os=CentOS_Stream_8&p=minikube
+  https://www.server-world.info/en/note?os=CentOS_Stream_8&p=minikube
