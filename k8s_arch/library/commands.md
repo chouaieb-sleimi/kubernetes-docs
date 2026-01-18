@@ -6,6 +6,7 @@ tags: #tools_utils
 
 <!-- code_chunk_output -->
 
+- [Docker](#docker)
 - [Cluster Maintenance](#cluster-maintenance)
   - [Component and Node Management](#component-and-node-management)
   - [Cluster Upgrade](#cluster-upgrade)
@@ -33,6 +34,24 @@ tags: #tools_utils
 <!-- /code_chunk_output -->
 
 ---
+
+## Docker
+
+volume mount options:
+
+```bash
+# volume mount
+docker run \
+  --mount type=bind,source=/data/mysql,target=/var/lib/mysql \
+  mysql
+
+# use custom volume driver
+docker run -it \
+  --name mysql \
+  --volume-driver rexray/ebs \
+  --mount src=ebs-vol,target=/var/lib/mysql \
+  mysql
+```
 
 ## Cluster Maintenance
 

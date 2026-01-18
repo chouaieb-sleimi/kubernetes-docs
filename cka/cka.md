@@ -58,6 +58,13 @@ tags: #k8s
     - [Image Security](#image-security)
     - [Container Security](#container-security)
     - [Network Security](#network-security)
+  - [Storage](#storage)
+    - [Docker/Container Storage](#dockercontainer-storage)
+    - [Container Runtime Interface](#container-runtime-interface)
+    - [Volumes](#volumes)
+    - [PersistentVolumes](#persistentvolumes)
+    - [PersistentVolumeClaims](#persistentvolumeclaims)
+    - [StorageClasses](#storageclasses)
 
 <!-- /code_chunk_output -->
 
@@ -203,3 +210,20 @@ see: [[security]]
 
 ### Network Security
 
+## Storage
+
+see: [[storage]]
+
+### Docker/Container Storage
+
+### Container Runtime Interface
+
+see: [[storage]] > container-storage
+
+### Volumes
+
+### PersistentVolumes
+
+### PersistentVolumeClaims
+
+### StorageClasses

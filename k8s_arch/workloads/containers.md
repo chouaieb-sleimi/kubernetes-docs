@@ -9,6 +9,7 @@ tags: #workloads
 - [K8S Containers](#k8s-containers)
   - [Multi-Container Pods](#multi-container-pods)
     - [Init Containers](#init-containers)
+  - [Interfaces](#interfaces)
 
 <!-- /code_chunk_output -->
 
@@ -94,3 +95,24 @@ If one of the `initContainers` fail to complete, Pod restarts repeatedly until t
 
 Read more about initContainers here.
 https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+
+## Interfaces
+
+non-kubernetes (MesOS, CloudFoundry,...) universal standards that allow orchestration tools to work w/ 3rd party vendor
+
+- **Container Runtime Interfaces (CRI)**
+  - rkt
+  - containerd
+  - cri-o
+- **Container Storage Interfaces (CSI)**
+  see [[container-storage]]
+  - calico
+  - flannel
+  - cilium
+- **Container Network Interfaces (CNI)**
+  - portworks
+  - Amazon EBS
+  - DellEMC
+  - Azure Disk
+  - GlusterFS
+  - ...

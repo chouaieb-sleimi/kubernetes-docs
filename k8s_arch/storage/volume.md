@@ -24,5 +24,5 @@ see: [kubernetes.io/docs - Volumes](https://kubernetes.io/docs/concepts/storage/
 - enables **safe container restart**
 - allows sharing of data across containers
 
-**volume types:** [[volume_types]]
+**volume types:** [[volume-types]]
 

@@ -7,6 +7,7 @@ tags: #storage
 <!-- code_chunk_output -->
 
 - [K8S State Persistance](#k8s-state-persistance)
+    - [Docker/Container Storage](#dockercontainer-storage)
     - [Volume](#volume)
     - [PersistentVolume](#persistentvolume)
     - [PersistentVolumeClaim](#persistentvolumeclaim)
@@ -28,6 +29,10 @@ tags: #storage
   - create `PVC` pointing to `StorageClass`
     - use `PVC` in `Pod`, `ReplicaSet` or `Deployment`
   - use `volumeClaimTemplates` pointing to `StorageClass` in `StatefulSets`
+
+### Docker/Container Storage
+
+[[container-storage]]
 
 ### Volume
 
