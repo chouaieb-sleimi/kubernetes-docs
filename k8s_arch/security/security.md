@@ -17,14 +17,11 @@ tags: #security
     - [Request Flow](#request-flow)
     - [TLS Basics](#tls-basics)
   - [TLS in Kubernetes](#tls-in-kubernetes)
-  - [Container Security](#container-security)
-    - [User Capabilities](#user-capabilities)
-    - [SecurityContext](#securitycontext)
+  - [Image and Container Security](#image-and-container-security)
+    - [Image Security](#image-security)
+    - [Container Security - Security Context](#container-security---security-context)
   - [Network Security](#network-security)
     - [NetworkPolicy](#networkpolicy)
-  - [Operator Framework](#operator-framework)
-    - [CustomControllers](#customcontrollers)
-    - [CustomResourceDefinition](#customresourcedefinition)
 
 <!-- /code_chunk_output -->
 
@@ -71,14 +68,13 @@ what can they do
 
 #### RBAC
 
-
 ### AdmissionController
 
-[[admission_controller]]
+[[admission-controller]]
 
 #### Dynamic AdmissionController
 
-[[admission_controller]] > dynamic_admission_controller
+[[admission-controller]] > dynamic_admission_controller
 
 ### Request Flow
 
@@ -108,28 +104,18 @@ what can they do
 
 ---
 
-## Container Security
+## Image and Container Security
 
-### User Capabilities
+### Image Security
 
-list user capabilities
+pass private registry creds to container-runtime in worker nodes
 
-    /usr/include/linux/capability.h
+1. create `docker-registry` type secret
+1. specify the secret in pod definition file
 
-override user privileges in podman run cmd
+### Container Security - Security Context
 
-    # add privilege flag
-    podman run --cap-add MAC_ADMIN ubuntu
-
-    # drop privilege flag
-    podman run --cap-drop KILL ubuntu
-
-    # add ALL privileges
-    podman run --privileged ubuntu
-
-### SecurityContext
-
-[[security_context]]
+[[security-context]]
 
 ---
 
@@ -138,13 +124,3 @@ override user privileges in podman run cmd
 ### NetworkPolicy
 
 [[networkPolicy]]
-
----
-
-## Operator Framework
-
-[[operator]]
-
-### CustomControllers
-
-### CustomResourceDefinition

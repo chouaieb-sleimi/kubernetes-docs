@@ -9,14 +9,9 @@ tags: #configuration
 - [K8S Configuration](#k8s-configuration)
   - [Define, Build, Modify Container Images](#define-build-modify-container-images)
   - [Commands And Arguments](#commands-and-arguments)
-  - [KubeConfig](#kubeconfig)
   - [ConfigMap](#configmap)
   - [Secrets](#secrets)
-  - [ServiceAccount](#serviceaccount)
-  - [Resource Requirements](#resource-requirements)
-    - [Resource Limits and Requests](#resource-limits-and-requests)
-    - [LimitRanges](#limitranges)
-  - [ResourceQuota](#resourcequota)
+  - [Resource Limits and Requests](#resource-limits-and-requests)
   - [Taints and Tolerations](#taints-and-tolerations)
     - [Taint - Node](#taint---node)
     - [Toleration - Pod](#toleration---pod)
@@ -57,19 +52,9 @@ podman push
 
 [[secret]]
 
-## Resource Requirements
-
-### Resource Limits and Requests
+## Resource Limits and Requests
 
 [[resource]]
-
-### LimitRanges
-
-[[limitRange]]
-
-## ResourceQuota
-
-[[resourceQuota]]
 
 ## Taints and Tolerations
 

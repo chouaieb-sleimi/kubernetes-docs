@@ -13,6 +13,7 @@ tags: #arch
     - [Control Plane](#control-plane)
     - [Nodes](#nodes)
     - [Namespace](#namespace)
+    - [Operator Framework](#operator-framework)
 
 <!-- /code_chunk_output -->
 
@@ -43,10 +44,10 @@ see [[control-plane]]
 
 **components:**
 
-  - api-server
-  - etcd
-  - scheduler
-  - controller manager
+- api-server
+- etcd
+- scheduler
+- controller manager
 
 ### Nodes
 
@@ -67,3 +68,7 @@ see [namespace.md](namespace.md)
 - resource quota
 - network policy
 - limit range
+
+### Operator Framework
+
+[[operator]]

@@ -1,5 +1,5 @@
 {
-  "collapse-filter": true,
+  "collapse-filter": false,
   "search": "",
   "showTags": false,
   "showAttachments": false,
@@ -85,7 +85,7 @@
       }
     },
     {
-      "query": "tag:monitoring",
+      "query": "",
       "color": {
         "a": 1,
         "rgb": 12807453
@@ -106,7 +106,7 @@
       }
     }
   ],
-  "collapse-display": false,
+  "collapse-display": true,
   "showArrow": true,
   "textFadeMultiplier": -2.2,
   "nodeSizeMultiplier": 1.5546875,
@@ -116,6 +116,6 @@
   "repelStrength": 15,
   "linkStrength": 1,
   "linkDistance": 170,
-  "scale": 0.4444444444444429,
+  "scale": 0.1922697567656797,
   "close": false
 }

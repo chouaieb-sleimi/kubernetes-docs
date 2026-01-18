@@ -1,6 +1,6 @@
 # K8S CustomResourceDefinition
 
-tags: #objects #workloads
+tags: #objects #arch
 
 ---
 

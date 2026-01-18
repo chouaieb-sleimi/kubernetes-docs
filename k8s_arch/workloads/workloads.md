@@ -10,7 +10,6 @@ tags: #workloads
 
 <!-- /code_chunk_output -->
 
-
 ---
 
 - [[replicationController]]
@@ -22,5 +21,4 @@ tags: #workloads
 - [[static-pod]]
 - [[horizontalPodAutoscaler]]
 - [[verticalPodAutoscaler]]
-- [[operator]]
 - [[helm]]

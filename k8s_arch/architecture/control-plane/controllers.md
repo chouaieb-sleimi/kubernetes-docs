@@ -30,7 +30,8 @@ tags: #arch #controlplane #controllers
 
 - **[[Node Controller]]:** responsible for noticing and responding when nodes go down
 - **[[Namespace Controller]]:** manages namespace creation and deletion
-- **[[Admission_Controller]]:** governs and enforces how the cluster is used
+- **[[Admission-Controller]]:** governs and enforces how the cluster is used
+- **[[Ingress-Controller]]**
 
 - **[[PV-binder Controller]]:** binds PersistentVolumes to PersistentVolumeClaims
 - **[[PV-Protection Controller]]:** marks PersistentVolumes as "released" when their claim is deleted
@@ -42,9 +43,13 @@ tags: #arch #controlplane #controllers
 - **[[StatefulSet Controller]]:** manages the deployment and scaling of a set of Pods, and provides guarantees about the ordering and uniqueness of these Pods
 - **[[Replication Controller]]:** maintains the correct number of pods for every replication controller object in the system
 
+- **[[CronJob Controller]]:** creates Jobs on a repeating schedule
+- **[[Job Controller]]:** creates one or more Pods and ensures that a specified number of them successfully terminate
+
 - **[[Endpoints Controller]]:** populates the Endpoints object (that is, joins Services & Pods)
 - **[[Garbage Collector Controller]]:** cleans up resources that have been marked for deletion
 - **[[Horizontal Pod Autoscaler Controller]]:** automatically scales the number of pods in a replication controller, deployment, or replica set based on observed CPU utilization (or, with custom metrics support, on some other application-provided metrics)
 
-- **[[CronJob Controller]]:** creates Jobs on a repeating schedule
-- **[[Job Controller]]:** creates one or more Pods and ensures that a specified number of them successfully terminate
+**Custom Controllers:**
+
+see: workloads [[customController]]

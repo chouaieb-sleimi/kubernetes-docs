@@ -34,7 +34,7 @@ tags: #k8s
 - [kubernetes.io - basic commands](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-strong-getting-started-strong-)
 - [kubernetes.io docs - kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
 - [kubernetes.io docs - declarative config](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/)
-- 
+-
 - [kompose.io - DOCKER COMPOSE TO KUBERNETES](https://kompose.io)
 - [github.com/dockersamples - docker sample apps](https://github.com/dockersamples)
 - [Dockerhub - kodekloud voting app images](https://hub.docker.com/r/kodekloud/examplevotingapp_worker)
@@ -79,6 +79,10 @@ tags: #k8s
 ---
 
 ## Images
+
+**utilities images**
+
+- google cluster end-to-end tests: `gcr.io/kubernetes-e2e-test-images/dnsutils`
 
 **sample admission controller servers**
 
@@ -130,13 +134,14 @@ Supported K8s runtimes:
 
 ### Containerd CLI Tools:
 
-| Tool | Purpose | Community | Works With |
-|------|---------|-----------|-----------|
-| **ctr** | Debugging | containerd | `containerd` |
-| **nerdctl** | General purpose | containerd | `containerd` |
-| **crictl** | Debugging | kubernetes | CRI compatible runtimes |
+| Tool        | Purpose         | Community  | Works With              |
+| ----------- | --------------- | ---------- | ----------------------- |
+| **ctr**     | Debugging       | containerd | `containerd`            |
+| **nerdctl** | General purpose | containerd | `containerd`            |
+| **crictl**  | Debugging       | kubernetes | CRI compatible runtimes |
 
 - **ctr**
+
   - comes w/ containerd
   - not user friendly
   - limited features
@@ -153,6 +158,7 @@ Supported K8s runtimes:
 ### CRI CLI Tools:
 
 - **crictl**
+
   - installed separately
   - inspect and debug runtimes
     - not to create containers

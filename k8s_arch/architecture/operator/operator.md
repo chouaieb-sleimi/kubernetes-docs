@@ -1,6 +1,6 @@
 # K8S Operator Framework
 
-tags: #objects #workloads
+tags: #objects #arch
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 

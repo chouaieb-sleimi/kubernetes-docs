@@ -10,3 +10,11 @@ kind: Namespace
 metadata:
   name: dev
 ```
+
+## LimitRange
+
+[[limitRange]]
+
+## ResourceQuota
+
+[[resourceQuota]]

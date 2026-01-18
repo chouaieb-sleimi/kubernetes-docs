@@ -4,7 +4,7 @@ tags: #objects #network #security
 
 ---
 
-demo/lab image: kodekloud/webapp-conntest
+demo/lab image: `kodekloud/webapp-conntest`
 
 - port-based or IP-based trafic control
 - specify how a pod is allowed to communicate with network "entities"

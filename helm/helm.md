@@ -1,11 +1,14 @@
 # Table of Contents
 
+tags: #k8s
+
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
 - [Table of Contents](#table-of-contents)
 - [Helm Resources](#helm-resources)
+- [Helm Commands](#helm-commands)
 - [Helm Notes](#helm-notes)
   - [YAML Syntax](#yaml-syntax)
     - [Scalars and Collections](#scalars-and-collections)
@@ -63,9 +66,13 @@
 
 ---
 
-# Helm Notes
+# Helm Commands
+
+- see [[helm_cmds]]
 
 ---
+
+# Helm Notes
 
 ## YAML Syntax
 
