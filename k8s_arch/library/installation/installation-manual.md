@@ -216,6 +216,8 @@ Wants=network.target
 [Service]
 ExecStart=/usr/local/bin/kubelet \
   --config /var/lib/kubelet/kubelet-config.yaml \
+  --cluster-dns 10.10.10.10 \
+  --cluster-domain cluster.local \
   --container-runtime=remote \
   --container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \
   --image-pull-progress-deadline=2m \

@@ -15,6 +15,11 @@ tags: #tools_utils
   - [TLS Setup](#tls-setup)
   - [TLS Management](#tls-management)
   - [Access to Private Registry](#access-to-private-registry)
+- [Networking](#networking)
+  - [CoreDNS](#coredns)
+  - [Network Namespaces](#network-namespaces)
+  - [Docker Networking](#docker-networking)
+  - [Weave Setup](#weave-setup)
 - [Authentication](#authentication)
   - [Kubeconfig](#kubeconfig)
   - [Kubectx and Kubens](#kubectx-and-kubens)
@@ -108,7 +113,7 @@ kubectl uncordon <node-name> # master
 
 ### ETCD
 
-**configure etcd client**
+**configure `etcdctl`**
 
 ```bash
 # set API version (if not set defaults to v2)
@@ -352,6 +357,159 @@ spec:
       image: private-registry.io/apps/internal-app
   imagePullSecrets:
     - name: regcred
+```
+
+---
+
+## Networking
+
+### CoreDNS
+
+**download and run CoreDNS**
+
+- by default, listens on port 53
+
+```bash
+wget https://github.com/coredns/coredns/releases/download/v1.7.0/coredns_1.7.0_linux_amd64.tgz
+coredns_1.7.0_linux_amd64.tgz
+tar -xzvf coredns_1.7.0_linux_amd64.tgz
+coredns
+./coredns
+```
+
+**configure CoreDNS**
+
+- add entries into the `/etc/hosts` file
+- Configure `Corefile` to use hosts entries
+- start/restart/reload CoreDNS
+
+```properties
+.53: {
+  cache 30
+  log
+  errors
+
+  # use /etc/hosts
+  hosts   /etc/hosts {
+    reload 1m
+    fallthrough
+  }
+
+  # forward unresolved queries to host's resolver
+  forward . /etc/erolv.conf {
+    max_concurrent 1000
+  }
+}
+```
+
+### Network Namespaces
+
+**setup virtual/bridge network** (uses Linux Bridge)
+
+```bash
+#------------------------------------
+### create netns and bridge network
+
+# create a network namespace
+ip netns add red
+ip netns add blue
+
+# add a new interface to the host to create a internal virt-network
+ip link add v-net-0 type bridge
+ip link set dev v-net-0 up # turn the interface up
+
+#------------------------------------
+### link netns and virt-network using virt-cable
+
+# create a virt-cable
+ip link add veth-red type veth peer name veth-red-br
+ip link add veth-blue type veth peer name veth-blue-br
+
+# connect virt-cable ends to netns and the virt-network
+ip link set veth-red netns red
+ip link set veth-blue netns blue
+ip link set veth-red-br master v-net-0
+ip link set veth-blue-br master v-net-0
+
+# add IP addr
+ip -n red addr add 192.168.15.1/24 dev veth-red   # virt-cable netns interfaces
+ip -n blue addr add 192.168.15.2/24 dev veth-blue # virt-cable netns interfaces
+ip addr add 192.168.15.5/24 dev v-net-0           # virt-network interface (ip link)
+
+# activate virt-cable interfaces
+ip -n red link set veth-red up
+ip -n blue link set veth-blue up
+
+# activate virt-cable interfaces (attached to host/virt-switch link)
+ip link set dev veth-red-br up
+ip link set dev veth-blue-br up
+
+#------------------------------------
+### configure egress communication for netns
+
+# configure routes on netns
+ip netns exec blue route
+ip netns exec blue ip route add 192.168.1.0/24 via 192.168.15.5
+ip netns exec blue ip route add default via 192.168.15.5
+
+# enable NAT for packets routing from virt-network on host (for destination response)
+iptables -t nat -A POSTROUTING -s 192.168.15.0/24 -j MASQUERADE
+# -t    Use the NAT table
+# -A    Append rule to POSTROUTING chain (rules applied after routing decision)
+# -s    Match source IP addresses from virtual network subnet
+# -j    "Jump" to MASQUERADE target which replaces source IP with host's IP
+
+#------------------------------------
+### configure ingress communication to netns
+
+# add port forwarding rule to allow external traffic to reach container
+iptables -t nat -A PREROUTING --dport 80 --to-destination 192.168.15.2:80 -j DNAT
+# -t nat              Use NAT table for port forwarding rules
+# -A PREROUTING       Add rule to PREROUTING chain (rules applied before routing decision)
+# --dport 80          Match destination port 80 (HTTP)
+# --to-destination    Forward matched traffic to container IP and port
+# -j                  Jump to DNAT target to modify destination address
+```
+
+display NAT table rules
+
+```bash
+iptables -nvL -t nat
+# -n         Show numeric output (don't resolve hostnames)
+# -v         Verbose output
+# -L         List rules
+# -t nat     Show NAT table
+```
+
+### Docker Networking
+
+see interfaces
+
+```bash
+docker run nginx
+
+# check netns
+ip netns
+ip -n $(ip netns) link  # check virt-cable netns's endpoint
+ip -n $(ip netns) addr  # check virt-cable netns's endpoint address
+ip link                 # check virt-cable virt-network's bridge port(look for 'master docker0')
+```
+
+use docker w/ CNI (how kubernetes uses docker)
+
+```bash
+# create docker w/ no net config
+docker run --network=none nginx
+
+ip netns             # get netns_id
+bridge add netns_id  /var/run/netns/netns_id # manually invokecni plugin
+```
+
+### Weave Setup
+
+```yaml
+# deployed as deamonset pods on the cluster
+kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
 ```
 
 ---

@@ -21,13 +21,16 @@ tags: #arch #dataplane #kube-proxy
   - network rules allow network communication to Pods from network sessions inside or outside the cluster
   - uses **os packet filtering layer if there is one** and it's available
   - Otherwise, **forwards the traffic itself**
-- supports service abstraction (ClusterIP, NodePort, LoadBalancer)
+- manages [[service]] abstraction (ClusterIP, NodePort, LoadBalancer) across the cluster
 - supports different proxy modes:
+  - **userspace**
+    listens on a port for each service
+  - **ipvs** (more performant, requires additional setup)
   - **iptables** (default, recommended)
-    - service: db(10.96.0.12) 
+    managed as forwarding tables on each proxy-kube
+    example: `service db`(10.96.0.12:1521)
     -> kube-proxy on nodeA > podIP(10.32.0.14)
     -> kube-proxy on nodeB > podIP(10.32.0.15)
-  - **ipvs** (more performant, requires additional setup)
 - can be run in userspace mode (deprecated)
 
 ## Manual Installation

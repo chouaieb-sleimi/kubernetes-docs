@@ -14,7 +14,7 @@ tags: #k8s
     - [Docker vs ContainerD](#docker-vs-containerd)
     - [Control Plane Components](#control-plane-components)
     - [Data Plane Components](#data-plane-components)
-  - [Scheduling](#scheduling)
+  - [Section 3: Scheduling](#section-3-scheduling)
     - [Manual Scheduling](#manual-scheduling)
     - [Labels and Selectors](#labels-and-selectors)
     - [Taints and Tolerations](#taints-and-tolerations)
@@ -28,8 +28,8 @@ tags: #k8s
     - [Scheduler Profiles](#scheduler-profiles)
     - [Admission Controllers](#admission-controllers)
       - [Custom/Dynamic Admission Controllers](#customdynamic-admission-controllers)
-  - [Logging and Monitoring](#logging-and-monitoring)
-  - [Application Lifecycle Management](#application-lifecycle-management)
+  - [Section 4: Logging and Monitoring](#section-4-logging-and-monitoring)
+  - [Section 5: Application Lifecycle Management](#section-5-application-lifecycle-management)
     - [Rolling Updates and Rollbacks](#rolling-updates-and-rollbacks)
     - [Configure Applications](#configure-applications)
     - [Commands and Arguments](#commands-and-arguments)
@@ -39,12 +39,12 @@ tags: #k8s
       - [Manual Scaling](#manual-scaling)
       - [Dynamic Scaling - Horizontal](#dynamic-scaling---horizontal)
       - [Dynamic Scaling - Vertical](#dynamic-scaling---vertical)
-  - [Cluster Maintenance](#cluster-maintenance)
+  - [Section 6: Cluster Maintenance](#section-6-cluster-maintenance)
     - [OS Patching](#os-patching)
     - [Kubernetes Releases](#kubernetes-releases)
     - [Cluster Upgrade](#cluster-upgrade)
     - [Backup & Restore](#backup--restore)
-  - [Security](#security)
+  - [Section 7: Security](#section-7-security)
     - [Basic Authentication (Passwords and Tokens)](#basic-authentication-passwords-and-tokens)
     - [TLS Basics](#tls-basics)
     - [TLS in Kubernetes](#tls-in-kubernetes)
@@ -58,13 +58,24 @@ tags: #k8s
     - [Image Security](#image-security)
     - [Container Security](#container-security)
     - [Network Security](#network-security)
-  - [Storage](#storage)
+  - [Section 8: Storage](#section-8-storage)
     - [Docker/Container Storage](#dockercontainer-storage)
-    - [Container Runtime Interface](#container-runtime-interface)
+    - [Container Runtime Interface (CRI)](#container-runtime-interface-cri)
     - [Volumes](#volumes)
     - [PersistentVolumes](#persistentvolumes)
     - [PersistentVolumeClaims](#persistentvolumeclaims)
     - [StorageClasses](#storageclasses)
+  - [Section 9: Networking](#section-9-networking)
+    - [Intro to Switching Routing Gateways](#intro-to-switching-routing-gateways)
+    - [Intro to DNS](#intro-to-dns)
+    - [CoreDNS](#coredns)
+    - [Network Namespaces](#network-namespaces)
+    - [Docker Networking](#docker-networking)
+    - [Container Networking Interface (CNI)](#container-networking-interface-cni)
+    - [Cluster Networking](#cluster-networking)
+    - [Pod Networking](#pod-networking)
+    - [Weave CNI + IPAM](#weave-cni--ipam)
+    - [Service Networking](#service-networking)
 
 <!-- /code_chunk_output -->
 
@@ -104,15 +115,15 @@ Keep the code - 20KLOUD handy while registering for the CKA or CKAD exams at Lin
 
 ### Control Plane Components
 
-[[control-plane]]
+[[architecture]] > control-plane
 
 ### Data Plane Components
 
-[[data-plane]]
+[[architecture]] > data-plane
 
-## Scheduling
+## Section 3: Scheduling
 
-see: [[scheduler]]
+[[architecture]] > control-plane > scheduler
 
 ### Manual Scheduling
 
@@ -138,17 +149,17 @@ see: [[scheduler]]
 
 ### Admission Controllers
 
-see: [[admission-controller.md]]
+see: [[controllers]] > admission-controller
 
 #### Custom/Dynamic Admission Controllers
 
-see: [dynamic_admission_controller.md](../architecture/control-plane/controllers/dynamic_admission_controller.md)
+see: [[controllers]] > admission-controller > dynamic_admission_controller
 
-## Logging and Monitoring
+## Section 4: Logging and Monitoring
 
 see: [ckad.md#Section 5: Observability And API Maintenance](../ckad/ckad.md#Section-5-Observability-And-API-Maintenance)
 
-## Application Lifecycle Management
+## Section 5: Application Lifecycle Management
 
 ### Rolling Updates and Rollbacks
 
@@ -168,7 +179,7 @@ see: [ckad.md#Section 5: Observability And API Maintenance](../ckad/ckad.md#Sect
 
 #### Dynamic Scaling - Vertical
 
-## Cluster Maintenance
+## Section 6: Cluster Maintenance
 
 see: [[maintenance]]
 
@@ -180,7 +191,7 @@ see: [[maintenance]]
 
 ### Backup & Restore
 
-## Security
+## Section 7: Security
 
 see: [[security]]
 
@@ -210,13 +221,13 @@ see: [[security]]
 
 ### Network Security
 
-## Storage
+## Section 8: Storage
 
 see: [[storage]]
 
 ### Docker/Container Storage
 
-### Container Runtime Interface
+### Container Runtime Interface (CRI)
 
 see: [[storage]] > container-storage
 
@@ -227,3 +238,28 @@ see: [[storage]] > container-storage
 ### PersistentVolumeClaims
 
 ### StorageClasses
+
+## Section 9: Networking
+
+see: [[networking]]
+
+### Intro to Switching Routing Gateways
+
+### Intro to DNS
+
+### CoreDNS
+
+### Network Namespaces
+
+### Docker Networking
+
+### Container Networking Interface (CNI)
+
+### Cluster Networking
+
+### Pod Networking
+
+### Weave CNI + IPAM
+
+### Service Networking
+

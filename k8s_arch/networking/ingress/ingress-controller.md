@@ -9,11 +9,10 @@ tags: #objects #network
 - [K8S Ingress Controller Deployment](#k8s-ingress-controller-deployment)
   - [Ingress ConfigMap](#ingress-configmap)
   - [Ingress ServiceAccount](#ingress-serviceaccount)
-    - [ServiceAccount Roles](#serviceaccount-roles)
-    - [ServiceAccount RoleBindings](#serviceaccount-rolebindings)
-    - [ServiceAccount ClusterRoleBindings](#serviceaccount-clusterrolebindings)
+    - [Roles](#roles)
+    - [RoleBindings](#rolebindings)
+    - [ClusterRoleBindings](#clusterrolebindings)
   - [Ingress Controller Deployment](#ingress-controller-deployment)
-    - [Controller Deployment](#controller-deployment)
   - [Ingress Service](#ingress-service)
 
 <!-- /code_chunk_output -->
@@ -30,6 +29,8 @@ tags: #objects #network
 ## Ingress ConfigMap
 
 create ingress configMap
+
+- makes it easy to change nginx config later
 
 ```yaml
 apiVersion: v1
@@ -51,7 +52,7 @@ metadata:
 
 > Note: Roles, ClusterRoles and RoleBindings must be configured as well
 
-### ServiceAccount Roles
+### Roles
 
 ```bash
 kubectl get role --namespace ingress-nginx
@@ -177,7 +178,7 @@ items:
         - create
 ```
 
-### ServiceAccount RoleBindings
+### RoleBindings
 
 ```yaml
 # for ingress-nginx
@@ -234,7 +235,7 @@ items:
       namespace: ingress-nginx
 ```
 
-### ServiceAccount ClusterRoleBindings
+### ClusterRoleBindings
 
 ```yaml
 # for ingress-nginx
@@ -335,8 +336,6 @@ rules:
 ```
 
 ## Ingress Controller Deployment
-
-### Controller Deployment
 
 ```yaml
 apiVersion: apps/v1

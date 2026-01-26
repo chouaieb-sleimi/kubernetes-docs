@@ -12,6 +12,7 @@ tags: #objects #network
     - [Single URL - Single paths - Single backend](#single-url---single-paths---single-backend)
     - [Single URL - Mutliple paths - Mutliple backends](#single-url---mutliple-paths---mutliple-backends)
     - [Multiple URLs - Mutliple backends](#multiple-urls---mutliple-backends)
+    - [Rewrite Target](#rewrite-target)
 
 <!-- /code_chunk_output -->
 
@@ -23,12 +24,25 @@ tags: #objects #network
   - load balancing
   - SSL termination
   - name-based virtual hosting
+- **ingress limitations**
+  - no support for:
+    - multi-tenancy
+    - namespace isolation
+    - no RBAC for features
+    - no resource isolation
+    - TCP/UDP routing
+    - traffic splitting/weighting
+    - header manipulation
+    - authentication
+    - rate limiting
+    - custom error pages
+    - session affinity
+
 
 **Ingress components:**
 
 - **Ingress controller** (Ingress runtimes)
   a special LoadBalancer container deployment customized for Ingress. They can be:
-
   - Cloud LoadBalancers (supported)
   - Nginx (supported)
   - HAProxy
@@ -65,10 +79,6 @@ kubectl get ingress --namespace <namespace-name>
 ```
 
 create ingress imperatively
-
-```bash
-
-```
 
 ```bash
 # format
@@ -209,4 +219,54 @@ spec:
                   number: 80
 ```
 
+### Rewrite Target
 
+rewrites `ingress-url/pay` > `service/`
+
+- instead of `ingress-url/pay` > `service/pay`
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-pay
+  annotations:
+    nginx.ingress.kubernetes.io/rerite-target: /
+
+spec:
+  rules:
+    - host: my-pay.website
+      http:
+        paths:
+          - path: /pay
+            backend:
+              service:
+                name: wear-service
+                port:
+                  number: 80
+```
+
+- rewrites `rewrite.bar.com/something` > `rewrite.bar.com/`
+- rewrites `rewrite.bar.com/something/` > `rewrite.bar.com/`
+- rewrites `rewrite.bar.com/something/new` > `rewrite.bar.com/new`
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-pay
+  annotations:
+    nginx.ingress.kubernetes.io/rerite-target: /$2
+
+spec:
+  rules:
+    - host: rewrite.bar.com
+      http:
+        paths:
+          - path: /something(/|$)(.*)
+            backend:
+              service:
+                name: wear-service
+                port:
+                  number: 80
+```
