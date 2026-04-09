@@ -2,16 +2,15 @@
 
 tags: #security
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [TLS in Kubernetes](#tls-in-kubernetes)
-  - [TLS Architecture](#tls-architecture)
-  - [TLS for kube-apiserver](#tls-for-kube-apiserver)
-  - [TLS for kubelets](#tls-for-kubelets)
-  - [Certificates API](#certificates-api)
-  - [KubeConfig](#kubeconfig)
+- [TLS Architecture](#tls-architecture)
+- [TLS for kube-apiserver](#tls-for-kube-apiserver)
+- [TLS for kubelets](#tls-for-kubelets)
+- [Certificates API](#certificates-api)
+- [KubeConfig](#kubeconfig)
 
 <!-- /code_chunk_output -->
 

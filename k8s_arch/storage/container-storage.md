@@ -2,14 +2,13 @@
 
 tags: #storage
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [Container Storage](#container-storage)
-  - [Docker Storage](#docker-storage)
-  - [Kubernetes Container-Runtime Storage](#kubernetes-container-runtime-storage)
-    - [Container Storage Interface](#container-storage-interface)
+- [Docker Storage](#docker-storage)
+- [Kubernetes Container-Runtime Storage](#kubernetes-container-runtime-storage)
+  - [Container Storage Interface](#container-storage-interface)
 
 <!-- /code_chunk_output -->
 

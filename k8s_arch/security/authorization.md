@@ -2,19 +2,18 @@
 
 tags: #security
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S User Auhorization](#k8s-user-auhorization)
-  - [Authorization modes](#authorization-modes)
-    - [Node Authorizer](#node-authorizer)
-    - [ABAC - Atribute Based Access Control](#abac---atribute-based-access-control)
-    - [RBAC - Role Based Access Control](#rbac---role-based-access-control)
-    - [Webhook](#webhook)
-  - [RBAC](#rbac)
-    - [Roles and RoleBindings](#roles-and-rolebindings)
-    - [ClusterRoles and ClusterRoleBindings](#clusterroles-and-clusterrolebindings)
+- [Authorization modes](#authorization-modes)
+  - [Node Authorizer](#node-authorizer)
+  - [ABAC - Atribute Based Access Control](#abac---atribute-based-access-control)
+  - [RBAC - Role Based Access Control](#rbac---role-based-access-control)
+  - [Webhook](#webhook)
+- [RBAC](#rbac)
+  - [Roles and RoleBindings](#roles-and-rolebindings)
+  - [ClusterRoles and ClusterRoleBindings](#clusterroles-and-clusterrolebindings)
 
 <!-- /code_chunk_output -->
 

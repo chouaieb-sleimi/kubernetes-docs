@@ -2,12 +2,11 @@
 
 tags: #objects #network
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Gateway API Routes](#k8s-gateway-api-routes)
-  - [Routes Overview](#routes-overview)
+- [Routes Overview](#routes-overview)
 
 <!-- /code_chunk_output -->
 

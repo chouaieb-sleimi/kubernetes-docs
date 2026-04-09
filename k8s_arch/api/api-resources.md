@@ -2,13 +2,12 @@
 
 tags: #api
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Objects/Resources](#k8s-objectsresources)
-  - [CKAD Resources](#ckad-resources)
-  - [All Resources](#all-resources)
+- [CKAD Resources](#ckad-resources)
+- [All Resources](#all-resources)
 
 <!-- /code_chunk_output -->
 

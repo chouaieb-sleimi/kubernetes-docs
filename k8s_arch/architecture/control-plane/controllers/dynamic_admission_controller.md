@@ -2,13 +2,12 @@
 
 tags: #objects #security
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Dynamic AdmissionController](#k8s-dynamic-admissioncontroller)
-  - [Overview](#overview)
-  - [Custom Dynamic Controller Deployment](#custom-dynamic-controller-deployment)
+- [Overview](#overview)
+- [Custom Dynamic Controller Deployment](#custom-dynamic-controller-deployment)
 
 <!-- /code_chunk_output -->
 

@@ -2,12 +2,11 @@
 
 tags: #objects #configuration
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Secret](#k8s-secret)
-  - [Consume Secret](#consume-secret)
+- [Consume Secret](#consume-secret)
 
 <!-- /code_chunk_output -->
 

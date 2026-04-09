@@ -2,15 +2,14 @@
 
 tags: #arch #dataplane
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Worker Nodes](#k8s-worker-nodes)
-  - [Components](#components)
-    - [kubelet](#kubelet)
-    - [kube-proxy](#kube-proxy)
-    - [container-runtime](#container-runtime)
+- [Components](#components)
+  - [kubelet](#kubelet)
+  - [kube-proxy](#kube-proxy)
+  - [container-runtime](#container-runtime)
 
 <!-- /code_chunk_output -->
 

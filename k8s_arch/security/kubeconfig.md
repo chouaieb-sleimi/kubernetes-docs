@@ -2,15 +2,14 @@
 
 tags: #security
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [KubeConfig](#kubeconfig)
-  - [KubeConfig Architecture](#kubeconfig-architecture)
-  - [KubeConfig Structure and Contents](#kubeconfig-structure-and-contents)
-  - [Namespaces in KubeConfig](#namespaces-in-kubeconfig)
-  - [Samples](#samples)
+- [KubeConfig Architecture](#kubeconfig-architecture)
+- [KubeConfig Structure and Contents](#kubeconfig-structure-and-contents)
+- [Namespaces in KubeConfig](#namespaces-in-kubeconfig)
+- [Samples](#samples)
 
 <!-- /code_chunk_output -->
 

@@ -2,13 +2,12 @@
 
 tags: #configuration #workloads
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Pod Resource Limits and Requests](#k8s-pod-resource-limits-and-requests)
-  - [Limits and Requests Overview](#limits-and-requests-overview)
-  - [Limits and Requests in Pods](#limits-and-requests-in-pods)
+- [Limits and Requests Overview](#limits-and-requests-overview)
+- [Limits and Requests in Pods](#limits-and-requests-in-pods)
 
 <!-- /code_chunk_output -->
 

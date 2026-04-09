@@ -2,17 +2,16 @@
 
 tags: #objects #network
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Ingress](#k8s-ingress)
-  - [Ingress Controller](#ingress-controller)
-  - [Ingress Resources](#ingress-resources)
-    - [Single URL - Single paths - Single backend](#single-url---single-paths---single-backend)
-    - [Single URL - Mutliple paths - Mutliple backends](#single-url---mutliple-paths---mutliple-backends)
-    - [Multiple URLs - Mutliple backends](#multiple-urls---mutliple-backends)
-    - [Rewrite Target](#rewrite-target)
+- [Ingress Controller](#ingress-controller)
+- [Ingress Resources](#ingress-resources)
+  - [Single URL - Single paths - Single backend](#single-url---single-paths---single-backend)
+  - [Single URL - Mutliple paths - Mutliple backends](#single-url---mutliple-paths---mutliple-backends)
+  - [Multiple URLs - Mutliple backends](#multiple-urls---mutliple-backends)
+  - [Rewrite Target](#rewrite-target)
 
 <!-- /code_chunk_output -->
 

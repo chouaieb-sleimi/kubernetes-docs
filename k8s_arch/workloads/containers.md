@@ -2,14 +2,13 @@
 
 tags: #workloads
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Containers](#k8s-containers)
-  - [Multi-Container Pods](#multi-container-pods)
-    - [Init Containers](#init-containers)
-  - [Interfaces](#interfaces)
+- [Multi-Container Pods](#multi-container-pods)
+  - [Init Containers](#init-containers)
+- [Interfaces](#interfaces)
 
 <!-- /code_chunk_output -->
 

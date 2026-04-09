@@ -2,20 +2,19 @@
 
 tags: #security
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [TLS Basics](#tls-basics)
-  - [Symmetric encryption](#symmetric-encryption)
-  - [Asymmetric encryption](#asymmetric-encryption)
-  - [Certificates](#certificates)
-    - [Issuing Certificates](#issuing-certificates)
-    - [Certificate Authority](#certificate-authority)
-  - [PKI](#pki)
-    - [PKI Components & Relationships](#pki-components--relationships)
-    - [TLS Communication Process](#tls-communication-process)
-    - [Certificate/Key File Extensions](#certificatekey-file-extensions)
+- [Symmetric encryption](#symmetric-encryption)
+- [Asymmetric encryption](#asymmetric-encryption)
+- [Certificates](#certificates)
+  - [Issuing Certificates](#issuing-certificates)
+  - [Certificate Authority](#certificate-authority)
+- [PKI](#pki)
+  - [PKI Components & Relationships](#pki-components--relationships)
+  - [TLS Communication Process](#tls-communication-process)
+  - [Certificate/Key File Extensions](#certificatekey-file-extensions)
 
 <!-- /code_chunk_output -->
 

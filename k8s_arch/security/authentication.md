@@ -2,17 +2,16 @@
 
 tags: #security
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S User Authentication](#k8s-user-authentication)
-  - [Configure Users - Server](#configure-users---server)
-    - [Static Password File (Deprecated in 1.19)](#static-password-file-deprecated-in-119)
-    - [Static Token File](#static-token-file)
-    - [Certificates](#certificates)
-  - [KubeConfig](#kubeconfig)
-      - [ServiceAccount](#serviceaccount)
+- [Configure Users - Server](#configure-users---server)
+  - [Static Password File (Deprecated in 1.19)](#static-password-file-deprecated-in-119)
+  - [Static Token File](#static-token-file)
+  - [Certificates](#certificates)
+- [KubeConfig](#kubeconfig)
+    - [ServiceAccount](#serviceaccount)
 
 <!-- /code_chunk_output -->
 

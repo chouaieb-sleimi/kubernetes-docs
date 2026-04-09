@@ -2,15 +2,14 @@
 
 tags: #objects #network
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Gateay API](#k8s-gateay-api)
-    - [GatewayClass](#gatewayclass)
-    - [Gateway](#gateway)
-    - [Routes](#routes)
-      - [HTTPRoute](#httproute)
+- [GatewayClass](#gatewayclass)
+- [Gateway](#gateway)
+- [Routes](#routes)
+  - [HTTPRoute](#httproute)
 
 <!-- /code_chunk_output -->
 

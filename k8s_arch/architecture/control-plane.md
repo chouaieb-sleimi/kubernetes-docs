@@ -2,22 +2,21 @@
 
 tags: #arch #controlplane
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Control Plane](#k8s-control-plane)
-  - [Components](#components)
-    - [Required Components](#required-components)
-      - [API-Server](#api-server)
-      - [ETCD](#etcd)
-      - [Scheduler](#scheduler)
-      - [Controller-Manager](#controller-manager)
-    - [Optional Components](#optional-components)
-      - [kubelet](#kubelet)
-      - [kube-proxy](#kube-proxy)
-      - [container-runtime](#container-runtime)
-  - [Addons / Other Components](#addons--other-components)
+- [Components](#components)
+  - [Required Components](#required-components)
+    - [API-Server](#api-server)
+    - [ETCD](#etcd)
+    - [Scheduler](#scheduler)
+    - [Controller-Manager](#controller-manager)
+  - [Optional Components](#optional-components)
+    - [kubelet](#kubelet)
+    - [kube-proxy](#kube-proxy)
+    - [container-runtime](#container-runtime)
+- [Addons / Other Components](#addons--other-components)
 
 <!-- /code_chunk_output -->
 

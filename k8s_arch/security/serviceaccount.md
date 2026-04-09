@@ -2,14 +2,13 @@
 
 tags: #objects #security
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S ServiceAccount](#k8s-serviceaccount)
-    - [Enhanced Security Features (Kubernetes v1.22+)](#enhanced-security-features-kubernetes-v122)
-    - [Use ServiceAccounts](#use-serviceaccounts)
-    - [ServiceAccounts Access Tokens](#serviceaccounts-access-tokens)
+- [Enhanced Security Features (Kubernetes v1.22+)](#enhanced-security-features-kubernetes-v122)
+- [Use ServiceAccounts](#use-serviceaccounts)
+- [ServiceAccounts Access Tokens](#serviceaccounts-access-tokens)
 
 <!-- /code_chunk_output -->
 

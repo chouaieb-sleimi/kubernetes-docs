@@ -2,19 +2,18 @@
 
 tags: #objects #monitoring
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Observability & Monitoring](#k8s-observability--monitoring)
-  - [Readiness and Liveness Probes](#readiness-and-liveness-probes)
-    - [Pod Status](#pod-status)
-    - [Pod Conditions](#pod-conditions)
-  - [Readiness Probe](#readiness-probe)
-  - [Liveness Probe](#liveness-probe)
-  - [Container Logging](#container-logging)
-  - [Monitoring Cluster](#monitoring-cluster)
-    - [Metrics Server Overview](#metrics-server-overview)
+- [Readiness and Liveness Probes](#readiness-and-liveness-probes)
+  - [Pod Status](#pod-status)
+  - [Pod Conditions](#pod-conditions)
+- [Readiness Probe](#readiness-probe)
+- [Liveness Probe](#liveness-probe)
+- [Container Logging](#container-logging)
+- [Monitoring Cluster](#monitoring-cluster)
+  - [Metrics Server Overview](#metrics-server-overview)
 
 <!-- /code_chunk_output -->
 

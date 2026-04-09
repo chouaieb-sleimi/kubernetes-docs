@@ -2,29 +2,28 @@
 
 tags: #network
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Networking](#k8s-networking)
-  - [Networking Concepts](#networking-concepts)
-    - [Network Namespaces](#network-namespaces)
-    - [Docker Networking](#docker-networking)
-    - [Container Networking Interface (CNI)](#container-networking-interface-cni)
-    - [Pod Networking](#pod-networking)
-    - [Weave CNI + IPAM](#weave-cni--ipam)
-  - [Cluster Networking](#cluster-networking)
-    - [NetworkPolicy](#networkpolicy)
-    - [CoreDNS](#coredns)
-    - [Port Forwarding](#port-forwarding)
-  - [Service Networking](#service-networking)
-    - [NodePort](#nodeport)
-    - [ClusterIP](#clusterip)
-    - [LoadBalancer](#loadbalancer)
-  - [Ingress](#ingress)
-    - [Ingress Controller](#ingress-controller)
-    - [Ingress Resources](#ingress-resources)
-    - [Gateway API](#gateway-api)
+- [Networking Concepts](#networking-concepts)
+  - [Network Namespaces](#network-namespaces)
+  - [Docker Networking](#docker-networking)
+  - [Container Networking Interface (CNI)](#container-networking-interface-cni)
+  - [Pod Networking](#pod-networking)
+  - [Weave CNI + IPAM](#weave-cni--ipam)
+- [Cluster Networking](#cluster-networking)
+  - [NetworkPolicy](#networkpolicy)
+  - [CoreDNS](#coredns)
+  - [Port Forwarding](#port-forwarding)
+- [Service Networking](#service-networking)
+  - [NodePort](#nodeport)
+  - [ClusterIP](#clusterip)
+  - [LoadBalancer](#loadbalancer)
+- [Ingress](#ingress)
+  - [Ingress Controller](#ingress-controller)
+  - [Ingress Resources](#ingress-resources)
+  - [Gateway API](#gateway-api)
 
 <!-- /code_chunk_output -->
 
@@ -141,9 +140,11 @@ for addons, see: https://kubernetes.io/docs/concepts/cluster-administration/addo
     - `dhcp`
   - **3rd aprty**
     - `flannel`
+      doesn't support k8s`networkPolicy`
+    - `calico`
+      one of the most capable
     - `weave`
     - `cilium`
-    - `calico`
     - `infoblocks`
 - CNI configuration at container-runtime:
   `--cni-conf-dir=/etc/cni/net.d`

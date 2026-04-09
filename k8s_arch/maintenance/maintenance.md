@@ -2,16 +2,15 @@
 
 tags: #arch #maintenance
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [Kubernetes Maintenance](#kubernetes-maintenance)
-  - [OS Patching](#os-patching)
-  - [Cluster Upgrade](#cluster-upgrade)
-    - [Kubernetes Releases](#kubernetes-releases)
-    - [Cluster Upgrade Process](#cluster-upgrade-process)
-  - [Backup & Restore](#backup--restore)
+- [OS Patching](#os-patching)
+- [Cluster Upgrade](#cluster-upgrade)
+  - [Kubernetes Releases](#kubernetes-releases)
+  - [Cluster Upgrade Process](#cluster-upgrade-process)
+- [Backup & Restore](#backup--restore)
 
 <!-- /code_chunk_output -->
 

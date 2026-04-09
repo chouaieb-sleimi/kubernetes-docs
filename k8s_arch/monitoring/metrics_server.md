@@ -2,13 +2,12 @@
 
 tags: #objects #monitoring
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Metrics Server](#k8s-metrics-server)
-    - [Metrics Server Overview](#metrics-server-overview)
-    - [Metrics Server Deployment](#metrics-server-deployment)
+- [Metrics Server Overview](#metrics-server-overview)
+- [Metrics Server Deployment](#metrics-server-deployment)
 
 <!-- /code_chunk_output -->
 

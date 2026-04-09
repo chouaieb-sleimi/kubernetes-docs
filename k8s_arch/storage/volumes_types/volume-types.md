@@ -2,23 +2,22 @@
 
 tags: #storage
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Volume Types](#k8s-volume-types)
-  - [configMap Volume](#configmap-volume)
-  - [emptyDir Volume](#emptydir-volume)
-  - [hostPath Volume](#hostpath-volume)
-  - [local Volume](#local-volume)
-  - [projected Volume](#projected-volume)
-  - [nfs Volume](#nfs-volume)
-  - [iscsi Volume](#iscsi-volume)
-  - [cephfs Volume](#cephfs-volume)
-  - [GlusterFS Volume](#glusterfs-volume)
-  - [Flocker Volume](#flocker-volume)
-  - [ScaleIO Volume](#scaleio-volume)
-  - [Cloud Service](#cloud-service)
+- [configMap Volume](#configmap-volume)
+- [emptyDir Volume](#emptydir-volume)
+- [hostPath Volume](#hostpath-volume)
+- [local Volume](#local-volume)
+- [projected Volume](#projected-volume)
+- [nfs Volume](#nfs-volume)
+- [iscsi Volume](#iscsi-volume)
+- [cephfs Volume](#cephfs-volume)
+- [GlusterFS Volume](#glusterfs-volume)
+- [Flocker Volume](#flocker-volume)
+- [ScaleIO Volume](#scaleio-volume)
+- [Cloud Service](#cloud-service)
 
 <!-- /code_chunk_output -->
 

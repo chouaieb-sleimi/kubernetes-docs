@@ -2,13 +2,12 @@
 
 tags: #objects #configuration
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S ConfigMap](#k8s-configmap)
-  - [Environment Variables](#environment-variables)
-  - [Consume Config Map](#consume-config-map)
+- [Environment Variables](#environment-variables)
+- [Consume Config Map](#consume-config-map)
 
 <!-- /code_chunk_output -->
 

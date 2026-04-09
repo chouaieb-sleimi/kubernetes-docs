@@ -2,22 +2,21 @@
 
 tags: #configuration
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Configuration](#k8s-configuration)
-  - [Define, Build, Modify Container Images](#define-build-modify-container-images)
-  - [Commands And Arguments](#commands-and-arguments)
-  - [ConfigMap](#configmap)
-  - [Secrets](#secrets)
-  - [Resource Limits and Requests](#resource-limits-and-requests)
-  - [Taints and Tolerations](#taints-and-tolerations)
-    - [Taint - Node](#taint---node)
-    - [Toleration - Pod](#toleration---pod)
-  - [Node Selectors and Affinity](#node-selectors-and-affinity)
-    - [Node Selectors](#node-selectors)
-    - [Node Affinity](#node-affinity)
+- [Define, Build, Modify Container Images](#define-build-modify-container-images)
+- [Commands And Arguments](#commands-and-arguments)
+- [ConfigMap](#configmap)
+- [Secrets](#secrets)
+- [Resource Limits and Requests](#resource-limits-and-requests)
+- [Taints and Tolerations](#taints-and-tolerations)
+  - [Taint - Node](#taint---node)
+  - [Toleration - Pod](#toleration---pod)
+- [Node Selectors and Affinity](#node-selectors-and-affinity)
+  - [Node Selectors](#node-selectors)
+  - [Node Affinity](#node-affinity)
 
 <!-- /code_chunk_output -->
 

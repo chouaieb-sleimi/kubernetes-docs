@@ -2,13 +2,12 @@
 
 tags: #arch #controlplane #apiserver
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [Kubernetes API-Server](#kubernetes-api-server)
-  - [Overview](#overview)
-  - [Manual Installation](#manual-installation)
+- [Overview](#overview)
+- [Manual Installation](#manual-installation)
 
 <!-- /code_chunk_output -->
 

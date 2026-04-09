@@ -2,13 +2,12 @@
 
 tags: #objects #arch
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Operator Framework](#k8s-operator-framework)
-    - [CustomControllers](#customcontrollers)
-    - [CustomResourceDefinition](#customresourcedefinition)
+- [CustomControllers](#customcontrollers)
+- [CustomResourceDefinition](#customresourcedefinition)
 
 <!-- /code_chunk_output -->
 
