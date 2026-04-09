@@ -15,6 +15,11 @@ tags: #tools_utils
   - [TLS Setup](#tls-setup)
   - [TLS Management](#tls-management)
   - [Access to Private Registry](#access-to-private-registry)
+  - [Cluster Troubleshooting](#cluster-troubleshooting)
+    - [Application Failure](#application-failure)
+    - [Control Plane Failure](#control-plane-failure)
+    - [Worker Node Failure](#worker-node-failure)
+    - [Network Failure](#network-failure)
 - [Networking](#networking)
   - [CoreDNS](#coredns)
   - [Network Namespaces](#network-namespaces)
@@ -26,8 +31,7 @@ tags: #tools_utils
 - [Authorization](#authorization)
 - [API Maintenance](#api-maintenance)
 - [Objects](#objects)
-  - [Selection](#selection)
-  - [Monitoring, Export](#monitoring-export)
+  - [Selection and Export](#selection-and-export)
   - [Creation, Deletion](#creation-deletion)
   - [Replace, Modify, Scale](#replace-modify-scale)
 - [Rollout, Updates](#rollout-updates)
@@ -359,6 +363,95 @@ spec:
     - name: regcred
 ```
 
+### Cluster Troubleshooting
+
+- `kubectl get/describe`
+- logs (pods `kubectl logs`)
+- logs (services `systmectl/service/journalctl`)
+- node status `top`
+- certs (issuer/expire date/group)
+  `openssl x509 -in /var/lib/kbelet/worker-1.crt-text | grep -Ei 'issuer:|not after:|subject:'`
+- dns `nslookup`
+- iptables/ipvs `iptables/ipvsadm`
+
+#### Application Failure
+
+1. ingress
+2. service
+3. pod(web)
+4. pod(db)
+
+#### Control Plane Failure
+
+1. node status
+2. pod status
+3. control plane components status (pods/services)
+4. control plane components logs (pods/services)
+
+#### Worker Node Failure
+
+1. node status
+2. worker nodes components status (pods/services)
+3. worker nodes components logs (pods/services)
+4. worker nodes certs
+
+#### Network Failure
+
+**Network components:**
+
+- pod (unique IPs)
+- services (stable IP)
+- coreDNS see: [[networking]] > CoreDNS
+  - deployment
+    - pods
+  - configmap
+  - service
+  - serviceaccount
+  - clusterRole/clusterRoleBinding
+- CNI plugins (setup IPs, configure net-ifs)
+- kube-proxy (rule managament)
+  service-to-pod proxying using iptables/IPVS networking rules
+
+**Troubleshooting steps:**
+
+- **check pod/service issues**
+  1. check pod status/IPs
+     `kubectl get pods all -o=jsonpath='{.items[*].status.podIP}'`
+  2. check if pods reachable via IP:port
+     telnet/`wget -qO- $IP:$PORT`
+  3. check service definition/endpoints
+  - selector-labels/ports
+  - check if service has (pod) endpoints
+    `kubectl get endpoints -l kubernetes.io/service-name=my-service -n default`
+
+- **check DNS (coreDNS)**
+  1. check pods
+     1. check status/logs
+        `kubectl get pods -n kube-system -l k8s-app=kube-dns`
+        `kubectl logs -n kube-system -l k8s-app=kube-dns`
+     2. check endpoints
+        `kubectl get endpoints -l k8s.io/service-name=kube-dns -n kube-system`
+  2. check app pod config
+     `kubectl exec -it my_pod -- cat /etc/resolv.conf`
+     configs:
+     - coredns service cluster ip
+     - search path
+     - ndots: 5
+  3. check app pod connectivity
+     `kubectl exec -it busybox -- nslookup kubernetes.default.svc.cluster.local`
+     `kubectl exec -it busybox -- nslookup app-service.default.svc.cluster.local`
+
+- **check CNI plugins**
+  check CNI deamonset pod status/logs
+
+- **kube-proxy**
+  1. check kube-proxy status/logs (pods/service)
+  2. check settings configmap
+     - mode (ipvs/ipdtables)
+     - clusterCIDR
+  3. verify iptables/ipvs network rules
+     `ipvsadm -ln`
+
 ---
 
 ## Networking
@@ -651,7 +744,7 @@ kubectl convert -f nginx_def.yaml --output-version <new-api>
 
 ## Objects
 
-### Selection
+### Selection and Export
 
 object selection (not always interchangeable)
 
@@ -672,11 +765,7 @@ kubectl [command] [object] [[ -n|--namespace ] <namespace-name>]
 kubectl config set-context $(kubectl config current-context) --namespace=dev
 ```
 
----
-
-### Monitoring, Export
-
-export resource definition file. _output_format: name, wide, yaml, json_
+get resource definition _output_format: name, wide, yaml, json_
 
 ```bash
 # objects
@@ -684,6 +773,14 @@ kubectl describe <resource>
 kubectl get <resource>
 kubectl get <resource> [ -o <output-format> ]
   # output-format: name, wide, yaml, json
+
+# JSON query
+kubectl get pods -o=jsonpath='{.items[0].spec.containers[0].image}'
+
+kubectl get nodes -o=jsonpath='{.items[*].metadata.name} {"\n"} {.items[*].status.capacity.cpu}'
+kubectl get nodes -o=jsonpath='{range.items[*]} {.metadata.name} {"\t"} {.status.capacity.cpu} {"\n"} {end}'
+kubectl get nodes -o=custom-columns=NODE:.metadata.name,CPU:.status.capacity.cpu --sort-by=.status.capacity.cpu
+
 ```
 
 get service url

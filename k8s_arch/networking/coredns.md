@@ -2,17 +2,27 @@
 
 tags: #network
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [K8S Networking](#k8s-networking)
-  - [Setup of CoreDNS](#setup-of-coredns)
-  - [CoreDNS in Kubernetes](#coredns-in-kubernetes)
+- [CoreDNS Components](#coredns-components)
+- [Setup of CoreDNS](#setup-of-coredns)
+- [CoreDNS in Kubernetes](#coredns-in-kubernetes)
 
 <!-- /code_chunk_output -->
 
 ---
+
+## CoreDNS Components
+
+- deployment: `coreDNS`
+  - pods: namespace=`kube-system`
+- configmap: holds `Corefile` definition
+- service: `kube-dns`, port 53
+  service IP is pointed to by each pod's `resolv.conf`
+- serviceaccount: `coreDNS`
+- clusterRole/clusterRoleBinding: `core-dns/kube-dns`
 
 ## Setup of CoreDNS
 
@@ -33,24 +43,24 @@ tags: #network
   - Configure `/etc/coredns/Corefile` to use hosts entries
   - start/restart/reload CoreDNS
 
-```properties
-.:53: {
-  cache 30
-  log
-  errors
+  ```properties
+  .:53: {
+    cache 30
+    log
+    errors
 
-  # use /etc/hosts
-  hosts   /etc/hosts {
-    reload 1m
-    fallthrough
-  }
+    # use /etc/hosts
+    hosts   /etc/hosts {
+      reload 1m
+      fallthrough
+    }
 
-  # forward unresolved queries to host's resolver
-  forward . /etc/erolv.conf {
-    max_concurrent 1000
+    # forward unresolved queries to host's resolver
+    forward . /etc/erolv.conf {
+      max_concurrent 1000
+    }
   }
-}
-```
+  ```
 
 ## CoreDNS in Kubernetes
 
@@ -58,7 +68,7 @@ tags: #network
 - kubelet configures pods' `/etc/resolv.conf` with:
   - **CoreDNS service** cluster-ip
   - **CoreDNS search domains** (`cluster.local` `svc.cluster.local` `default.svc.cluster.local`)
-  > CoreDNS's cluster-ip is configured in the kubelet (`--cluster-dns` + `--cluster-domain`)
+    > CoreDNS's cluster-ip is configured in the kubelet (`--cluster-dns` + `--cluster-domain`)
 - `/etc/coredns/Corefile` configmap data:
 
 ```properties
@@ -71,6 +81,7 @@ tags: #network
     pods insecure
     upstream
     fallthrough in-addr.arpa ip6.arpa
+    ttl 30
   }
 
   prometheus :9153

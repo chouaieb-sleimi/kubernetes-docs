@@ -1,4 +1,4 @@
-# Table of Contents
+# HELM
 
 tags: #k8s
 
@@ -6,7 +6,7 @@ tags: #k8s
 
 <!-- code_chunk_output -->
 
-- [Table of Contents](#table-of-contents)
+- [HELM](#helm)
 - [Helm Resources](#helm-resources)
 - [Helm Commands](#helm-commands)
 - [Helm Notes](#helm-notes)

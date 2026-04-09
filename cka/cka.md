@@ -76,10 +76,41 @@ tags: #k8s
     - [Pod Networking](#pod-networking)
     - [Weave CNI + IPAM](#weave-cni--ipam)
     - [Service Networking](#service-networking)
+  - [Section 10: Design and Install a Cluster](#section-10-design-and-install-a-cluster)
+    - [Design A Kubernetes Cluster](#design-a-kubernetes-cluster)
+    - [Choosing Kubernetes Infrastructure](#choosing-kubernetes-infrastructure)
+    - [Configure High Availability](#configure-high-availability)
+    - [ETCD in HA](#etcd-in-ha)
+    - [Kubernetes the Hard Way](#kubernetes-the-hard-way)
+  - [Section 11: Install Kubernetes the `kubeadm` way](#section-11-install-kubernetes-the-kubeadm-way)
+  - [Section 12: Helm Basics](#section-12-helm-basics)
+    - [Installation and Configuration](#installation-and-configuration)
+    - [Helm Components](#helm-components)
+    - [Helm Charts](#helm-charts)
+    - [Working with Helm Basics](#working-with-helm-basics)
+    - [Customizing Helm Parameters](#customizing-helm-parameters)
+    - [Lifecycle Management w/ Helm](#lifecycle-management-w-helm)
+  - [Section 13: Kustomize Basics](#section-13-kustomize-basics)
+    - [Kustomize vs Helm](#kustomize-vs-helm)
+    - [the `kustomization.yaml` File](#the-kustomizationyaml-file)
+    - [Kustomize Output](#kustomize-output)
+    - [Kustomize ApiVersion & Kind](#kustomize-apiversion--kind)
+    - [Managing Directories](#managing-directories)
+    - [Common Transformers](#common-transformers)
+    - [Image Transformers](#image-transformers)
+    - [Patches Intro](#patches-intro)
+    - [Patches Type](#patches-type)
+    - [Patches Directories](#patches-directories)
+    - [Patches List](#patches-list)
+    - [Overlays](#overlays)
+    - [Componenets](#componenets)
+  - [Section 14: Troubleshooting](#section-14-troubleshooting)
+    - [Application Failure](#application-failure)
+    - [Control Plane Failure](#control-plane-failure)
+    - [Worker Node Failure](#worker-node-failure)
+    - [Network Failure](#network-failure)
 
 <!-- /code_chunk_output -->
-
----
 
 ## Kubernetes Library
 
@@ -92,6 +123,8 @@ tags: #k8s
 - Candidate Handbook: https://www.cncf.io/certification/candidate-handbook
 
 - Exam Tips: https://docs.linuxfoundation.org/tc-docs/certification/tips-cka-and-ckad
+
+- KodeKloud Mock Exams: "Ultimate CKA Mock Exams Series"
 
 Keep the code - 20KLOUD handy while registering for the CKA or CKAD exams at Linux Foundation to get a 20% discount.
 
@@ -120,6 +153,8 @@ Keep the code - 20KLOUD handy while registering for the CKA or CKAD exams at Lin
 ### Data Plane Components
 
 [[architecture]] > data-plane
+
+---
 
 ## Section 3: Scheduling
 
@@ -155,9 +190,13 @@ see: [[controllers]] > admission-controller
 
 see: [[controllers]] > admission-controller > dynamic_admission_controller
 
+---
+
 ## Section 4: Logging and Monitoring
 
 see: [ckad.md#Section 5: Observability And API Maintenance](../ckad/ckad.md#Section-5-Observability-And-API-Maintenance)
+
+---
 
 ## Section 5: Application Lifecycle Management
 
@@ -179,6 +218,8 @@ see: [ckad.md#Section 5: Observability And API Maintenance](../ckad/ckad.md#Sect
 
 #### Dynamic Scaling - Vertical
 
+---
+
 ## Section 6: Cluster Maintenance
 
 see: [[maintenance]]
@@ -190,6 +231,8 @@ see: [[maintenance]]
 ### Cluster Upgrade
 
 ### Backup & Restore
+
+---
 
 ## Section 7: Security
 
@@ -221,6 +264,8 @@ see: [[security]]
 
 ### Network Security
 
+---
+
 ## Section 8: Storage
 
 see: [[storage]]
@@ -238,6 +283,8 @@ see: [[storage]] > container-storage
 ### PersistentVolumeClaims
 
 ### StorageClasses
+
+---
 
 ## Section 9: Networking
 
@@ -263,3 +310,86 @@ see: [[networking]]
 
 ### Service Networking
 
+---
+
+## Section 10: Design and Install a Cluster
+
+see: [[architecture]]
+
+### Design A Kubernetes Cluster
+
+### Choosing Kubernetes Infrastructure
+
+### Configure High Availability
+
+### ETCD in HA
+
+see: [[architecture]] > control-plane > etcd
+
+### Kubernetes the Hard Way
+
+---
+
+## Section 11: Install Kubernetes the `kubeadm` way
+
+---
+
+## Section 12: Helm Basics
+
+see [[library]] > helm
+
+### Installation and Configuration
+
+### Helm Components
+
+### Helm Charts
+
+### Working with Helm Basics
+
+### Customizing Helm Parameters
+
+### Lifecycle Management w/ Helm
+
+---
+
+## Section 13: Kustomize Basics
+
+see: [[library]] > kustomize
+
+### Kustomize vs Helm
+
+### the `kustomization.yaml` File
+
+### Kustomize Output
+
+### Kustomize ApiVersion & Kind
+
+### Managing Directories
+
+### Common Transformers
+
+### Image Transformers
+
+### Patches Intro
+
+### Patches Type
+
+### Patches Directories
+
+### Patches List
+
+### Overlays
+
+### Componenets
+
+## Section 14: Troubleshooting
+
+see: [[library]] > commands > Cluster Troubleshooting
+
+### Application Failure
+
+### Control Plane Failure
+
+### Worker Node Failure
+
+### Network Failure
