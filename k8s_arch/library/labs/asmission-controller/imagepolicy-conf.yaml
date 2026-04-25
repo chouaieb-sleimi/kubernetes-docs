@@ -1,0 +1,6 @@
+imagePolicy:
+  kubeConfigFile: /etc/kubernetes/imgvalidation/kubeconf.yaml
+  allowTTL: 50
+  denyTTL: 50
+  retryBackoff: 500
+  defaultAllow: true

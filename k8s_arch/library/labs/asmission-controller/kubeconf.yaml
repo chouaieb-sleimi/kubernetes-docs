@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Config
+clusters:
+- cluster:
+    certificate-authority: /etc/kubernetes/imgvalidation/webhook.crt
+    server: https://image-checker-webhook.default.svc:1323/image_policy
+  name: checker_webhook
+contexts:
+- context:
+    cluster: checker_webhook
+    user: api-server
+  name: checker_validator
+current-context: checker_validator
+preferences: {}
+users:
+- name: api-server
+  user:
+    client-certificate: /etc/kubernetes/pki/front-proxy-client.crt
+    client-key: /etc/kubernetes/pki/front-proxy-client.key

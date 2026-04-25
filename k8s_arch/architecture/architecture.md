@@ -74,7 +74,7 @@ see [[data-plane]]
 
 ### Namespace
 
-see [namespace.md](namespace.md)
+see [[namespace]]
 
 **components:**
 

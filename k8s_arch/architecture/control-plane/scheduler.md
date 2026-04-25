@@ -62,6 +62,7 @@ useful for testing or specific use cases where manual control over pod placement
 
 ### Priority Classes and Preemption
 
+- determine pod scheduling order
 - **priority ranges:**
   - -2,147,483,647 to 1,000,000,000 for user-defined priorities
   - 1,000,000,000 to 2,000,000,000 for system priorities
@@ -149,24 +150,41 @@ see docs: [Using Multiple Schedulers](https://kubernetes.io/docs/tasks/extend-ku
 
 ### Scheduling Phases/ Plugins/ Extensions
 
-1. **Scheduling Queue:**
-   - validates pod priority and places it in the scheduling queue.
+- **Extensions:**
+  - predefined extension points (or hooks) in the scheduling framework
+  - act as interfaces or lifecycle events where custom logic can be injected
+  - define when and where in the scheduling process plugins can execute, they don't contain the actual logic themselves
+  - "slots" in the scheduler's code that allow for pluggability.
+    - provide the framework for extensibility
+    - are static and part of the scheduler's architecture
+
+- **Plugins:**
+  - implementations of scheduling logic that "plug into" the extensions
+  - are concrete components (either built-in or custom) that perform specific tasks, such as evaluating nodes or making decisions
+  - register themselves to one or more extensions
+    - they execute when those extensions are invoked during scheduling
+  - plugins provide the functionality
+    - are modular and can be enabled, disabled, or customized per scheduler profile
+
+- **Scheduling Process:**
+  1. **Scheduling Queue:**
+  - validates pod priority and places it in the scheduling queue.
     - high priority pods are scheduled first.
-   - extension: `QueueSort`
-   - plugin: `PrioritySort`
-2. **Filtering:**
-   - filters out nodes that do not meet the pod's requirements.
-   - extensions: `Filter`, `PreFilter`, `PostFilter`
-   - plugins: `NodeResourcesFit`, `NodeAffinity`, `NodeUnschedulable`, `TaintToleration`, `NodePorts`, `NodeName`
-3. **Scoring:**
-   - scores the remaining nodes based on various criteria.
-   - extensions: `Score`, `PreScore`, `Reserve`
-   - plugins: `NodeResourcesFit`, `ImageLocality`, `NodeResourcesBalancedAllocation`, `InterPodAffinity`
-4. **Binding:**
-   - binds the pod to the selected node.
-   - extensions: `Bind`, `PostBind`, `preBind`, `Permit`
-   - plugin: `DefaultBinder`
-  
+  - extension: `QueueSort`
+  - plugin: `PrioritySort`
+  2. **Filtering:**
+  - filters out nodes that do not meet the pod's requirements.
+  - extensions: `Filter`, `PreFilter`, `PostFilter`
+  - plugins: `NodeResourcesFit`, `NodeAffinity`, `NodeUnschedulable`, `TaintToleration`, `NodePorts`, `NodeName`
+  3. **Scoring:**
+  - scores the remaining nodes based on various criteria.
+  - extensions: `Score`, `PreScore`, `Reserve`
+  - plugins: `NodeResourcesFit`, `ImageLocality`, `NodeResourcesBalancedAllocation`, `InterPodAffinity`
+  4. **Binding:**
+  - binds the pod to the selected node.
+  - extensions: `Bind`, `PostBind`, `preBind`, `Permit`
+  - plugin: `DefaultBinder`
+
 see docs: [Kubernetes Scheduler Extensibility](https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/)
 
 ### Scheduler Profiles
@@ -196,8 +214,8 @@ see docs: [Kubernetes Scheduler Extensibility](https://kubernetes.io/docs/concep
       plugins:
         preScore:
           enabled:
-            - name: '*'
+            - name: "*"
         score:
           enabled:
-            - name: '*'
+            - name: "*"
   ```

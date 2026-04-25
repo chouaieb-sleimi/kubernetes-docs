@@ -7,12 +7,14 @@ tags: #k8s
 <!-- code_chunk_output -->
 
 - [Documentation](#documentation)
-- [Labs](#labs)
+- [Certs/ Labs](#certs-labs)
 - [Images](#images)
 - [Commands](#commands)
 - [Objects List](#objects-list)
-- [Helm](#helm)
-- [Kustomize](#kustomize)
+- [Tools & Utils](#tools--utils)
+  - [Dev & CLI](#dev--cli)
+  - [Helm](#helm)
+  - [Kustomize](#kustomize)
 - [Docker vs ContainerD](#docker-vs-containerd)
   - [Containerd CLI Tools:](#containerd-cli-tools)
   - [CRI CLI Tools:](#cri-cli-tools)
@@ -39,7 +41,7 @@ tags: #k8s
 
 ---
 
-## Labs
+## Certs/ Labs
 
 - **Kubernetes for Beginners Lab**
   https://uklabs.kodekloud.com/courses/labs-kubernetes-for-the-absolute-beginners-hands-on
@@ -48,7 +50,6 @@ tags: #k8s
 - **Kubernetes Application Developer - CKAD Lab**
   https://uklabs.kodekloud.com/courses/labs-certified-kubernetes-application-developer
   Coupon `udemystudent030485`
-
 - **Kubernetes Administration - CKA Lab**
   https://learn.kodekloud.com/user/courses/udemy-labs-certified-kubernetes-administrator-with-practice-tests
   Coupon `kk-labs-cka-lakjg328321095305`
@@ -114,13 +115,24 @@ tags: #k8s
 
 ---
 
-## Helm
+## Tools & Utils
+
+### Dev & CLI
+
+- kui (desktop-deprecated)
+- k9s (desktop)
+- kunobi (desktop)
+- Headlamp (desktop)
+- Lens (IDE)
+- OpenLens (opensource Lens)
+
+
+### Helm
 
 [[helm]]
 
----
 
-## Kustomize
+### Kustomize
 
 [[kustomize]]
 

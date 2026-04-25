@@ -30,6 +30,8 @@ tags: #tools_utils
   - [Kubectx and Kubens](#kubectx-and-kubens)
 - [Authorization](#authorization)
 - [API Maintenance](#api-maintenance)
+  - [Dynamic Admission Controller](#dynamic-admission-controller)
+    - [Validating / Mutating Webhooks](#validating--mutating-webhooks)
 - [Objects](#objects)
   - [Selection and Export](#selection-and-export)
   - [Creation, Deletion](#creation-deletion)
@@ -740,6 +742,23 @@ bulk **convert definition files** form a version to another
 kubectl convert -f nginx_def.yaml --output-version <new-api>
 ```
 
+### Dynamic Admission Controller
+
+see: architecture > control-plane > controllers > dynamic_admission_controller
+
+Admission controller setup steps:
+
+1. create tls secret for webhook deployment
+2. create webhook deployment (uses tls secret)
+   lab image: `stackrox/admission-controller-webhook-demo:latest`
+3. create service (expose webhook)
+
+#### Validating / Mutating Webhooks
+
+- create webhook configuration (webhook config in api-server):
+  - ValidatingWebhookConfiguration
+  - MutatingWebhookConfiguration.
+
 ---
 
 ## Objects
@@ -845,6 +864,8 @@ kubcetl taint nodes <node-name> key=value:<taint-effect>
     # NoExecute: new pods will not be scheduled on the node, existing pods that don't tolerate the taint are evicted
 
 kubcetl taint nodes node01 app=blue:NoSchedule
+kubcetl taint nodes node01 app:NoSchedule-      # removes taint
+kubcetl taint nodes node01 app=blue:NoSchedule- # removes taint
 ```
 
 node labels (for node affinity)
