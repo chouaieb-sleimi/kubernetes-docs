@@ -4,7 +4,7 @@ tags: #objects #arch
 
 ---
 
-Represents a custom current/desired state of k8s resource.
+Represents a custom current/desired state of k8s resource. It is an extension of the Kubernetes API that is not necessarily available in a default Kubernetes installation.
 
 CRD/custom resource sample 1
 

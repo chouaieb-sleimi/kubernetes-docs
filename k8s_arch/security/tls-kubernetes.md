@@ -44,6 +44,35 @@ tags: #security
 
 **TLS cluster setup steps:**
 
+**sample pki structure:**
+
+```bash
+/etc/kubernetes/pki/
+├── apiserver.crt
+├── apiserver-etcd-client.crt
+├── apiserver-etcd-client.key
+├── apiserver.key
+├── apiserver-kubelet-client.crt
+├── apiserver-kubelet-client.key
+├── ca.crt
+├── ca.key
+├── etcd/
+│   ├── ca.crt
+│   ├── ca.key
+│   ├── healthcheck-client.crt
+│   ├── healthcheck-client.key
+│   ├── peer.crt
+│   ├── peer.key
+│   ├── server.crt
+│   └── server.key
+├── front-proxy-ca.crt
+├── front-proxy-ca.key
+├── front-proxy-client.crt
+├── front-proxy-client.key
+├── sa.key
+└── sa.pub
+```
+
 see: [kubernetes-certs-checker spreadsheet](kubernetes-certs-checker.xlsx)
 
 1. generate **CA `ca.key`+ self-sign`ca.crt`**
