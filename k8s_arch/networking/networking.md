@@ -7,8 +7,7 @@ tags: #network
 <!-- code_chunk_output -->
 
 - [Networking Concepts](#networking-concepts)
-  - [Network Namespaces](#network-namespaces)
-  - [Docker Networking](#docker-networking)
+  - [Kubernetes Networking Model](#kubernetes-networking-model)
   - [Container Networking Interface (CNI)](#container-networking-interface-cni)
   - [Pod Networking](#pod-networking)
   - [Weave CNI + IPAM](#weave-cni--ipam)
@@ -43,93 +42,41 @@ tags: #network
 
 ## Networking Concepts
 
-### Network Namespaces
+### Kubernetes Networking Model
 
-see: commands > Network Namespaces
-
-**setup network namespace** using pipe/virtual cable:
-
-1. **create netns**
-1. **create virtual/bridge network** (interface)
-1. **create `veth` pipe/ virt-cable** w/ its 2 interfaces/ends
-1. **attach `veth` interface** to netns
-1. **attach other `veth` interface** to the bridge
-1. **assign ip addr** to interfaces
-1. **activate interfaces**
-1. **enable NAT-IP masquerade** for egress
-
-**virtual networks/switches** solutions:
-
-- Linux Bridge
-- Open vSwitch (OvS)
-
-**setup Linux Bridge** for virtual networks
-
-- **create network namespaces and virtual/bridge network** (host interface)
-- **link netns and virt-network** using virt-cable
-- **enable egress traffic from** netns
-  - configure routes on netns
-  - enable NAT for packets routing from virt-network on host
-- **(optional) enable ingress traffic to** netns
-  - **option 1:** define route in the source: `ip route add <netns-addr> via <host-addr>`
-  - **option 2:** configure port forwarding on host: `ip route add <netns-addr> via <host-addr>`
-
-> **Note:** in this setup, the host provides to netns:
->
-> - gateway
-> - default gateway
-> - NAT
-
-### Docker Networking
-
-docker network types:
-
-- **none:** unreachable to/from the ouside
-- **host:** contianer is attached to host network (share host ports)
-- **bridge:**
-  - default network `docker0`
-  - internal private network
-  - nat-ed network using `docker0` bridge host interface
-  - `docker0` netns `id` is present when inspecting: `containers[].NetworkSettings.SandboxID+SandboxKey`
-
-**when a contianer is created**, docker (see netns setup above):
-
-- creates netns
-- attaches netns to bridge network
-- assigns an ip addr to container interface from bridge network subnet
-- **configure egress traffic:**
-  - adds nat rule to iptables for nat-ing container traffic via host interface
-  - configures **iptables MASQUERADE rules** for outbound traffic
-  - **inside container:**
-    - adds **route to outside** via host interface
-    - adds **dns server addr resolv.conf** (usually host ip addr)
-    - adds **gateway addr to route table** (usually bridge interface ip addr)
-- **configure ingress traffic:**
-  - adds route to container interface via bridge interface
-  - creates DNAT rules if ports are published (-p flag)
-  - updates Docker proxy rules if ports are published
-
-**docker networking model:** Contianer Network Model (CNM)
+see [[networking-model]]
 
 ### Container Networking Interface (CNI)
 
 for CNI, see: https://kubernetes.io/docs/concepts/cluster-administration/networking/#how-to-implement-the-kubernetes-network-model
 for addons, see: https://kubernetes.io/docs/concepts/cluster-administration/addons
 
+- CNI is more than plugins: it defines the standard, runtime integration, plugin binaries, and configuration.
+  - **CNI spec** defines the plugin contract and JSON config format.
+  - **CNI configuration** lives in `/etc/cni/net.d/` and tells the runtime which plugin to run and how to connect pods.
+  - **CNI plugins** are the executable components under `/opt/cni/bin/` that implement the actual networking.
+  - **IPAM plugins** are a special plugin type used by CNI plugins to allocate pod IP addresses.
+
+- **network plugins** are the CNI components that implement networking for pods.
+  - they are invoked by the container runtime to configure pod interfaces, IP assignment, routes, and connectivity.
+  - they follow the CNI plugin contract with actions like `ADD`, `DEL`, and `CHECK`.
+  - they are typically installed under `/opt/cni/bin/` and configured by files in `/etc/cni/net.d/`.
+
 - defines **container-runtime/plugin standards**
-- defines **container-runtime responsibilities:**
+- **container-runtime** responsibilities:
   - runtime must create netns
   - runtime to invoke network plugin when container is added/deleted
   - runtime to invoke network plugin when container is deleted
   - defines `json` format of the netowrk config
-- defines **network plugins responsibilities:**
+- **network plugins** responsibilities:
   - must support CLI args: `ADD/DEL/CHECK`
   - must support CLI params: container id, netns, etc.
   - must manage IP addr assignment to pods
   - must return results in specific format
 - **plugins:** (path: `/opt/cni/bin/`)
   - **builtin**
-    - `bridge:` steps 02-08 (see netns setup above)
+    - `bridge:`
+      - does steps 02-08; see above: [namespace-setup](./networking-model.md#pipevirtual-cable-network-namespace-setup)
       - step 01 (netns creation) is done by container-runtime (docker, rkt, cri-o, etc.)
     - `vlan`
     - `ipvlan`
@@ -139,10 +86,8 @@ for addons, see: https://kubernetes.io/docs/concepts/cluster-administration/addo
     - `host-local`
     - `dhcp`
   - **3rd aprty**
-    - `flannel`
-      doesn't support k8s`networkPolicy`
-    - `calico`
-      one of the most capable
+    - `flannel` (doesn't support k8s`networkPolicy`)
+    - `calico` (one of the most capable)
     - `weave`
     - `cilium`
     - `infoblocks`

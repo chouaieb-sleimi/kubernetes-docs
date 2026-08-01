@@ -8,6 +8,7 @@ tags: #objects #network
 
 - [Ingress Controller](#ingress-controller)
 - [Ingress Resources](#ingress-resources)
+  - [Redirect HTTP to HTTPS](#redirect-http-to-https)
   - [Single URL - Single paths - Single backend](#single-url---single-paths---single-backend)
   - [Single URL - Mutliple paths - Mutliple backends](#single-url---mutliple-paths---mutliple-backends)
   - [Multiple URLs - Mutliple backends](#multiple-urls---mutliple-backends)
@@ -36,7 +37,6 @@ tags: #objects #network
     - rate limiting
     - custom error pages
     - session affinity
-
 
 **Ingress components:**
 
@@ -85,6 +85,37 @@ kubectl create ingress <ingress-name> --rule="host/path=service:port"
 
 # example
 kubectl create ingress ingress-test --rule="wear.my-online-store.com/wear*=wear-service:80"
+```
+
+### Redirect HTTP to HTTPS
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: secure-ingress
+  annotations:
+    # Explicitly enforce the HTTP to HTTPS redirect
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # Force redirect even if no TLS block is present (e.g., if SSL terminates at an external load balancer)
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - example.com
+      secretName: example-tls-secret
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  number: 80
 ```
 
 ### Single URL - Single paths - Single backend

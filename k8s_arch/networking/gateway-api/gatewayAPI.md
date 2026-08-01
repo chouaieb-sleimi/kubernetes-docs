@@ -10,6 +10,7 @@ tags: #objects #network
 - [Gateway](#gateway)
 - [Routes](#routes)
   - [HTTPRoute](#httproute)
+- [Installation](#installation)
 
 <!-- /code_chunk_output -->
 
@@ -60,9 +61,15 @@ spec:
     - name: http
       port: 80
       protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: All
     - name: https
       port: 443
       protocol: HTTPS
+      allowedRoutes:
+        namespaces:
+          from: web-namespace
       tls:
         mode: Terminate
         certificateRefs:
@@ -81,7 +88,9 @@ metadata:
   namespace: default
 spec:
   parentRefs:
-    - name: web-gateway
+    - name: web-gateway           # Name of the Gateway
+      namespace: default          # Namespace where the Gateway is deployed
+      sectionName: https          # Attach to the 'http' listener
   hostnames:
     - "example.com"
   rules:
@@ -100,3 +109,7 @@ spec:
         - name: web-service
           port: 80
 ```
+
+### Installation
+
+see: [commands#NGINX-Gateway-Fabric]

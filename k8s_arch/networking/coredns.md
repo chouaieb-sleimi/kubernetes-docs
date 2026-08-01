@@ -16,13 +16,13 @@ tags: #network
 
 ## CoreDNS Components
 
-- deployment: `coreDNS`
-  - pods: namespace=`kube-system`
-- configmap: holds `Corefile` definition
-- service: `kube-dns`, port 53
+- **deployment**: `coreDNS`
+  - **pods**: namespace=`kube-system`
+- **configmap**: holds `Corefile` definition
+- **service**: `kube-dns`, port 53
   service IP is pointed to by each pod's `resolv.conf`
-- serviceaccount: `coreDNS`
-- clusterRole/clusterRoleBinding: `core-dns/kube-dns`
+- **serviceaccount**: `coreDNS`
+- **clusterRole/clusterRoleBinding**: `core-dns/kube-dns`
 
 ## Setup of CoreDNS
 
