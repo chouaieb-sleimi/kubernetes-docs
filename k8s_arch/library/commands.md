@@ -6,6 +6,10 @@ tags: #tools_utils
 
 <!-- code_chunk_output -->
 
+- [System Architecture](#system-architecture)
+  - [Common Linux paths for Kubernetes nodes](#common-linux-paths-for-kubernetes-nodes)
+    - [Controller node (kubeadm layout)](#controller-node-kubeadm-layout)
+    - [Worker node (kubeadm layout)](#worker-node-kubeadm-layout)
 - [Docker](#docker)
 - [Cluster Maintenance](#cluster-maintenance)
   - [Component and Node Management](#component-and-node-management)
@@ -15,21 +19,26 @@ tags: #tools_utils
   - [TLS Setup](#tls-setup)
   - [TLS Management](#tls-management)
   - [Access to Private Registry](#access-to-private-registry)
+  - [Multiple Schedulers](#multiple-schedulers)
   - [Cluster Troubleshooting](#cluster-troubleshooting)
     - [Application Failure](#application-failure)
     - [Control Plane Failure](#control-plane-failure)
     - [Worker Node Failure](#worker-node-failure)
     - [Network Failure](#network-failure)
+- [VPA](#vpa)
 - [Networking](#networking)
   - [CoreDNS](#coredns)
   - [Network Namespaces](#network-namespaces)
   - [Docker Networking](#docker-networking)
   - [Weave Setup](#weave-setup)
+  - [Calico Setup](#calico-setup)
+  - [Ingress Controller - NGINX Gateway Fabric](#ingress-controller---nginx-gateway-fabric)
 - [Authentication](#authentication)
   - [Kubeconfig](#kubeconfig)
   - [Kubectx and Kubens](#kubectx-and-kubens)
 - [Authorization](#authorization)
 - [API Maintenance](#api-maintenance)
+  - [Admission Controllers](#admission-controllers)
   - [Dynamic Admission Controller](#dynamic-admission-controller)
     - [Validating / Mutating Webhooks](#validating--mutating-webhooks)
 - [Objects](#objects)
@@ -38,11 +47,94 @@ tags: #tools_utils
   - [Replace, Modify, Scale](#replace-modify-scale)
 - [Rollout, Updates](#rollout-updates)
 - [Port Forwarding](#port-forwarding)
-- [Data Plane Components](#data-plane-components)
-- [Admission Controllers](#admission-controllers)
 - [Helm](#helm)
 
 <!-- /code_chunk_output -->
+
+---
+
+## System Architecture
+
+### Common Linux paths for Kubernetes nodes
+
+#### Controller node (kubeadm layout)
+
+```bash
+tree -L 2 /etc/kubernetes /etc/systemd/system/kubelet.service.d /var/lib/kubelet /var/lib/etcd /etc/cni/net.d /opt/cni/bin
+
+/etc/kubernetes                       # kubeadm control plane configuration and kubeconfigs
+├── admin.conf                        # admin client kubeconfig for cluster administration
+├── controller-manager.conf           # kubeconfig used by kube-controller-manager
+├── front-proxy-client.conf           # kubeconfig for aggrefgated API server front-proxy
+├── kubelet.conf                      # kubeconfig used by the local kubelet to authenticate to API server
+├── scheduler.conf                    # kubeconfig used by kube-scheduler
+├── manifests                         # static pod manifests for control plane components
+│   ├── kube-apiserver.yaml           # API server static pod manifest
+│   ├── kube-controller-manager.yaml  # controller manager static pod manifest
+│   └── kube-scheduler.yaml           # scheduler static pod manifest
+└── pki                               # certificate authority and component TLS keys/certs
+    ├── ca.crt                        # cluster CA certificate
+    ├── ca.key                        # cluster CA private key
+    ├── sa.key                        # service account signing key
+    ├── sa.pub                        # service account public key
+    ├── apiserver.crt                 # API server TLS certificate
+    ├── apiserver.key                 # API server TLS private key
+    ├── apiserver-kubelet-client.crt  # kube-apiserver client cert for kubelet
+    └── apiserver-kubelet-client.key  # kube-apiserver client key for kubelet
+
+/etc/systemd/system/kubelet.service.d  # kubelet systemd drop-in configuration
+└── 10-kubeadm.conf                    # kubeadm-managed kubelet service settings
+
+/var/lib/kubelet                      # kubelet runtime state and configuration
+├── config.yaml                       # kubelet configuration file
+├── pods                              # runtime pod directory managed by kubelet
+└── pki                               # kubelet client certificates and CA trust
+
+/etc/cni/net.d                        # CNI network configuration directory
+└── 10-bridge.conf                    # example CNI network config used by the node
+
+/opt/cni/bin                        # CNI plugin binaries installed on the node
+├── bridge                          # bridge plugin for pod networking
+├── host-local                      # CNI IPAM plugin for local address assignment
+├── ipvlan                          # ipvlan plugin for L2/L3 pod networking
+└── loopback                        # CNI loopback plugin required by spec
+
+/var/lib/etcd                       # etcd data directory for the control plane
+└── member                          # etcd member storage
+    ├── wal                         # etcd write-ahead log files
+    └── snap                        # etcd database snapshots
+```
+
+#### Worker node (kubeadm layout)
+
+```bash
+tree -L 2 /etc/kubernetes /etc/systemd/system/kubelet.service.d /var/lib/kubelet /etc/cni/net.d /opt/cni/bin
+/etc/kubernetes                      # kubeadm kubelet configuration and certificates
+├── kubelet.conf                     # kubeconfig used by kubelet to connect to the API server
+└── pki                              # kubelet client certificates and CA trust
+    ├── kubelet.crt                  # kubelet client certificate
+    ├── kubelet.key                  # kubelet client private key
+    └── ca.crt                       # cluster CA certificate trusted by kubelet
+
+/etc/systemd/system/kubelet.service.d  # kubelet systemd drop-in configuration
+└── 10-kubeadm.conf                    # kubeadm-managed kubelet service overrides
+
+/var/lib/kubelet                    # kubelet runtime state, pods, and credentials
+├── config.yaml                     # kubelet runtime config file
+├── pods                            # runtime pod directories created by kubelet
+└── pki                             # kubelet certificate/key storage
+
+/etc/cni/net.d                      # CNI network configuration directory
+└── 10-bridge.conf                  # CNI config used by the node
+
+/opt/cni/bin                        # CNI plugin binaries installed on the node
+├── bridge                          # bridge plugin for pod networking
+├── host-local                      # local IPAM plugin for address allocation
+├── ipvlan                          # ipvlan plugin for layer 2/3 pod networking
+└── loopback                        # CNI loopback plugin required by the CNI spec
+```
+
+> Note: other popular Kubernetes distributions use different root paths, e.g. `k3s` under `/etc/rancher/k3s` and `microk8s` under `/var/snap/microk8s/current`.
 
 ---
 
@@ -103,18 +195,41 @@ kubectl node drain <node-name>       # evict pods and mark node as unschedulable
 **upgrade commands**
 
 ```bash
-# control node upgrade
-dnf update kubeadm=<version>   # upgrade kubeadm on control plane node
-kubeadm upgrade plan
-kubeadm upgrade apply <version>
-systemctl restart kubelet      # restart kubelet to pick up new version
+### kubeadm/kubelet upgrade (controlplane+node) -- upgrade kubeadm (apt)
 
-# worker node upgrade
-kubectl drain <node-name> --ignore-daemonsets # master
-dnf update kubeadm=<version> kubectl=<version>
-kubeadm upgrade node config --kubelet-version <version>
-systemctl restart kubelet
-kubectl uncordon <node-name> # master
+vim /etc/apt/sources.list
+vim /etc/apt/sources.list.d/kubernetes.list
+apt update
+apt-cache madison kubeadm/kubelet
+apt-get install kubeadm/kubelet=1.35.4-1.1
+
+# restart kubelet to pick up new version
+systemctl daemon-reload   # for: kubelet
+systemctl restart kubelet # for: kubelet
+
+# kubeadm upgrade (controlplane+node) -- upgrade kubeadm (dnf)
+dnf update kubeadm=<version>    # upgrade kubeadm on control plane node
+
+### controlplane node(s) upgrade
+
+kubectl cordon controlplane
+kubectl cordon controlplane     # if: controlplane is schedulable
+# update kubeadm: see above
+# update kubelet: see above
+kubeadm upgrade plan            # see available versions and upgrade plan
+kubeadm upgrade apply <version> # output of: "kubeadm upgrade plan"
+kubectl uncordon controlplane
+
+### worker node(s) upgrade
+
+kubectl cordon <node-name>    # on: controlplane
+kubectl drain <node-name>     # on: controlplane
+# update kubelet: see above   # on: node
+# update kubelet: see above   # on: node
+kubeadm upgrade node          # on: node
+# or run upgrade cmd below:
+kubeadm upgrade node config --kubelet-version <version> # on: node
+kubectl uncordon <node-name> # on: controlplane
 ```
 
 ### ETCD
@@ -327,7 +442,8 @@ spec:
     - digital signature
     - key encipherment
     - server auth
-  request: <certificate-goes-here>
+    - client auth
+  request: <base64-csr-goes-here>
 ```
 
 **manage certificate signing by admin**
@@ -364,6 +480,15 @@ spec:
   imagePullSecrets:
     - name: regcred
 ```
+
+### Multiple Schedulers
+
+see: architecture > control plane > scheduler
+
+implementation steps:
+
+1. create `KubeSchedulerConfiguration` config file
+2. start scheduler binary/pod using config file
 
 ### Cluster Troubleshooting
 
@@ -455,6 +580,87 @@ spec:
      `ipvsadm -ln`
 
 ---
+
+## VPA
+
+**implementation steps:**
+
+1. **create CRDs**
+
+- `verticalpodautoscalercheckpoints`
+- `verticalpodautoscalers`
+
+2. **define RBAC**
+
+- `clusterrole/system:metrics-reader`
+- `clusterrole/system:vpa-actor`
+- `clusterrole/system:vpa-status-actor`
+- `clusterrole/system:vpa-checkpoint-actor`
+- `clusterrole/system:evictioner`
+- `clusterrolebinding/system:metrics-reader`
+- `clusterrolebinding/system:vpa-actor`
+- `clusterrolebinding/system:vpa-status-actor`
+- `clusterrolebinding/system:vpa-checkpoint-actor`
+- `clusterrole/system:vpa-target-reader`
+- `clusterrolebinding/system:vpa-target-reader-binding`
+- `clusterrolebinding/system:vpa-evictioner-binding`
+- `serviceaccount/vpa-admission-controller`
+- `serviceaccount/vpa-recommender`
+- `serviceaccount/vpa-updater`
+- `clusterrole/system:vpa-admission-controller`
+- `clusterrolebinding/system:vpa-admission-controller`
+- `clusterrole/system:vpa-status-reader`
+- `clusterrolebinding/system:vpa-status-reader-binding`
+
+3. **clone VPA repository**
+   `git clone https://github.com/kubernetes/autoscaler.git`
+
+4. **run setup script**
+   `./autoscaler/vertical-pod-autoscaler/hack/vpa-up.sh`
+
+   _script output:_
+
+   ```
+   HEAD is now at 9196162ba Update VPA default version to 1.6.0
+   customresourcedefinition.apiextensions.k8s.io/verticalpodautoscalercheckpoints.autoscaling.k8s.io configured
+   customresourcedefinition.apiextensions.k8s.io/verticalpodautoscalers.autoscaling.k8s.io configured
+   clusterrole.rbac.authorization.k8s.io/system:metrics-reader unchanged
+   clusterrole.rbac.authorization.k8s.io/system:vpa-actor configured
+   clusterrole.rbac.authorization.k8s.io/system:vpa-status-actor unchanged
+   clusterrole.rbac.authorization.k8s.io/system:vpa-checkpoint-actor unchanged
+   clusterrole.rbac.authorization.k8s.io/system:evictioner unchanged
+   clusterrole.rbac.authorization.k8s.io/system:vpa-updater-in-place created
+   clusterrolebinding.rbac.authorization.k8s.io/system:vpa-updater-in-place-binding created
+   clusterrolebinding.rbac.authorization.k8s.io/system:metrics-reader unchanged
+   clusterrolebinding.rbac.authorization.k8s.io/system:vpa-actor unchanged
+   clusterrolebinding.rbac.authorization.k8s.io/system:vpa-status-actor unchanged
+   clusterrolebinding.rbac.authorization.k8s.io/system:vpa-checkpoint-actor unchanged
+   clusterrole.rbac.authorization.k8s.io/system:vpa-target-reader unchanged
+   clusterrolebinding.rbac.authorization.k8s.io/system:vpa-target-reader-binding unchanged
+   clusterrolebinding.rbac.authorization.k8s.io/system:vpa-evictioner-binding unchanged
+   serviceaccount/vpa-admission-controller unchanged
+   serviceaccount/vpa-recommender unchanged
+   serviceaccount/vpa-updater unchanged
+   clusterrole.rbac.authorization.k8s.io/system:vpa-admission-controller configured
+   clusterrolebinding.rbac.authorization.k8s.io/system:vpa-admission-controller unchanged
+   clusterrole.rbac.authorization.k8s.io/system:vpa-status-reader unchanged
+   clusterrolebinding.rbac.authorization.k8s.io/system:vpa-status-reader-binding unchanged
+   role.rbac.authorization.k8s.io/system:leader-locking-vpa-updater created
+   rolebinding.rbac.authorization.k8s.io/system:leader-locking-vpa-updater created
+   role.rbac.authorization.k8s.io/system:leader-locking-vpa-recommender created
+   rolebinding.rbac.authorization.k8s.io/system:leader-locking-vpa-recommender created
+   deployment.apps/vpa-updater created
+   deployment.apps/vpa-recommender created
+   Generating certs for the VPA Admission Controller in /tmp/vpa-certs.
+   Certificate request self-signature ok
+   subject=CN = vpa-webhook.kube-system.svc
+   Uploading certs to the cluster.
+   secret/vpa-tls-certs created
+   Deleting /tmp/vpa-certs.
+   service/vpa-webhook created
+   deployment.apps/vpa-admission-controller created
+   service/vpa-webhook unchanged
+   ```
 
 ## Networking
 
@@ -607,6 +813,68 @@ bridge add netns_id  /var/run/netns/netns_id # manually invokecni plugin
 kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
 ```
 
+### Calico Setup
+
+see: self-managed on-premises installation guide:
+https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/onpremises
+
+```bash
+# 01. Install the Tigera Operator and custom resource definitions
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.32.0/manifests/v1_crd_projectcalico_org.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.32.0/manifests/tigera-operator.yaml
+
+# 02. Download the custom resources necessary to configure Calico
+curl -O https://raw.githubusercontent.com/projectcalico/calico/v3.32.0/manifests/custom-resources.yaml
+
+# 03. customize operator (cidr, etc.) and apply
+vim custom-resources.yaml
+kubectl create -f custom-resources.yaml
+
+# 04. Monitor the deployment
+watch kubectl get pods -n calico-system
+watch kubectl get tigerastatus
+
+```
+
+### Ingress Controller - NGINX Gateway Fabric
+
+
+1. install an nginx gateway API
+
+```bash
+# Install the Gateway API resources
+kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.5.1" | kubectl apply -f -
+# If the GitHub-based kustomize fetch times out, use the local tarball fallback below.
+mkdir -p /tmp/ngf
+curl -L --fail https://codeload.github.com/nginx/nginx-gateway-fabric/tar.gz/refs/tags/v1.5.1 \
+  | tar -xz -C /tmp/ngf --strip-components=1
+kubectl kustomize /tmp/ngf/config/crd/gateway-api/standard | kubectl apply -f -
+
+
+# Deploy the NGINX Gateway Fabric CRDs
+kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.1/deploy/crds.yaml
+
+# Deploy NGINX Gateway Fabric
+kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.1/deploy/nodeport/deploy.yaml
+
+# Verify the Deployment
+kubectl get pods -n nginx-gateway
+
+# View the nginx-gateway service
+kubectl get svc -n nginx-gateway nginx-gateway -o yaml
+
+# Update the nginx-gateway service to expose ports 30080 for HTTP and 30081 for HTTPS
+kubectl patch svc nginx-gateway -n nginx-gateway --type='json' -p='[
+  {"op": "replace", "path": "/spec/ports/0/nodePort", "value": 30080},
+  {"op": "replace", "path": "/spec/ports/1/nodePort", "value": 30081}
+]'
+
+```
+
+2. create gateway-listener > route
+
+see: [labs/gateway-nginx]
+
 ---
 
 ## Authentication
@@ -740,6 +1008,21 @@ bulk **convert definition files** form a version to another
 ```bash
 # need to install the convert plugin
 kubectl convert -f nginx_def.yaml --output-version <new-api>
+```
+
+### Admission Controllers
+
+```bash
+# see default controllers
+k exec kube-apiserver-controlplane -n kube-system -- \
+  kube-apiserver -h | grep -i enable-admission-plugins
+
+# see current controllers besides default
+ps aux | grep -v grep | grep -i kube-apiserver | grep -i admission
+
+# add/remove admission controller
+# valid for kubeadm deployments
+vim /etc/kubernetes/manifests/kube-apiserver.yaml
 ```
 
 ### Dynamic Admission Controller
@@ -976,25 +1259,6 @@ let kubectl choose the local port
 kubectl port-forward deployment/mongo :27017
 # Forwarding from 127.0.0.1:63753 -> 27017
 # Forwarding from [::1]:63753 -> 27017
-```
-
----
-
-## Data Plane Components
-
-## Admission Controllers
-
-```bash
-# see default controllers
-k exec kube-apiserver-controlplane -n kube-system -- \
-  kube-apiserver -h | grep -i enable-admission-plugins
-
-# see current controllers besides default
-ps aux | grep -v grep | grep -i kube-apiserver | grep -i admission
-
-# add/remove admission controller
-# valid for kubeadm deployments
-vim /etc/kubernetes/manifests/kube-apiserver.yaml
 ```
 
 ---

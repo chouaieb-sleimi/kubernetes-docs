@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"deny-backend","namespace":"default"},"spec":{"ingress":[],"podSelector":{"matchLabels":{"app":"backend"}},"policyTypes":["Ingress"]}}
+  creationTimestamp: "2026-05-27T19:23:35Z"
+  generation: 1
+  name: deny-backend
+  namespace: default
+  resourceVersion: "1563"
+  uid: 001f9344-0487-471d-9586-3fb19a80080c
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
