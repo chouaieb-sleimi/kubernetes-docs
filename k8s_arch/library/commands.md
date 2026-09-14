@@ -11,6 +11,9 @@ tags: #tools_utils
     - [Controller node (kubeadm layout)](#controller-node-kubeadm-layout)
     - [Worker node (kubeadm layout)](#worker-node-kubeadm-layout)
 - [Docker](#docker)
+- [Kube Aliases `kuberc`](#kube-aliases-kuberc)
+- [Kube Namepsace `kubens`](#kube-namepsace-kubens)
+- [Kube Context `kubectx`](#kube-context-kubectx)
 - [Cluster Maintenance](#cluster-maintenance)
   - [Component and Node Management](#component-and-node-management)
   - [Cluster Upgrade](#cluster-upgrade)
@@ -155,6 +158,139 @@ docker run -it \
   --mount src=ebs-vol,target=/var/lib/mysql \
   mysql
 ```
+
+## Kube Aliases `kuberc`
+
+`kuberc` is a lightweight convenience layer for `kubectl` that lets you define reusable command aliases and shell shortcuts for the most common Kubernetes actions.
+
+**Typical use cases**
+
+- shorten long commands like `kubectl get pods -A`
+- group frequent resource queries by namespace/context
+- create per-cluster alias sets
+
+**Setup**
+
+- minimum kubectl v1.33
+- enable kuberc: `export KUBECTL_KUBERC=true`
+  - disable Kuberc temporarily: `export KUBERC=off`
+
+- default path: `~/.kube/kuberc`
+- a beta feature of the configuration
+  - apiVersion is `kubectl.config.k8s.io/v1beta1`
+  - kind is `Preference`
+
+**Example `~/.kube/kuberc`**
+
+```yaml
+apiVersion: kubectl.config.k8s.io/v1beta1
+kind: Preference
+aliases:
+  - name: kgp # alias of the command that we want to use
+    command: get # what action should be performed
+    appendArgs: # object that we want to use with the action
+      - pods
+  - name: klogs
+    command: logs
+    appendArgs:
+      - --follow
+      - --tail=50
+  - name: crns
+    command: create namespace
+    appendArgs:
+      - dev-project-01
+
+# define flags as key-value pairs to set conditions like output, server-side and interactive
+overrides:
+  - command: apply
+    flags:
+      - name: server-side # execute the command without confirmation
+        default: "true"
+  - command: delete
+    flags:
+      - name: interactive # before execution, prompt for confirmation
+        default: "true"
+  - command: get
+    flags:
+      - name: output # output of the object in a specific format like JSON or YAML
+        default: "yaml"
+  - command: exec
+    flags:
+      - name: it # attach -it flags to exec commands
+```
+
+**Usage**
+
+```bash
+kubectl --kuberc <CUSTOM KUBERC CONFIG PATH> <COMMAND>
+kubectl gp
+kubectl gpa
+kubectl gs
+kubectl dp nginx
+```
+
+> Tip: combine `kuberc` with a shell profile so your most-used commands are one keypress away.
+
+## Kube Namepsace `kubens`
+
+`kubens` is a helper to quickly switch the active namespace for your current kube context.
+
+**Install**
+
+```bash
+git clone https://github.com/ahmetb/kubectx.git ~/.kubectx
+echo 'source ~/.kubectx/kubens' >> ~/.bashrc
+```
+
+**Usage**
+
+```bash
+kubens                  # list namespaces
+kubens default          # switch to default namespace
+kubens -                # switch back to previous namespace
+kubens dev              # switch to the dev namespace
+```
+
+**Useful workflow**
+
+```bash
+kubectl config view --minify --output 'jsonpath={..namespace}'
+kubens prod
+kubectl get pods
+```
+
+## Kube Context `kubectx`
+
+`kubectx` is used to switch between Kubernetes contexts in your kubeconfig file without manually editing the config.
+
+**Install**
+
+```bash
+git clone https://github.com/ahmetb/kubectx.git ~/.kubectx
+echo 'source ~/.kubectx/kubectx' >> ~/.bashrc
+```
+
+**Usage**
+
+```bash
+kubectx                  # list all contexts
+kubectx -c               # show current context
+kubectx prod-cluster     # switch to a named context
+kubectx -                # switch back to the previous context
+kubectx minikube         # set working context to minikube
+```
+
+**With kubeconfig**
+
+```bash
+kubectl config get-contexts
+kubectl config current-context
+kubectl config use-context kubeadmin@kubeplayground
+```
+
+> Practical tip: use `kubens` and `kubectx` together to quickly move between clusters and namespaces during debugging.
+
+---
 
 ## Cluster Maintenance
 
@@ -837,7 +973,6 @@ watch kubectl get tigerastatus
 ```
 
 ### Ingress Controller - NGINX Gateway Fabric
-
 
 1. install an nginx gateway API
 
